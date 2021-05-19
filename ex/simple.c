@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+// G(x=1 => F(x=0))
+
 int original() {
     int x, n;
     while(1) {
