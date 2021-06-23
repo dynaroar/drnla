@@ -17,14 +17,14 @@
         
 // G(x=1 => F(x=0))
 
-int original(int c) {
+int original(int c, int n) {
     if(c < 0) return 0;
     int c2=c;
     int x, n, r=0;
     while(1) {
         while(c>0) { r = r+c; c--; }
         x = (2*r) - (c*c) + 1;  // DIG Infer:  { x == 1 }
-        n = random();
+
         while(n>0) n--;
         
         r=0;
