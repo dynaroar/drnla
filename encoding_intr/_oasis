@@ -1,0 +1,26 @@
+OASISFormat    : 0.4
+OCamlVersion   : > 4.01.0
+FindlibVersion : >= 1.3.2
+BuildTools     : ocamlbuild
+# AlphaFeatures  : ocamlbuild_more_args
+# XOCamlbuildPluginTags: package(cppo_ocamlbuild)
+Plugins        : META (0.4), DevFiles (0.4)
+
+Name           : DynamiteLTL_Encoding
+Version        : 0.1
+Synopsis       : C instrumentation for DynmaiteLTL encoding
+License        : LGPL with OCaml linking exception
+
+Authors        : Y. Cyrus Liu
+Description    : CIL transformation for dynamic ltl verification 
+
+Executable "encode"
+  Path           : src
+  MainIs         : encoding.ml
+  BuildTools     : ocamlbuild # camlp4of
+  CompiledObject : best
+  ByteOpt        : -rectypes -custom camlp4lib.cma -w -a+8 -warn-error -a -g
+  NativeOpt      : -rectypes camlp4lib.cmxa -w -a+8 -warn-error -a
+  Install        : false
+  BuildDepends   : cil,
+                   camlp4
