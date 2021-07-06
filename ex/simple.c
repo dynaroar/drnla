@@ -1,15 +1,35 @@
 #include <stdlib.h>
 
-
+ #define nla(x) {
+    int a, n, x, y, z;
+    a = __VERIFIER_nondet_int();
+    n = 0;
+    x = 0;
+    y = 1;
+    z = 6;
+    int k = __VERIFIER_nondet_int();
+    while (6 * n + 6 <= k) {
+        n = n + 1;
+        x = x + y;
+        y = y + z;
+        z = z + 6;
+    }
+        
 // G(x=1 => F(x=0))
 
-int original() {
-    int x, n;
+int original(int c, int n) {
+    if(c < 0) return 0;
+    int c2=c;
+    int x, n, r=0;
     while(1) {
-        x = (c*c - (c*c) + 1); // DIG Infer:  { x == 1 }
-        n = random();
-        while(n>0) n --;  // TODO make this NLA
-        x = (d*d - d*d);       // DIG Infer: { x = 0; }
+        while(c>0) { r = r+c; c--; }
+        x = (2*r) - (c*c) + 1;  // DIG Infer:  { x == 1 }
+
+        while(n>0) n--;
+        
+        r=0;
+        while(c2>0) { r = r+c2; c2--; }
+        x =  (2*r) - (c2*c2);       // DIG Infer: { x = 0; }
     }
 }
 
@@ -72,6 +92,7 @@ int step5() {
 // G(x=1 => F(x=0))
 // Prove G by replacing _OR with error();
 int step6() {
+    if ( c^8*d^2 == 0 ) { x=1; return; }
     int x, n;                                                _F_xeq0 = true; _OR_NOT_xeq1_Fxeq0 = true; if(!_OR_NOT_xeq1_Fxeq0) error();
     while(1) {                                               _F_xeq0 = true; _OR_NOT_xeq1_Fxeq0 = true; if(!_OR_NOT_xeq1_Fxeq0) error();
         x = (c*c - (c*c) + 1); _xeq1 = true; _xeq0 = false;  _F_xeq0 = true; _OR_NOT_xeq1_Fxeq0 = true; if(!_OR_NOT_xeq1_Fxeq0) error();
@@ -81,3 +102,9 @@ int step6() {
     }
 }
 
+// F(x=0)
+int timos(f) {
+    int x;
+    nla(x);
+    // x==0?
+}
