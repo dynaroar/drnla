@@ -22,16 +22,17 @@ let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
 
   
 (* class assignAddVisitor (vinfos : varinfo list) = object(self) *)
-class assignAtomicVisitor (vexprs : (varinfo * exp) list) = object(self)
+class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list)= object(self)
   inherit nopCilVisitor 
   
   method vinst (i : instr) = 
     match i with
     | Set(_, _, loc) | Call(_, _, _, loc) ->
        let inject = L.map (fun (vi, exp) -> Set((Var vi, NoOffset), exp, loc)) vexprs in
-       let traceFormals = L.map (fun (vi, _) -> Lval (Var vi, NoOffset)) vexprs in
+       (* let atomFormals = L.map (fun (vi, _) -> Lval (Var vi, NoOffset)) vexprs in *)
+       let localFormals = L.map (fun x -> Lval (Var x, NoOffset)) flocals in
        let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
-       let vtraceCall = mkCall traceName traceFormals in
+       let vtraceCall = mkCall traceName localFormals in
        let injectVis = i::inject@[vtraceCall] in
        ChangeTo injectVis
     | _ -> SkipChildren 
@@ -47,7 +48,7 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
        * let vis = new assignAddVisitor varInfos in
        *     ignore(visitCilFunction vis fd) *)
       let varInfos = mkVis fd exprs in
-      let vis = new assignAtomicVisitor varInfos in
+      let vis = new assignAtomicVisitor varInfos fd.slocals in
       ignore(visitCilFunction vis fd)
     end
 

@@ -90,7 +90,7 @@ let main () =
     (match ctlProperty with
     | Atomic (aexp) ->
        let exprs = [aexp] in
-       LocalVar.varInject("mainQ", exprs) ast 
+       LocalVar.varInject(mainQ, exprs) ast 
     | _ -> ()
     ) in  outputFile ast
     
