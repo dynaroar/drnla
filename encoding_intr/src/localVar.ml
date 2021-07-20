@@ -13,8 +13,14 @@ let mkVis (fd: fundec) (exprs: exp list): (varinfo * exp) list =
   L.mapi (fun i expr ->
       ((makeLocalVar fd ("_atomic"^(string_of_int i)) (TInt (IInt, []))), expr)
     ) exprs
-     
- 
+
+  
+let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
+  let mkVi ?(ftype=TVoid []) fname: varinfo = makeVarinfo true fname ftype in
+  let f = var(mkVi ~ftype:ftype fname) in
+  Call(av, Lval f, args, !currentLoc)
+
+  
 (* class assignAddVisitor (vinfos : varinfo list) = object(self) *)
 class assignAtomicVisitor (vexprs : (varinfo * exp) list) = object(self)
   inherit nopCilVisitor 
@@ -23,12 +29,16 @@ class assignAtomicVisitor (vexprs : (varinfo * exp) list) = object(self)
     match i with
     | Set(_, _, loc) | Call(_, _, _, loc) ->
        let inject = L.map (fun (vi, exp) -> Set((Var vi, NoOffset), exp, loc)) vexprs in
-       let injectVis = i::inject in
+       let traceFormals = L.map (fun (vi, _) -> Lval (Var vi, NoOffset)) vexprs in
+       let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
+       let vtraceCall = mkCall traceName traceFormals in
+       let injectVis = i::inject@[vtraceCall] in
        ChangeTo injectVis
     | _ -> SkipChildren 
 
 end
- 
+
+                                                           
                                       
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
@@ -46,3 +56,4 @@ let varInject (funvars : string * exp list) (f : file) : unit =
   funvars |> processFunction |> onlyFunctions |> iterGlobals f
 
 
+       

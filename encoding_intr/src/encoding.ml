@@ -4,7 +4,6 @@ open Int64
 open Ctl
    
 module F = Frontc
-module C = Cil
 module E = Errormsg
 module CM = Common
           
@@ -14,19 +13,19 @@ let encodeTrans = ref false
 
 let outFile = ref ""
           
-let parseOneFile (fname: string) : C.file =
+let parseOneFile (fname: string) : file =
   let cabs, cil = F.parse_with_cabs fname () in
   Rmtmps.removeUnusedTemps cil;
   cil
 
-let outputFile (f : C.file) : unit =
+let outputFile (f : file) : unit =
   if !outFile <> "" then
     try
       let c = open_out !outFile in
       
-      C.print_CIL_Input := false;
+      print_CIL_Input := false;
       Stats.time "printCIL" 
-        (C.dumpFile (C.defaultCilPrinter) c !outFile) f;
+        (dumpFile defaultCilPrinter c !outFile) f;
       close_out c
     with _ ->
       E.s (E.error "Couldn't open file %s" !outFile)
@@ -50,24 +49,26 @@ let parse_cmdline =
   end
 
 let main () =
-  
-  C.print_CIL_Input := true;
-  C.insertImplicitCasts := false;
-  C.lineLength := 100000;
-  C.warnTruncate := false;
-  E.colorFlag := true;
-  Cabs2cil.doCollapseCallCast := true;
-
+  initCIL();
+  Cil.lineDirectiveStyle:= None; (*reduce code, remove all junk stuff*)
+  Cprint.printLn := false; (*don't print line #*)
+  (* for Cil to retain &&, ||, ?: instead of transforming them to If stmts *)
+  Cil.useLogicalOperators := true;
+ 
   let () = parse_cmdline in
   let src = !filename in
   outFile := (src ^ ".encode.c");
   let ast = parseOneFile src in
 
+  let mainQ = "mainQ" in
+  let vtrace = "vtrace" in
+  let vassume = "vassume" in  
+
   (* TODO  we might want to parse CTL* property here, then extract the atomic proposition *)
   let tmpLoc = {line = -1; file = src; byte = 0;} in
   let tmpInit ={init = None;} in
   let vi = {
-      vname = "x";
+      vname = "y";
       vtype = TInt (IInt, []);
       vattr = [];
       vstorage = NoStorage;
