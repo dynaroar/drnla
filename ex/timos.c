@@ -15,7 +15,7 @@ int mainF(int x, int y) {
     while (x > 0) {
         if (mainAP(x, y)) return 1;
         if (dup) {
-            if (!(px > y && px >= 0))
+            if (!(px > x && px >= 0))
                 return 0;
         }
         if (!dup && __VERIFIER_nondet_int()) {
