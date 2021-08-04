@@ -1,3 +1,8 @@
+int mainAP(int x, int y) {
+    if (y == 0) return 1;
+    return 0;
+}
+
 int mainF(int x, int y) {
     int px, py;
     int dup = 0;
@@ -6,9 +11,9 @@ int mainF(int x, int y) {
     __VERIFIER_assume(x > y);
     __VERIFIER_assume(x > 0);
     
-    if (y == 0) return 1;
+    if (mainAP(x, y)) return 1;
     while (x > 0) {
-        if (y == 0) return 1;
+        if (mainAP(x, y)) return 1;
         if (dup) {
             if (!(px > y && px >= 0))
                 return 0;
@@ -21,7 +26,7 @@ int mainF(int x, int y) {
         x--;
         y--;
     }
-    if (y == 0) return 1;
+    if (mainAP(x, y)) return 1;
     return 0;
 }
 
