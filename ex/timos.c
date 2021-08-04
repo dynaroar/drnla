@@ -1,6 +1,4 @@
-int mainF() {
-    int x = __VERIFIER_nondet_int();
-    int y = __VERIFIER_nondet_int();
+int mainF(int x, int y) {
     int px, py;
     int dup = 0;
    
@@ -28,7 +26,9 @@ int mainF() {
 }
 
 int main() {
-    int r = mainF();
+    int x = __VERIFIER_nondet_int();
+    int y = __VERIFIER_nondet_int();
+    int r = mainF(x, y);
     //@ assert (r == 1);
 }
 
