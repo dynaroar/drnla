@@ -60,8 +60,8 @@ def analyze_traces(traces, var, val):
         print(f"----matrix from {datafile}-----\n" + str(data_traces.shape))
 
         # print(var_col)
-        print(predindex)
-        print(tracehold)
+        print(f"atomic property holds at: {predindex}")
+        print(f"trace location reached to this hold position:\n{tracehold}")
         # print(data_traces)
     print("all runs that reach the state where predicate holds:")
     print(predholds)
