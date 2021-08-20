@@ -87,7 +87,8 @@ def analyze_traces(traces, var, val):
             submatrix.append(iterm)
 
     if submatrix:
-        # subarray = np.array(submatrix)
+        #convert to matrix may open to more machine learning/statistics methods.
+        #subarray = np.array(submatrix)
         # truecol =np.all(subarray == subarray[0,:], axis = 0)
         # print(truecol)
         # comval = -1
@@ -110,7 +111,7 @@ def analyze_traces(traces, var, val):
             commonloc = 1
             for ele in noreptcs[0]:
                 iscontained = list(map (lambda tcs: ele in tcs, noreptcs[1:]))
-                print("the first traces element is conrained :" + str(iscontained))
+                print("the first trace element is contained in the next trace :" + str(iscontained))
                 if all(iscontained):
                     commonloc = ele
                     break
