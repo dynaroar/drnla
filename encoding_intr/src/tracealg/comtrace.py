@@ -9,6 +9,8 @@ import numpy as np
 import shlex
 import shutil
 from random import randrange, randint, seed
+from functools import reduce
+from itertools import groupby
 # sys.path.append("../tools")
 # import time
 
@@ -40,6 +42,7 @@ def analyze_traces(traces, var, val):
                 itemList = re.split(",", line.rstrip('\n'))
                 numList = list(map (lambda x: int(x.strip()), itemList))
                 data_traces.append(numList)
+                # data_traces.append(itemList)
         data_traces = np.matrix(data_traces)
         var_col = sum(data_traces[:,var].tolist(),[])
         trace_col = sum(data_traces[:,0].tolist(),[])
@@ -58,42 +61,63 @@ def analyze_traces(traces, var, val):
         predholds.append(tracehold)
 
         print(f"----matrix from {datafile}-----\n" + str(data_traces.shape))
+        print(data_traces)
 
         # print(var_col)
         print(f"atomic property holds at: {predindex}")
         print(f"trace location reached to this hold position:\n{tracehold}")
-        # print(data_traces)
     print("all runs that reach the state where predicate holds:")
     print(predholds)
+
+# cut off to the length of mininal trace:
     trace_length = list(map(lambda x: len(x), predholds))
-    if not trace_length and 0 == trace_length:
-        return -1
-    minlen = min([value for value in trace_length if value != 0])
+    # if not trace_length and 0 == trace_length:
+    #     return -1
+    # minlen = min([value for value in trace_length if value != 0])
     print(trace_length)
-    print(f"The shortest trace run state number: {minlen}")
+    # print(f"The shortest trace run state number: {minlen}")
 
     submatrix=[]
+    print("predicate holds on non-empty traces for all the runs:")
     for iterm in predholds:
         if iterm:
-            print(iterm[:minlen])
+            print(iterm)
             # subtrace = iterm[]
-            submatrix.append(iterm[:minlen])
+            # submatrix.append(iterm[:minlen])
+            submatrix.append(iterm)
 
-    print("common traces for all the runs:")
-    print(submatrix)
     if submatrix:
         # subarray = np.array(submatrix)
         # truecol =np.all(subarray == subarray[0,:], axis = 0)
         # print(truecol)
-        comval = -1
-        trans_trc = (np.matrix(submatrix)).T
-        for i in range(trans_trc.shape[0]):
-            if np.all(trans_trc[i] == trans_trc[i][0]):
-                print('All run holds recently at Column:', i)
-                comval = trans_trc[i][0]
-                return comval
-            else:
-                return -1
+        # comval = -1
+        # trans_trc = (np.matrix(submatrix)).T
+        # for i in range(trans_trc.shape[0]):
+        #     if np.all(trans_trc[i] == trans_trc[i][0]):
+        #         print('All run holds recently at Column:', i)
+        #         comval = trans_trc[i][0]
+        #         return comval
+        #     else:
+        #         return -1
+        # commontcs = list(set.intersection(*map (set, submatrix)))
+        noreptcs = []
+        for i in range(len(submatrix)):
+            norep = [i[0] for i in groupby(submatrix[i])]
+            noreptcs.append(norep)
+        print("predicate holds with no repeating traces:\n" + str(noreptcs))
+
+        if len(noreptcs) >= 2:
+            commonloc = 1
+            for ele in noreptcs[0]:
+                iscontained = list(map (lambda tcs: ele in tcs, noreptcs[1:]))
+                print("the first traces element is conrained :" + str(iscontained))
+                if all(iscontained):
+                    commonloc = ele
+                    break
+            return commonloc
+        else:
+            return submatrix[0][0]
+
     else :
         return -1
 
@@ -122,7 +146,7 @@ def run_prog(prog, iter, pred, val):
         os.makedirs(trace_path)
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(-1000, 1000)
+        nondet_input = randint(-100, 100)
         with open(trace_file, 'w') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
     comloc = analyze_traces(trace_path, pred, val)
