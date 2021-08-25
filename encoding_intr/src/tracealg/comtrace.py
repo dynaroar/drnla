@@ -25,8 +25,23 @@ def run_command(command):
     return p.stdout
 
 
+def trace_gp(run_tcs, var, val):
+    var_col = sum(run_tcs[:,var].tolist(),[])
+    trace_col = sum(run_tcs[:,0].tolist(),[])
+    gtrace = []
+    for i in range(len(var_col)):
+        if var_col[i] < val and i != 0:
+            gtrace = []
+            break
+        gtrace.append(trace_col[i])
+    return gtrace
 
-
+def check_gp(gholds):
+    for iterm in gholds:
+        if not iterm :
+            return False, gholds.index(iterm)
+    return True, 0
+ 
 # read and parse traces data into matrix and analyze them finding the backward recent common trace.
 def analyze_traces(traces, var, val):
     """run .
@@ -34,7 +49,7 @@ def analyze_traces(traces, var, val):
         traces: c program execution traces data.
         var: predicate value to check, recorded as index to data point.
     """
-    predholds=[]
+    fholds, gholds=[], []
     for datafile in os.listdir(traces):
         with open(f"{traces}/{datafile}", "rt") as fr:
             data_traces = []
@@ -44,63 +59,52 @@ def analyze_traces(traces, var, val):
                 data_traces.append(numList)
                 # data_traces.append(itemList)
         data_traces = np.matrix(data_traces)
+        print(f"----matrix from {datafile}-----\n" + str(data_traces.shape))
+        print(data_traces)
+
         var_col = sum(data_traces[:,var].tolist(),[])
         trace_col = sum(data_traces[:,0].tolist(),[])
 
-        # var_col =[row[var] for row in data_traces]
-        # preds = list(filter (lambda x: x==0, var_col))
-
-        predindex = []
-        tracehold = []
+        predindex, tracehold = [], []
+ # check the location of var column holds of the value?
         for i in range(len(var_col)):
             if var_col[i] == val and i != 0:
                 predindex.append(i)
                 tracehold = trace_col[:i+1]
                 break
         tracehold.reverse()
-        predholds.append(tracehold)
+        fholds.append(tracehold)
 
-        print(f"----matrix from {datafile}-----\n" + str(data_traces.shape))
-        print(data_traces)
-
-        # print(var_col)
         print(f"atomic property holds at: {predindex}")
-        print(f"trace location reached to this hold position:\n{tracehold}")
-    print("all runs that reach the state where predicate holds:")
-    print(predholds)
+        print(f"trace locations reached to this hold position:\n{tracehold}")
+        this_gp = trace_gp(data_traces, var-1, val)
+        gholds.append(this_gp)
+        
+    print("all runs that FP holds at the first state:")
+    print(fholds)
+    gp_hold, runindex = check_gp (gholds)
+    if gp_hold:
+        print("all runs that GP holds:")
+        print(gholds)
+    else:
+        print(f"GP violates at run {runindex}")
 
 # cut off to the length of mininal trace:
-    trace_length = list(map(lambda x: len(x), predholds))
-    # if not trace_length and 0 == trace_length:
-    #     return -1
-    # minlen = min([value for value in trace_length if value != 0])
-    print(trace_length)
-    # print(f"The shortest trace run state number: {minlen}")
+    trace_length = list(map(lambda x: len(x), fholds))
+    if not trace_length and 0 == trace_length:
+        return -1
+    minlen = min([value for value in trace_length if value != 0])
+    print(f"trace length for FP runs: {trace_length}")
+    print(f"The shortest trace run state number: {minlen}")
 
     submatrix=[]
-    print("predicate holds on non-empty traces for all the runs:")
-    for iterm in predholds:
+    # print("predicate holds on non-empty traces for all the runs:")
+    for iterm in fholds:
         if iterm:
-            print(iterm)
-            # subtrace = iterm[]
-            # submatrix.append(iterm[:minlen])
+            # print(iterm)
             submatrix.append(iterm)
 
     if submatrix:
-        #convert to matrix may open to more machine learning/statistics methods.
-        #subarray = np.array(submatrix)
-        # truecol =np.all(subarray == subarray[0,:], axis = 0)
-        # print(truecol)
-        # comval = -1
-        # trans_trc = (np.matrix(submatrix)).T
-        # for i in range(trans_trc.shape[0]):
-        #     if np.all(trans_trc[i] == trans_trc[i][0]):
-        #         print('All run holds recently at Column:', i)
-        #         comval = trans_trc[i][0]
-        #         return comval
-        #     else:
-        #         return -1
-        # commontcs = list(set.intersection(*map (set, submatrix)))
         noreptcs = []
         for i in range(len(submatrix)):
             norep = [i[0] for i in groupby(submatrix[i])]
@@ -121,9 +125,6 @@ def analyze_traces(traces, var, val):
 
     else :
         return -1
-
-
-
 
 # compile and run c program to generate traces
 def run_prog(prog, iter, pred, val):
