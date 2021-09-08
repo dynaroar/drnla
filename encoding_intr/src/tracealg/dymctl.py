@@ -18,7 +18,18 @@ from itertools import groupby
 # import time
 
 from enum import Enum
-  
+
+# draw the trace graph, default to 4 subplots
+def drawG(graph):
+    for key, graph in graph.items():
+        loc = 221 + int(key)
+        plt.subplot(loc)
+        # plt.figure()
+        # nx.draw(graph, with_labels=True, font_weight='bold')
+        labels = nx.get_node_attributes(graph, 'vars') 
+        nx.draw(graph, with_labels=labels, font_weight='bold')
+    plt.show()  
+
 # compile and run c program to generate traces, store trace data into a hash table.
 def gettcs(prog, iter):
     """run .
@@ -41,7 +52,7 @@ def gettcs(prog, iter):
     tracehash = {}
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(1, 100)
+        nondet_input = randint(-100, 100)
         with open(trace_file, 'w+') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
             data_traces = []
@@ -53,7 +64,7 @@ def gettcs(prog, iter):
         tracehash[i] = data_traces
     return tracehash
 
-def transi(traces_hash, node_hash):
+def transi(traces_hash):
     rungraph = {}
     # G = nx.DiGraph()
     for run, traces in traces_hash.items():
@@ -112,23 +123,17 @@ def getResult(result_graph):
 def main (program, iter_num, predicate, value):
     #run the program with random number to generate traces
     traces = gettcs(program, iter_num)
-    nodehash = {}
-    tracegraph = transi(traces, nodehash)
+    tracegraph = transi(traces)
     print (f"graph from traces: {tracegraph}")
-    for key, graph in tracegraph.items():
-        # plt.figure()
-        # nx.draw(graph, with_labels=True, font_weight='bold')
-        print(f"----run {key} of nodes:\n {graph.nodes(data=True)} \n")
 
-     # plt.show()  
-     # we can use a stack to store all the sub formula, pop one by one to check?
+    # we can use a stack to store all the sub formula, pop one by one to check?
     resultgraph = checkFp(tracegraph, predicate, value)
     for key, graph in tracegraph.items():
-        # plt.figure()
-        # nx.draw(graph, with_labels=True, font_weight='bold')
+        print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
         print(f"----run {key} of results:\n {graph.graph} \n")
     results = getResult(resultgraph)
     print(f"The Property AF(y==0) holds for the input program: {results}")
+    # drawG(tracegraph)
     return None
 
 if __name__ == "__main__":
