@@ -41,7 +41,7 @@ def gettcs(prog, iter):
     tracehash = {}
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(-100, 100)
+        nondet_input = randint(1, 100)
         with open(trace_file, 'w+') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
             data_traces = []
@@ -84,17 +84,36 @@ def checkFp(trace_graph, pre, val):
         G.graph['Fp']={"holds":False, "state":None}
         for node in G.nodes:
             values = G.nodes[node]['vars']
+            checkp = [i[pre] for i in values]
             print(f"getting {node} node data for checking Fp: {values}")
+            print(f"get the predicate values to check: {checkp} \n")
+            for item in checkp:
+                if int(node) != 1 and item == val:
+                    G.graph['Fp']={"holds":True, "state":int(node)}
+                    break  
         ctlgraph[key] = G
-    return G
+    return ctlgraph
 
+def getResult(result_graph):
+    resutls = {}
+    hold = True
+    cex = (None, None)
+    for key, rgraph in result_graph.items():
+        hold = rgraph.graph['Fp']['holds'] and hold 
+        if not (rgraph.graph['Fp']['holds']):
+            hold = False;
+            cex = (key, None)
+            break
+    results = {"Holds": hold, "CEX": cex}
+    return results        
+        
 
    
 def main (program, iter_num, predicate, value):
     #run the program with random number to generate traces
     traces = gettcs(program, iter_num)
     nodehash = {}
-    tracegraph = transi (traces, nodehash)
+    tracegraph = transi(traces, nodehash)
     print (f"graph from traces: {tracegraph}")
     for key, graph in tracegraph.items():
         # plt.figure()
@@ -108,6 +127,8 @@ def main (program, iter_num, predicate, value):
         # plt.figure()
         # nx.draw(graph, with_labels=True, font_weight='bold')
         print(f"----run {key} of results:\n {graph.graph} \n")
+    results = getResult(resultgraph)
+    print(f"The Property AF(y==0) holds for the input program: {results}")
     return None
 
 if __name__ == "__main__":
