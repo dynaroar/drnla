@@ -21,14 +21,17 @@ from enum import Enum
 
 # draw the trace graph, default to 4 subplots
 def drawG(graph):
-    for key, graph in graph.items():
-        loc = 221 + int(key)
-        plt.subplot(loc)
-        # plt.figure()
-        # nx.draw(graph, with_labels=True, font_weight='bold')
-        labels = nx.get_node_attributes(graph, 'vars') 
-        nx.draw(graph, with_labels=labels, font_weight='bold')
-    plt.show()  
+    # for key, graph in graph.items():
+    #     loc = 221 + int(key)
+    #     plt.subplot(loc)
+    #     # plt.figure()
+    #     # nx.draw(graph, with_labels=True, font_weight='bold')
+    #     labels = nx.get_node_attributes(graph, 'vars') 
+    #     nx.draw(graph, labels=labels, font_weight='bold')
+    nx.draw(graph, with_labels=True, node_size = 20)
+    plt.show()
+
+
 
 # compile and run c program to generate traces, store trace data into a hash table.
 def gettcs(prog, iter):
@@ -52,7 +55,7 @@ def gettcs(prog, iter):
     tracehash = {}
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(-100, 100)
+        nondet_input = randint(-50, 50)
         with open(trace_file, 'w+') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
             data_traces = []
@@ -86,7 +89,19 @@ def transi(traces_hash):
             # print(f"node {node} data: {G.nodes[node]}")
         rungraph[run] = G
     return rungraph
-    
+
+def transiG(traces_hash, node_hash):
+    # rungraph = {}
+    G = nx.DiGraph()
+    for run, traces in traces_hash.items():
+        states = [item[0] for item in traces]
+
+        for i in range(len(traces)-1):
+            pre, succ = (tuple(traces[i]), tuple(traces[i+1]))  
+            G.add_edge(pre, succ)
+    return (G, node_hash)
+
+
 def checkFp(trace_graph, pre, val):
     ctlgraph = {} 
     for key, G in trace_graph.items():
@@ -123,16 +138,19 @@ def getResult(result_graph):
 def main (program, iter_num, predicate, value):
     #run the program with random number to generate traces
     traces = gettcs(program, iter_num)
-    tracegraph = transi(traces)
-    print (f"graph from traces: {tracegraph}")
+    # tracegraph = transi(traces)
+    nodehash = {}
+    tracegraph, nodehash = transiG(traces, nodehash)
+    print (f"graph from traces: {tracegraph.nodes}")
+    drawG(tracegraph)
 
-    # we can use a stack to store all the sub formula, pop one by one to check?
-    resultgraph = checkFp(tracegraph, predicate, value)
-    for key, graph in tracegraph.items():
-        print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
-        print(f"----run {key} of results:\n {graph.graph} \n")
-    results = getResult(resultgraph)
-    print(f"The Property AF(y==0) holds for the input program: {results}")
+# we can use a stack to store all the sub formula, pop one by one to check?
+    # resultgraph = checkFp(tracegraph, predicate, value)
+    # for key, graph in tracegraph.items():
+    #     print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
+    #     print(f"----run {key} of results:\n {graph.graph} \n")
+    # results = getResult(resultgraph)
+    # print(f"The Property AF(y==0) holds for the input program: {results}")
     # drawG(tracegraph)
     return None
 
