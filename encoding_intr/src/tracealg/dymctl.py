@@ -6,8 +6,11 @@ import os
 import subprocess
 import argparse
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 import shlex
 import shutil
+from pyModelChecking import *
 from random import randrange, randint, seed
 from functools import reduce
 from itertools import groupby
@@ -49,12 +52,62 @@ def gettcs(prog, iter):
                 data_traces.append(numList)
         tracehash[i] = data_traces
     return tracehash
-      
-         
-def main(program, iter_num, predicate, value):
+
+def transi(traces_hash, node_hash):
+    rungraph = {}
+    # G = nx.DiGraph()
+    for run, traces in traces_hash.items():
+        # print(f"------run {run}--------")
+        G = nx.DiGraph()
+        states = [item[0] for item in traces]
+        # statenorep = [i[0] for i in groupby(states)]
+        for i in range(len(traces)-1):
+            pre, succ = (traces[i][0], traces[i+1][0])  
+            G.add_edge(pre, succ)
+
+        # set graph node attributes to store vars concrete value
+        for node in G.nodes():
+            nx.set_node_attributes(G, {node:[]}, "vars")
+        for item in traces:
+            node = item[0]
+            nodeval = item[1:]
+            G.nodes[node]['vars'].append(nodeval)
+            # print(f"node {node} data: {G.nodes[node]}")
+        rungraph[run] = G
+    return rungraph
+    
+def checkFp(trace_graph, pre, val):
+    ctlgraph = {} 
+    for key, G in trace_graph.items():
+        print(f"------run {key}--------")
+        print(f"----nodes: {G.nodes}")
+        G.graph['Fp']={"holds":False, "state":None}
+        for node in G.nodes:
+            values = G.nodes[node]['vars']
+            print(f"getting {node} node data for checking Fp: {values}")
+        ctlgraph[key] = G
+    return G
+
+
+   
+def main (program, iter_num, predicate, value):
     #run the program with random number to generate traces
     traces = gettcs(program, iter_num)
-    print (f"traces: {traces}")
+    nodehash = {}
+    tracegraph = transi (traces, nodehash)
+    print (f"graph from traces: {tracegraph}")
+    for key, graph in tracegraph.items():
+        # plt.figure()
+        # nx.draw(graph, with_labels=True, font_weight='bold')
+        print(f"----run {key} of nodes:\n {graph.nodes(data=True)} \n")
+
+     # plt.show()  
+     # we can use a stack to store all the sub formula, pop one by one to check?
+    resultgraph = checkFp(tracegraph, predicate, value)
+    for key, graph in tracegraph.items():
+        # plt.figure()
+        # nx.draw(graph, with_labels=True, font_weight='bold')
+        print(f"----run {key} of results:\n {graph.graph} \n")
     return None
 
 if __name__ == "__main__":
