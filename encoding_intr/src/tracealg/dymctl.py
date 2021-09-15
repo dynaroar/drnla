@@ -120,6 +120,19 @@ def checkFp(trace_graph, pre, val):
         ctlgraph[key] = G
     return ctlgraph
 
+
+def checkrFp(trace_graph, pre, val):
+    ctlgraph = {} 
+
+    succnodes = list(trace_graph.neighbors((1,0,0)))
+    for item in succnodes:
+        succnodes = list(nx.dfs_preorder_nodes(trace_graph, item))
+        print(f"depths list nodes for {item} is : {succnodes}")
+    return ctlgraph
+
+
+
+
 def getResult(result_graph):
     resutls = {}
     hold = True
@@ -141,7 +154,9 @@ def main (program, iter_num, predicate, value):
     # tracegraph = transi(traces)
     nodehash = {}
     tracegraph, nodehash = transiG(traces, nodehash)
-    print (f"graph from traces: {tracegraph.nodes}")
+    # print (f"graph from traces: {tracegraph.nodes}")
+
+    resultgraph = checkrFp(tracegraph, predicate, value)
     drawG(tracegraph)
 
 # we can use a stack to store all the sub formula, pop one by one to check?
