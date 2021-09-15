@@ -55,7 +55,7 @@ def gettcs(prog, iter):
     tracehash = {}
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(-50, 50)
+        nondet_input = randint(1, 50)
         with open(trace_file, 'w+') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
             data_traces = []
@@ -121,13 +121,29 @@ def checkFp(trace_graph, pre, val):
     return ctlgraph
 
 
-def checkrFp(trace_graph, pre, val):
-    ctlgraph = {} 
-
+def checkrAFp(trace_graph, pre, val):
+    ctlgraph = {}
+    allnodes = list(nx.dfs_preorder_nodes(trace_graph, (1,0,0)))
+    for node in allnodes:
+        if node[pre] == val:
+            nx.set_node_attributes(trace_graph, {node:True}, "p")
+        else:
+            nx.set_node_attributes(trace_graph, {node:False}, "p")
+        print(f"node {node} data: {trace_graph.nodes[node]}")       
+    ctlgraph = trace_graph         
     succnodes = list(trace_graph.neighbors((1,0,0)))
+    afp = True
     for item in succnodes:
+        fp = False
         succnodes = list(nx.dfs_preorder_nodes(trace_graph, item))
-        print(f"depths list nodes for {item} is : {succnodes}")
+        # print(f"depths list nodes for {item} is : {succnodes}")
+        for n in succnodes:
+            value = ctlgraph.nodes[n]["p"]
+            if fp or value:
+                fp = True
+                break
+        afp = afp and fp
+    ctlgraph.graph['AFp'] = afp 
     return ctlgraph
 
 
@@ -146,6 +162,13 @@ def getResult(result_graph):
     results = {"Holds": hold, "CEX": cex}
     return results        
         
+def getrResult(result_graph):
+    resutls = {}
+    hold = result_graph.graph['AFp']
+    cex = (None, None)
+    results = {"Holds": hold, "CEX": cex}
+    return results        
+        
 
    
 def main (program, iter_num, predicate, value):
@@ -156,8 +179,11 @@ def main (program, iter_num, predicate, value):
     tracegraph, nodehash = transiG(traces, nodehash)
     # print (f"graph from traces: {tracegraph.nodes}")
 
-    resultgraph = checkrFp(tracegraph, predicate, value)
-    drawG(tracegraph)
+    resultgraph = checkrAFp(tracegraph, predicate, value)
+    results = getrResult(resultgraph)
+    print(f"The Property AF(y==0) holds for the input program: {results}")
+             
+    # drawG(tracegraph)
 
 # we can use a stack to store all the sub formula, pop one by one to check?
     # resultgraph = checkFp(tracegraph, predicate, value)
