@@ -41,12 +41,30 @@ def transi(traces_hash):
         rungraph[run] = G
     return rungraph, varshash
 
- 
+def initFormulas(pred, val):
+    aphash = dict()
+    aphash['p'] = 'x<0'
+    aphash['q'] = 'y==0'
+    atomic1 = L.AtomicProposition('p')
+    atomic2 = L.AtomicProposition('q')
+    phiF = L.F(atomic2)
+    phiOr = L.Or(atomic1, phiF)
+    phiG = L.G(phiOr)
+    subfs = [atomic1, atomic2, phiF, phiOr, phiG]
+    return aphash, subfs
 
-def checkLTL(trace_graph, phi, aps):
+def resetL(trace, f):
+    pass
+    
+    
+def labelT(trace, phi):
+    pass
+
+def checkLTL(trace_graph, phis, aps):
     ctlgraph = {} 
     for key, G in trace_graph.items():
-        pass
+        resetL(G, phis)
+        labelT(G, phis)
     ctlgraph[key] = G
     return ctlgraph
  
@@ -73,15 +91,10 @@ def main (program, iter_num, predicate, value):
     traces = U.gettcs(program, iter_num)
     tracegraph, vars = transi(traces)
     print(f"vars name from data trace: {vars}")
-    atomicHash = dict()
-    atomicHash['p'] = 'x<0'
-    atomicHash['q'] = 'y==0'
-    atomic1 = L.AtomicProposition('p')
-    atomic2 = L.AtomicProposition('q')
-    phiR = L.F(atomic2)
-    phi1 = L.Or(atomic1, phiR)
-    phi = L.G(phi1)
-    resultgraph = checkLTL(tracegraph, phi, atomicHash)
+
+    aphash, subfs = initFormulas(predicate, value)
+    print(f"before model checking formla: {subfs}")
+    resultgraph = checkLTL(tracegraph, subfs, aphash)
 
     # for key, graph in tracegraph.items():
     #     print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
