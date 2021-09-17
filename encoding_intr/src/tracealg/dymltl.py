@@ -54,17 +54,66 @@ def initFormulas(pred, val):
     return aphash, subfs
 
 def resetL(trace, f):
-    pass
+    for node in trace.nodes:
+        for subf in f:
+            nx.set_node_attributes(trace, {node: False}, subf)            
     
-    
-def labelT(trace, phi):
-    pass
+def nodesat(node, ap_value):
+    #TODO construct smt script here...
+    return True
+
+def setPre(trace, f, index):
+    nodeUpdate = list(trace.nodes)[:index]
+    for node in nodeUpdate:
+        trace.nodes[node][f] = True
+        
+def labelT(trace, f, aps):
+    for subf in f:
+        # trace_rev = nx.DiGraph.reverse(trace)
+        nodes_rev = list(trace.nodes)[::-1]
+
+        # print(f"trace_rev nodes: {nodes_rev}")
+       
+        for node in nodes_rev:
+            if isinstance(subf, L.AtomicProposition):
+                ap_value = aps[subf.name]
+                if nodesat(node, ap_value):
+                    trace.nodes[node][subf] = True
+                    
+            if isinstance(subf, L.F):
+                subff = subf.subformula
+                if trace.nodes[node][subff]:
+                    trace.nodes[node][subf] = True
+                    index = list(trace.nodes()).index(node)
+                    print(f"node in nodes index: {list(trace.nodes()).index(node)}")
+                    setPre(trace, subf, index)
+                    break
+                    
+            if isinstance(subf, L.G):
+                subff = subf.subformula
+                if trace.nodes[node][subff]:
+                    trace.nodes[node][subf] = True
+            
+            if isinstance(subf, L.Or):
+                subf1 = subf.left
+                subf2 = subf.right
+                if trace.nodes[node][subf1] or trace.nodes[node][subf2]:
+                    trace.nodes[node][subf] = True
+                    
+            if isinstance(subf, L.And):
+                subf1 = subf.left
+                subf2 = subf.right
+                if trace.nodes[node][subf1] and trace.nodes[node][subf2]:
+                    trace.nodes[node][subf] = True
+    # trace = nx.DiGraph.reverse(trace_rev)
+         
+                  
 
 def checkLTL(trace_graph, phis, aps):
     ctlgraph = {} 
     for key, G in trace_graph.items():
         resetL(G, phis)
-        labelT(G, phis)
+        labelT(G, phis, aps)
     ctlgraph[key] = G
     return ctlgraph
  
@@ -96,8 +145,8 @@ def main (program, iter_num, predicate, value):
     print(f"before model checking formla: {subfs}")
     resultgraph = checkLTL(tracegraph, subfs, aphash)
 
-    # for key, graph in tracegraph.items():
-    #     print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
+    for key, graph in tracegraph.items():
+        print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
     #     print(f"----run {key} of results:\n {graph.graph} \n")
     # results = getResult(resultgraph)
     # print(f"The Property AF(y==0) holds for the input program: {results}")
