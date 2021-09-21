@@ -16,8 +16,8 @@ class AtomicProposition(Formula):
 
     '''
     
-    def __init__(self, name):
-        self.name = str(name)
+    def __init__(self, atom):
+        self.atom = atom
 
 class F(Formula):
     '''
