@@ -16,6 +16,7 @@ from random import randrange, randint, seed
 from functools import reduce
 from itertools import groupby
 from enum import Enum
+from z3 import *
 
 # sys.path.append("../tools")
 # import time
@@ -24,81 +25,34 @@ from enum import Enum
 import ltl as L
 import utils as U
 
+varsName = [Int('loc'), Int('x'), Int('y'), Int('z'), Int('a'), Int('b'), Int('c')]
 
+def z3check(f):
+    s = Solver()
+    s.add(Not(f))
+    if s.check() == unsat:
+        return True
+    else:
+        print (f"failed to prove formula sat: {f}")
+        print(s.model())
+        return False
 
 def transi(traces_hash):
     rungraph = dict()
-    varshash = dict()
+    # varshash = dict()
     for run, traces in traces_hash.items():
         G = nx.DiGraph()
         traceTuple = list(map(lambda x:tuple(x), traces))
         # map variable name to it's trace data location(columns)
-        for i in range(len(traceTuple[0])):
-            varshash[U.vars_name[i]]= i
+        # for i in range(len(traceTuple[0])):
+        #     varshash[i]= Int(U.vars_name[i])
         for i in range(len(traceTuple)-1):
             pre, succ = (traceTuple[i], traceTuple[i+1])
             G.add_edge(pre, succ)
         rungraph[run] = G
-    return rungraph, varshash
+    # return rungraph, varshash
+    return rungraph
 
-# bottom up a ltl formula, collect all the sub formulas
-
-     # G(AP(x<0) Or F(AP(y==0))), default the order, <s
-    # atomic1 = L.AtomicProposition('x<0')
-    # atomic2 = L.AtomicProposition('y==0')
-    # phiF = L.F(atomic2)
-    # phiOr = L.Or(atomic1, phiF)
-    # phiG = L.G(phiOr)
-    # subfs = [atomic1, atomic2, phiF, phiOr, phiG]
-
-def initFormulas(phi, subfs):
-    if isinstance(phi, L.AtomicProposition):
-        return subfs
-
-    elif isinstance(phi, L.F):
-        sf = phi.subformula
-        subfs = [sf] + subfs
-        # print(f"subformula in F: {subfs}")
-        return initFormulas(sf, subfs)
-      
-    elif isinstance(phi, L.G):
-        sf = phi.subformula
-        subfs = [sf] + subfs
-        # print(f"subformula in G: {subfs}")
-        return initFormulas(sf, subfs)
-
-    elif isinstance(phi, L.Or):
-        sf1 = phi.left
-        sf2 = phi.right
-        subR = initFormulas(sf2, [sf2]+subfs)
-        return initFormulas(sf1, [sf1]+subR)
-
-    elif isinstance(phi, L.And):
-        sf1 = phi.left
-        sf2 = phi.right
-        sub_R = initFormulas(sf2, [sf2]+subfs)
-        initFormulas(sf1, [sf1]+subR)
-    else:
-        raise Exception(f"Not a valid ltl formula {str(phi)}")
-
-
-def initTest():
-    # aphash = dict()
-    # aphash['p'] = 'x<0' # should z3 ast
-    # aphash['q'] = 'y==0' # 
-    # G(AP(x<0) Or F(AP(y==0))), default the order, <s
-    # atomic1 = L.AtomicProposition('p')
-    # atomic2 = L.AtomicProposition('q')
-    atomic1 = L.AtomicProposition('x<0')
-    atomic2 = L.AtomicProposition('y==0')
-    phiF = L.F(atomic2)
-    phiOr = L.Or(atomic1, phiF)
-    phiG = L.G(phiOr)
-
-    subfs = initFormulas(phiG, [phiG])
-    # subfs = [atomic1, atomic2, phiF, phiOr, phiG]
-    print(f"subformulas lists: {subfs}")
-    return subfs
 
 def resetL(trace, f):
     for node in trace.nodes:
@@ -106,8 +60,17 @@ def resetL(trace, f):
             nx.set_node_attributes(trace, {node: False}, subf)            
     
 def nodesat(node, ap_value):
-    #TODO construct smt script here...    
-    return True
+    
+    nodeVal = And(True, True)
+    for i in range(len(list(node))):
+        if i != 0:
+            nodeVal = And(varsName[i] == node[i], nodeVal)
+    fz3 = Implies(nodeVal, ap_value)
+    z3sat = z3check(fz3)
+    # print(f"check z3 formula for node {node}: {fz3}")
+    # print(f"results: {z3sat}")
+    return z3sat 
+
 
 def setPre(trace, f, index):
     nodeUpdate = list(trace.nodes)[:index]
@@ -123,6 +86,7 @@ def labelT(trace, f):
         # print(f"trace_rev nodes: {nodes_rev}")
        
         for node in nodes_rev:
+            # if isinstance(subf, L.AtomicProposition) and (node[0] != 1):
             if isinstance(subf, L.AtomicProposition):
                 # ap_value = aps[subf.name]
                 ap_value = subf.atom
@@ -180,40 +144,42 @@ def checkLTL(trace_graph, phis):
  
 
 
-def getResult(result_graph):
+def getResult(result_graph, phiLtl):
     resutls = {}
     hold = True
     cex = (None, None)
     for key, rgraph in result_graph.items():
-        hold = rgraph.graph['Fp']['holds'] and hold 
-        if not (rgraph.graph['Fp']['holds']):
-            hold = False;
-            cex = (key, None)
-            break
+        subhold = True
+        for node in rgraph.nodes:
+            subhold = rgraph.nodes[node][phiLtl] and subhold
+                    
+        hold = subhold and hold 
     results = {"Holds": hold, "CEX": cex}
     return results        
         
-def test1():
-     pass
-     
-   
+  
 # def main (program, iter_num, predicate, value):
 def main (program, iter_num):
     #run the program with random number to generate traces
     # atomic proposition, the formula type is now a Z3.ast.
     traces = U.gettcs(program, iter_num)
-    tracegraph, vars = transi(traces)
-    print(f"vars name from data trace: {vars}")
+    # tracegraph, vars = transi(traces)
+    tracegraph = transi(traces)
+    # print(f"vars z3 name from data trace: {vars}")
 
-    subfs = initTest()
+    # subfs = U.initTest()
+    # subfs = U.test1()  
+    # subfs = U.test2()  
+    subfs = U.test3()  
     print(f"before model checking formla: {subfs}")
     resultgraph = checkLTL(tracegraph, subfs)
 
     for key, graph in tracegraph.items():
-        print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
+        if key == 0:
+            print(f"----run {key} of nodes data:\n {graph.nodes(data=True)} \n")
     #     print(f"----run {key} of results:\n {graph.graph} \n")
-    # results = getResult(resultgraph)
-    # print(f"The Property AF(y==0) holds for the input program: {results}")
+    results = getResult(resultgraph, subfs[-1])
+    print(f"The Property {subfs[-1]} holds for the input program: {results}")
     # U.drawG(tracegraph)
     return None
 

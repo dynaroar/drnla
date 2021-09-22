@@ -3,9 +3,10 @@ import shlex, shutil
 import networkx as nx
 import matplotlib.pyplot as plt
 
+import ltl as L
+from z3 import *
 from random import randrange, randint, seed
 
-vars_name = ['loc', 'x', 'y', 'z', 'a', 'b', 'c']
 
 # draw the trace graph, default to 4 subplots
 def drawG(graph):
@@ -55,3 +56,85 @@ def gettcs(prog, iter):
         tracehash[i] = data_traces
     return tracehash
  
+# bottom up a ltl formula, collect all the sub formulas
+
+     # G(AP(x<0) Or F(AP(y==0))), default the order, <s
+    # atomic1 = L.AtomicProposition('x<0')
+    # atomic2 = L.AtomicProposition('y==0')
+    # phiF = L.F(atomic2)
+    # phiOr = L.Or(atomic1, phiF)
+    # phiG = L.G(phiOr)
+    # subfs = [atomic1, atomic2, phiF, phiOr, phiG]
+
+def initFormulas(phi, subfs):
+    if isinstance(phi, L.AtomicProposition):
+        return subfs
+
+    elif isinstance(phi, L.F):
+        sf = phi.subformula
+        subfs = [sf] + subfs
+        # print(f"subformula in F: {subfs}")
+        return initFormulas(sf, subfs)
+      
+    elif isinstance(phi, L.G):
+        sf = phi.subformula
+        subfs = [sf] + subfs
+        # print(f"subformula in G: {subfs}")
+        return initFormulas(sf, subfs)
+
+    elif isinstance(phi, L.Or):
+        sf1 = phi.left
+        sf2 = phi.right
+        subR = initFormulas(sf2, [sf2]+subfs)
+        return initFormulas(sf1, [sf1]+subR)
+
+    elif isinstance(phi, L.And):
+        sf1 = phi.left
+        sf2 = phi.right
+        sub_R = initFormulas(sf2, [sf2]+subfs)
+        initFormulas(sf1, [sf1]+subR)
+    else:
+        raise Exception(f"Not a valid ltl formula {str(phi)}")
+    
+
+
+# test cases to debug
+def initTest():
+    # aphash = dict()
+    # aphash['p'] = 'x<0' # should z3 ast
+    # aphash['q'] = 'y==0' # 
+    # G(AP(x<0) Or F(AP(y==0))), default the order, <s
+    # atomic1 = L.AtomicProposition('p')
+    # atomic2 = L.AtomicProposition('q')
+    
+    atomic1 = L.AtomicProposition(Int('x')<0)
+    atomic2 = L.AtomicProposition(Int('y')==0)
+    phiF = L.F(atomic2)
+    phiOr = L.Or(atomic1, phiF)
+    phiG = L.G(phiOr)
+
+    subfs = initFormulas(phiG, [phiG])
+    # subfs = [atomic1, atomic2, phiF, phiOr, phiG]
+    print(f"subformulae lists: {subfs}")
+    return subfs
+
+def test1():
+    phi = L.AtomicProposition(Int('x')>=0)
+    subfs = initFormulas(phi, [phi])
+    print(f"subformulae lists: {subfs}")
+    return subfs
+
+def test2():
+    phi = L.AtomicProposition(Int('x')>0)
+    phiG = L.G(phi)
+    subfs = initFormulas(phiG, [phiG])
+    print(f"subformulae lists: {subfs}")
+    return subfs
+
+def test3():
+    phi = L.AtomicProposition(Int('x')>0)
+    phiG = L.G(phi)
+    phiF = L.F(phiG)
+    subfs = initFormulas(phiF, [phiF])
+    print(f"subformulae lists: {subfs}")
+    return subfs
