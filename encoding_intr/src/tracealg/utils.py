@@ -44,7 +44,7 @@ def gettcs(prog, iter):
     tracehash = {}
     for i in range(iter):
         trace_file = f"{trace_path}/{progname}_{i}.tcs"
-        nondet_input = randint(1, 50)
+        nondet_input = randint(-50, 50)
         with open(trace_file, 'w+') as f:
             subprocess.call(['./' + progpath +'/'+ progname, str(nondet_input)], stdout=f)
             data_traces = []
@@ -91,8 +91,8 @@ def initFormulas(phi, subfs):
     elif isinstance(phi, L.And):
         sf1 = phi.left
         sf2 = phi.right
-        sub_R = initFormulas(sf2, [sf2]+subfs)
-        initFormulas(sf1, [sf1]+subR)
+        subR = initFormulas(sf2, [sf2]+subfs)
+        return initFormulas(sf1, [sf1]+subR)
     else:
         raise Exception(f"Not a valid ltl formula {str(phi)}")
     
@@ -136,5 +136,24 @@ def test3():
     phiG = L.G(phi)
     phiF = L.F(phiG)
     subfs = initFormulas(phiF, [phiF])
+    print(f"subformulae lists: {subfs}")
+    return subfs
+
+def test4():
+    phi1 = L.AtomicProposition(Int('x')<0)
+    phi2 = L.AtomicProposition(Int('y')>=0)
+    phiOr = L.Or(phi1, phi2)
+    phiG = L.G(phiOr)
+    subfs = initFormulas(phiG, [phiG])
+    print(f"subformulae lists: {subfs}")
+    return subfs
+
+
+def test5():
+    phi1 = L.AtomicProposition(Int('x')<0)
+    phi2 = L.AtomicProposition(Int('y')>=0)
+    phiand = L.And(phi1, phi2)
+    phiG = L.G(phiand)
+    subfs = initFormulas(phiG, [phiG])
     print(f"subformulae lists: {subfs}")
     return subfs

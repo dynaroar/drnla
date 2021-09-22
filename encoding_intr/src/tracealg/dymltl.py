@@ -170,7 +170,9 @@ def main (program, iter_num):
     # subfs = U.initTest()
     # subfs = U.test1()  
     # subfs = U.test2()  
-    subfs = U.test3()  
+    # subfs = U.test3()  
+    subfs = U.test5()  
+
     print(f"before model checking formla: {subfs}")
     resultgraph = checkLTL(tracegraph, subfs)
 
