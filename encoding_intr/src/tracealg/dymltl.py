@@ -149,11 +149,16 @@ def getResult(result_graph, phiLtl):
     hold = True
     cex = (None, None)
     for key, rgraph in result_graph.items():
-        subhold = True
-        for node in rgraph.nodes:
-            subhold = rgraph.nodes[node][phiLtl] and subhold
-                    
-        hold = subhold and hold 
+        # subhold = True
+        # only check the firs node here
+        # for node in rgraph.nodes:
+        #     subhold = rgraph.nodes[node][phiLtl] and subhold
+        initnode = list(rgraph.nodes)[0]
+        subhold = rgraph.nodes[initnode][phiLtl] # and subhold
+        if not subhold:
+            hold = False
+            break
+            # hold = subhold and hold 
     results = {"Holds": hold, "CEX": cex}
     return results        
         
@@ -170,8 +175,9 @@ def main (program, iter_num):
     # subfs = U.initTest()
     # subfs = U.test1()  
     # subfs = U.test2()  
-    # subfs = U.test3()  
-    subfs = U.test5()  
+    subfs = U.test3()  
+    # subfs = U.test4()  
+    # subfs = U.test5()  
 
     print(f"before model checking formla: {subfs}")
     resultgraph = checkLTL(tracegraph, subfs)
