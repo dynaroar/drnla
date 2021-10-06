@@ -142,7 +142,7 @@ def test3():
 def test4():
     phi1 = L.AtomicProposition(Int('x')<0)
     phi2 = L.AtomicProposition(Int('y')>=0)
-    phiOr = L.Or(phi1, phi2)
+    phiOr = L.Or(phi1, phi2) 
     phiG = L.G(phiOr)
     subfs = initFormulas(phiG, [phiG])
     print(f"subformulae lists: {subfs}")
@@ -157,3 +157,4 @@ def test5():
     subfs = initFormulas(phiG, [phiG])
     print(f"subformulae lists: {subfs}")
     return subfs
+

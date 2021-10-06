@@ -172,10 +172,10 @@ def main (program, iter_num):
     tracegraph = transi(traces)
     # print(f"vars z3 name from data trace: {vars}")
 
-    # subfs = U.initTest()
+    subfs = U.initTest()
     # subfs = U.test1()  
     # subfs = U.test2()  
-    subfs = U.test3()  
+    # subfs = U.test3()  
     # subfs = U.test4()  
     # subfs = U.test5()  
 
