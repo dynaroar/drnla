@@ -23,6 +23,22 @@ let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
   let f = var(mkVi ~ftype:ftype fname) in
   Call(av, Lval f, args, !currentLoc)
 
+let rec isnonlinear (expr : exp) : bool =
+  match expr with
+  | BinOp (opc, opr1, opr2, _) ->
+     (match opc with
+      | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr | LAnd
+      | LOr | PlusPI | IndexPI | MinusPI | MinusPP -> true         
+      | _ -> (isnonlinear opr1) || (isnonlinear opr2) 
+     )
+  | UnOp (opc, opr, _) ->
+     (match opc with
+      | BNot -> true
+      | _ -> isnonlinear opr
+     )
+  | Const _ | Lval _ -> false
+  | _ -> true
+
 
 (* class assignAddVisitor (vinfos : varinfo list) = object(self) *)
 class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list)= object(self)
@@ -45,7 +61,7 @@ class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list
 end
 
 
-
+ 
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> tf then () else begin
