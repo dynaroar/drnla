@@ -61,14 +61,15 @@ let main () =
   outFile := (src ^ ".encode.c");
   let ast = parseOneFile src in
 
-  let mainQ = "mainQ" in
+  (* let mainQ = "mainQ" in *)
+  let mainQ = "main" in
   let vtrace = "vtrace" in
   let vassume = "vassume" in
   (* TODO  we might want to parse CTL* property here, then extract the atomic proposition *)
   let tmpLoc = {line = -1; file = src; byte = 0;} in
   let tmpInit ={init = None;} in
   let vi = {
-      vname = "y";
+      vname = "x";
       vtype = TInt (IInt, []);
       vattr = [];
       vstorage = NoStorage;
@@ -83,7 +84,8 @@ let main () =
       vdescrpure = true;
     } in
 
-  let aExpr = BinOp (Eq, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 0), TInt (IInt, [])) in
+  (* let aExpr = BinOp (Eq, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 0), TInt (IInt, [])) in *)
+  let aExpr = BinOp (Gt, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 500), TInt (IInt, [])) in
   let ctlProperty = Atomic aExpr in
 
   let includes = ["stdio.h"; "stdlib.h"; "assert.h"; "math.h"] in
