@@ -61,7 +61,17 @@ class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list
 end
 
 
- 
+class nonlinearVisitor nonhash = object(self)
+  inherit nopCilVisitor
+  method vinst (i : instr) =
+    match i with
+    | Set (lv, expr, loc) ->
+       if isnonlinear expr 
+       then (Hashtbl.add nonhash loc expr; SkipChildren)
+       else SkipChildren
+    | _ -> SkipChildren
+  
+end
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> tf then () else begin
@@ -69,8 +79,14 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
        * let vis = new assignAddVisitor varInfos in
        *     ignore(visitCilFunction vis fd) *)
       let varInfos = mkVis fd exprs in
+      let nonlinear = Hashtbl.create 10 in
       let vis = new assignAtomicVisitor varInfos fd.slocals in
-      ignore(visitCilFunction vis fd)
+      let nonVis = new nonlinearVisitor nonlinear in
+      ignore(visitCilFunction vis fd);
+      ignore(visitCilFunction nonVis fd);
+      Hashtbl.iter (fun x y -> Printf.printf "linear location at line : %s \n" (string_of_int x.line))
+        nonlinear
+      
     end
 
 let varInject (funvars : string * exp list) (f : file) : unit =
