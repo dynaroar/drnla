@@ -24,6 +24,8 @@ int mainQ(int a , int b )
             // vtrace25(x, y, c, d);
             printf("vtrace25; %i; %i; %i; %i\n", x, y, c, d);
             while (x > 0) {
+                printf("vtrace26; %i; %i; %i; %i\n", x, y, c, d);
+                
                 d--;
                 // vtrace27(x, y, c, d);
                 /* x &= c - 1; */
