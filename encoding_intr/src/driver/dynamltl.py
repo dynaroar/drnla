@@ -16,7 +16,11 @@ from functools import reduce
 from itertools import groupby
 from enum import Enum
  
-# compile and run c program to generate traces, store trace data into a hash table.
+# A main driver to run the sub-components.
+
+def init_prog (program):
+    pass
+
 def gettcs(prog, iter):
     """run .
     Args:
@@ -72,6 +76,7 @@ def run_ultimate (program):
 # def main (program, iter_num, predicate, value):
 def main (program, iter_num, invs):
     #run the program with random number to generate traces
+    # init_prog(program)
     # traces = gettcs(program, iter_num)
     invars = parse_results(invs)
     print("parse all invariants into a list:")
