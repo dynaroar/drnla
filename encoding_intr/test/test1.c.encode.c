@@ -5,61 +5,50 @@
 #include "stdlib.h"
 #include "assert.h"
 #include "math.h"
+int mainQ(int i ) 
+{ 
+  int x ;
+  int y ;
+  int a ;
 
-
-
-void vtrace9(int x, int y, int a, int atomic0){}
-void vtrace10(int x, int y, int a, int atomic0){}
-void vtrace11(int x, int y, int a, int atomic0){}
-void vtrace13(int x, int y, int a, int atomic0){}
-void vtrace14(int x, int y, int a, int atomic0){}
-void vtrace16(int x, int y, int a, int atomic0){}
-void vtrace19(int x, int y, int a, int atomic0){}
-void vtrace20(int x, int y, int a, int atomic0){}
-void vtrace21(int x, int y, int a, int atomic0){}
-
-int mainQ(int i ){
-    int x;
-    int y;
-    int a;
-    int atomic0;
-
-    x = i;
-    /* atomic0 = y == 0; */
-    /* vtrace9(x, y, a, atomic0); */
-    y = 2;
-    /* atomic0 = y == 0; */
-    /* vtrace10(x, y, a, atomic0); */
-    a = 0;
-    atomic0 = y == 0;
-    vtrace11(x, y, a, atomic0);
-    while (a < 10) {
-        x = 1;
-        atomic0 = y == 0;
-        vtrace13(x, y, a, atomic0);
-        y = 1;
-        atomic0 = y == 0;
-        vtrace14(x, y, a, atomic0);
-        while (x > 0) {
-            x --;
-            atomic0 = y == 0;
-            vtrace16(x, y, a, atomic0);
-        }
-        y = 0;
-        atomic0 = y == 0;
-        vtrace19(x, y, a, atomic0);
-        /* vtrace(x, y); */
-        atomic0 = y == 0;
-        vtrace20(x, y, a, atomic0);
-        a ++;
-        atomic0 = y == 0;
-        vtrace21(x, y, a, atomic0);
+  {
+  x = 0;
+  vtrace7(x, y, a);
+  y = 0;
+  vtrace7(x, y, a);
+  a = 0;
+  vtrace8(x, y, a);
+  x = i;
+  vtrace9(x, y, a);
+  y = 2;
+  vtrace10(x, y, a);
+  a = 0;
+  vtrace11(x, y, a);
+  while (a < 10) {
+    x = 1;
+    vtrace13(x, y, a);
+    y = 1;
+    vtrace14(x, y, a);
+    while (x > 0) {
+      x --;
+      vtrace16(x, y, a);
     }
-    return (y);
+    y = 0;
+    vtrace19(x, y, a);
+    a ++;
+    vtrace21(x, y, a);
+  }
+  return (y);
 }
+}
+extern int ( /* missing proto */  atoi)() ;
+void main(int argc , char **argv ) 
+{ 
+  int tmp ;
 
-
-void main(int argc, char **argv) {
-    //mainQ(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
-    mainQ(atoi(argv[1]));
+  {
+  tmp = atoi(*(argv + 1));
+  mainQ(tmp);
+  return;
+}
 }

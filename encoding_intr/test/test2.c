@@ -5,21 +5,25 @@ void vassume(int b){}
 
 void vtrace1(int x, int y, int atomic0){};
 void vtrace2(int x, int y, int atomic0){};
+void vtrace3(int x, int y, int atomic0){};
+
 
 /* void vtrace(int x, int y) {} */
 int mainQ(int x, int y) {
     int atomic0 = 0;
     vassume(x>y);
     vassume(y>0);
-    atomic0= y== 0;
+    atomic0 = y== 0;
     vtrace1(x, y, atomic0);
 
     while (x>0){
         x--;
         y--;
+        atomic0 = y== 0;
+        vtrace2(x, y, atomic0);
     }
-    atomic0= y== 0;
-    vtrace2(x, y, atomic0);
+    atomic0 = y== 0;
+    vtrace3(x, y, atomic0);
 
 return y;
 }

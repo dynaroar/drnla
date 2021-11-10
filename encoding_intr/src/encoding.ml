@@ -35,7 +35,9 @@ let outputFile (f : file) : unit =
 let usage = "usage: " ^ Sys.argv.(0) ^ " [-i] filename"
 
 let speclist = [
-  ("-i", Arg.Set encodeTrans, ": encoding transform for CTL*");
+    ("-i", Arg.Set encodeTrans, ": encoding transform for LTL.");
+    (* ("-vs", Arg.String invars, ": invariant to assert."); *)
+    
 ]
 
 let parse_cmdline =

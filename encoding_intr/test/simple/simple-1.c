@@ -24,7 +24,8 @@ void mainQ(int a)
     /* while(1){ */
     vtrace1(x, z, atomic0);
     /* vtrace1(x, z); */
-    while(z<10){
+    while(z<2){
+    /* while(z<10){ */
         if(x<5){
             x++;
         } else {

@@ -84,7 +84,9 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
       let nonVis = new nonlinearVisitor nonlinear in
       ignore(visitCilFunction vis fd);
       ignore(visitCilFunction nonVis fd);
-      Hashtbl.iter (fun x y -> Printf.printf "linear location at line : %s \n" (string_of_int x.line))
+      (* let expPinter = new cilPrinter in *)
+      Hashtbl.iter (fun x y -> Printf.printf "linear location at line : %s \n" (string_of_int x.line)
+        (* printExpr expPrinter () y *))
         nonlinear
       
     end
