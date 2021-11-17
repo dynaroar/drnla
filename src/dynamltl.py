@@ -74,7 +74,7 @@ if __name__ == "__main__":
     inp = os.path.realpath(os.path.expanduser(args.inp))
 
     mlog = common.getLogger(__name__, settings.logger_level)
-    mlog.info(f'DynmaLTL log leverl: {settings.logger_level}')
+    mlog.info(f'DynamLTL log leverl: {settings.logger_level}')
     mlog.info(f'Timeout: {settings.timeout}s')
     mlog.info(f'{datetime.datetime.now()}, {sys.argv}')
 
