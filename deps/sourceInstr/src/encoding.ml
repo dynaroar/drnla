@@ -11,6 +11,7 @@ module S = String
 
 let filename = ref ""
 let encodeTrans = ref false
+let invars = ref ""
 
 let outFile = ref ""
 
@@ -36,7 +37,7 @@ let usage = "usage: " ^ Sys.argv.(0) ^ " [-i] filename"
 
 let speclist = [
     ("-i", Arg.Set encodeTrans, ": encoding transform for LTL.");
-    (* ("-vs", Arg.String invars, ": invariant to assert."); *)
+    ("-inv", Arg.Set_string invars, ": invariants to assert.");
     
 ]
 
@@ -60,6 +61,7 @@ let main () =
 
   let () = parse_cmdline in
   let src = !filename in
+  let invar_trans = !invars in
   outFile := (src ^ ".encode.c");
   let ast = parseOneFile src in
 
