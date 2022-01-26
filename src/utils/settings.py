@@ -6,20 +6,19 @@ logger_level = 2
 run_dig = False
 use_reals = False
 use_random_seed = False
+gen_tcs = False
 tmpdir = Path().home()/'tmp'
 timeout =  5 * 1000
 max_nonterm_refinement_depth = 3
 n_inps = 100
+invars = ""
 
+SRC_DIR = Path(__file__).parent
 
 DYNAMLTL_DIR = Path(__file__).parent.parent.parent
+DIG_PYTHON = Path().home()/'miniconda3/bin/python3'
 
-class VTRACE:
-    PRELOOP_LABEL = 1
-    INLOOP_LABEL = 2
-    POSTLOOP_LABEL = 3
-    TRANSREL_LABEL = 4
-
+ 
 class CIL:
     PTR_VARS_PREFIX = 'PTR_'
 
@@ -28,17 +27,37 @@ class CIL:
 
     CIL_EXE = CIL_TRANSFORM_DIR / "encoding.native"
     CIL_OPTS = "--save-temps -D HAPPY_MOOD" # --gcc=/usr/bin/gcc-5
-    CIL_CMD = partial("{cil_exe} {cil_opts} {ext} {inf} --out={outf} {opts}".format,
-                      cil_exe=CIL_EXE, cil_opts=CIL_OPTS)
+    # CIL_CMD = partial("{cil_exe} {cil_opts} {ext} {inf} --out={outf} {opts}".format,
+    #                   cil_exe=CIL_EXE, cil_opts=CIL_OPTS)
+    CIL_CMD = partial("{cil_exe} {inf} {opts}".format, cil_exe=CIL_EXE)
 
-    TRANSFORM_OPTS = partial("--bnd={bnd}".format)
-    TRANSFORM = lambda bnd, inf, outf: CIL.CIL_CMD(ext="--dotransform", 
-            inf=inf, outf=outf, opts=(CIL.TRANSFORM_OPTS(bnd=bnd)))
+    TRANSFORM_OPTS = partial("--inv={invar}".format)
+    # TRANSFORM = lambda invar, inf, outf: CIL.CIL_CMD(ext="--dotransform", 
+    #         inf=inf, outf=outf, opts=(CIL.TRANSFORM_OPTS(invar=invar)))
+    TRANSFORM = lambda invar, inf: CIL.CIL_CMD(inf=inf, opts=(CIL.TRANSFORM_OPTS(invar=invar)))
 
     RANK_VALIDATE_OPTS = partial("--pos={pos} --ranks={ranks}".format)
     RANK_VALIDATE = lambda pos, ranks, inf, outf: CIL.CIL_CMD(ext="--dovalidate", 
             inf=inf, outf=outf, opts=(CIL.RANK_VALIDATE_OPTS(pos=pos, ranks=('"' + ranks + '"'))))
 
+
+class CTRACE:
+    SE_MIN_DEPTH = 20
+
+    GCC_CMD = "gcc"
+    # CIL_INSTRUMENT_DIR = SRC_DIR / "ocaml"
+    # assert CIL_INSTRUMENT_DIR.is_dir(), CIL_INSTRUMENT_DIR
+
+    COMPILE = "{gcc} {filename} -o {tmpfile}"
+    COMPILE = partial(COMPILE.format, gcc=GCC_CMD)
+    C_RUN = "./{exe} > {tracefile}"
+    C_RUN = partial(C_RUN.format)
+    
+
+class DYNAMIC:
+    CMD =DIG_PYTHON/'python3'
+      
+ 
 # class REACHABILITY:
 #     TOOLS_HOME = Path(os.path.expandvars("$DYNAMITE_DEPS"))
 #     ARCH = 64

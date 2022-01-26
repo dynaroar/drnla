@@ -10,11 +10,14 @@ import shlex
 import shutil
 import datetime, multiprocessing
 
+import analysis
+
 from random import randrange, randint, seed
 from functools import reduce
 from itertools import groupby
 from enum import Enum
 from utils import settings, common
+
 # A main driver to run the sub-components.
 
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
@@ -50,12 +53,17 @@ if __name__ == "__main__":
     ag("--vs", "-v",
        type=str,
        help="invariants file from Dig.")
+
+    ag("--gen_tcs", "-gen_tcs",
+       action="store_true",
+       help="generate traces with random inputs.")
     
     ag("--log", "-log",
        type=int,
        choices=range(5),
        default=4,
        help="set logger level info")
+    
     
     # ag("--run_dig", "-run_dig", action="store_true", help="run DIG on the input")
 
@@ -70,17 +78,25 @@ if __name__ == "__main__":
         settings.timeout = int(args.timeout)
         
     settings.logger_level = args.log
-    
+    settings.gen_tcs = args.gen_tcs
     inp = os.path.realpath(os.path.expanduser(args.inp))
 
     mlog = common.getLogger(__name__, settings.logger_level)
-    mlog.info(f'DynamLTL log leverl: {settings.logger_level}')
+    mlog.info(f'DynamLTL log level: {settings.logger_level}')
     mlog.info(f'Timeout: {settings.timeout}s')
     mlog.info(f'{datetime.datetime.now()}, {sys.argv}')
 
     # main(args.inp, args.n, args.vs)
+    config = analysis.Setup(inp)
     def prove():
-        pass
+        if settings.gen_tcs:
+            trace = analysis.GENTRACE(config)
+            trace.gen()
+        cil_intr = analysis.CINSTR(config)
+        cil_intr.transform()
+        
+        
+
     prove_process = multiprocessing.Process(target=prove)
     prove_process.start()
     mlog.debug('prove_process: {}'.format(prove_process.pid))
