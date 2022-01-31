@@ -63,10 +63,7 @@ if __name__ == "__main__":
        choices=range(5),
        default=4,
        help="set logger level info")
-    
-    
-    # ag("--run_dig", "-run_dig", action="store_true", help="run DIG on the input")
-
+  
     ag("--timeout", "-timeout",
        type=int,
        default=300,
@@ -94,8 +91,10 @@ if __name__ == "__main__":
             trace.gen()
         cil_intr = analysis.CINSTR(config)
         cil_intr.transform()
-        
-        
+        dynamic = analysis.DIG(config)
+        dynamic.run()
+        ultimate = analysis.ULTIMATE(config)    
+             
 
     prove_process = multiprocessing.Process(target=prove)
     prove_process.start()

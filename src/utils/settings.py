@@ -2,7 +2,7 @@ from pathlib import Path
 from functools import partial
 import os
 
-logger_level = 2
+logger_level = 4
 run_dig = False
 use_reals = False
 use_random_seed = False
@@ -11,14 +11,15 @@ tmpdir = Path().home()/'tmp'
 timeout =  5 * 1000
 max_nonterm_refinement_depth = 3
 n_inps = 100
-invars = ""
+invars = "invariants_file"
 
 SRC_DIR = Path(__file__).parent
 
 DYNAMLTL_DIR = Path(__file__).parent.parent.parent
 DIG_PYTHON = Path().home()/'miniconda3/bin/python3'
+DIG_PY = Path().home()/'dynamic-ltl/dynamiteLTL/deps/dig/src/dig.py'
 
- 
+
 class CIL:
     PTR_VARS_PREFIX = 'PTR_'
 
@@ -54,8 +55,11 @@ class CTRACE:
     C_RUN = partial(C_RUN.format)
     
 
+# ~/miniconda3/bin/python3 -O src/dig.py tests/bit-gf.craft.c -log 4 -noss  --writeresults ~/tmp/cy1.v
+
 class DYNAMIC:
-    CMD =DIG_PYTHON/'python3'
+    DIG_CMD = "{python} -O {dig_py} {filename} -log 4 -noss --writeresults {invart_outf}"
+    RUN_CMD = partial(DIG_CMD.format, python=DIG_PYTHON, dig_py=DIG_PY)
       
  
 # class REACHABILITY:
