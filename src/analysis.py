@@ -44,7 +44,7 @@ class DIG(object):
         # self._transf = Path(config.trans_out)
         self.invarsf = config.tmpdir / 'dltl.inv'
     def run(self):
-        source = self._config.inp
+        source = self._config.trans_out
         run_cmd = settings.DYNAMIC.RUN_CMD(filename=source, invart_outf=self.invarsf)
         mlog.info(f'run DIG dynamic with command:\n {run_cmd}')
          
@@ -53,7 +53,10 @@ class ULTIMATE(object):
     def __init__(self, config):
         self._config = config
     def run(self):
-        
+        source = self._config.trans_out
+        run_cmd = settings.ULTIMATE.RUN_CMD(filename=source)
+        mlog.info(f'run ULTIMATE with command:\n {run_cmd}')
+
     
         
     

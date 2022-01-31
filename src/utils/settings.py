@@ -19,6 +19,7 @@ DYNAMLTL_DIR = Path(__file__).parent.parent.parent
 DIG_PYTHON = Path().home()/'miniconda3/bin/python3'
 DIG_PY = Path().home()/'dynamic-ltl/dynamiteLTL/deps/dig/src/dig.py'
 
+ULTIMATE_HOME = Path().home()/'Downloads/ultimate/releaseScripts/default/UAutomizer-linux'
 
 class CIL:
     PTR_VARS_PREFIX = 'PTR_'
@@ -61,7 +62,16 @@ class DYNAMIC:
     DIG_CMD = "{python} -O {dig_py} {filename} -log 4 -noss --writeresults {invart_outf}"
     RUN_CMD = partial(DIG_CMD.format, python=DIG_PYTHON, dig_py=DIG_PY)
       
- 
+# ./run-ultimate.sh -tc config/AutomizerLTL.xml -s config-poly/svcomp-LTL-64bit-Automizer_Default.epf -i ~/dynamic-ltl/dynamiteLTL/benchmarks/polynomials/poly2.c
+    
+class ULTIMATE:
+
+    ULTIMATE_CMD = "{run_ultimate} -tc {toolchain} -s {setting} -i {filename}"
+    RUN_ULTIMATE = ULTIMATE_HOME / 'run-ultiamte.sh'
+    TOOLCHAIN = ULTIMATE_HOME / 'config/AutomizerLTL.xml'
+    SETTING = ULTIMATE_HOME / 'config-poly/svcomp-LTL-64bit-Automizer_Default.epf'
+    RUN_CMD = partial(ULTIMATE_CMD.format, run_ultimate=RUN_ULTIMATE, toolchain=TOOLCHAIN, setting=SETTING)
+    
 # class REACHABILITY:
 #     TOOLS_HOME = Path(os.path.expandvars("$DYNAMITE_DEPS"))
 #     ARCH = 64

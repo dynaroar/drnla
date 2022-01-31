@@ -93,10 +93,12 @@ if __name__ == "__main__":
         cil_intr.transform()
         dynamic = analysis.DIG(config)
         dynamic.run()
-        ultimate = analysis.ULTIMATE(config)    
+        ultimate = analysis.ULTIMATE(config)
+        ultimate.run()
              
 
     prove_process = multiprocessing.Process(target=prove)
     prove_process.start()
     mlog.debug('prove_process: {}'.format(prove_process.pid))
     prove_process.join(timeout=settings.timeout)
+
