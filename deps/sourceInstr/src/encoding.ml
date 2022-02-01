@@ -105,7 +105,7 @@ let main () =
        LocalVar.varInject(mainQ, exprs) ast
     | _ -> ()
     ) in 
-         printf("nonlinear location and expression:\n");
+         (* printf("nonlinear location and expression:\n"); *)
          outputFile ast
  ;;
 

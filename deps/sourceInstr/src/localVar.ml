@@ -23,18 +23,18 @@ let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
   let f = var(mkVi ~ftype:ftype fname) in
   Call(av, Lval f, args, !currentLoc)
 
-let rec isnonlinear (expr : exp) : bool =
+let rec isnonlinear (expr : exp) (base: bool) : bool =
   match expr with
   | BinOp (opc, opr1, opr2, _) ->
      (match opc with
       | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr | LAnd
-      | LOr | PlusPI | IndexPI | MinusPI | MinusPP -> true         
-      | _ -> (isnonlinear opr1) || (isnonlinear opr2) 
+        | LOr | PlusPI | IndexPI | MinusPI | MinusPP -> true
+       | _ -> (isnonlinear opr1 false) || (isnonlinear opr2 false) 
      )
   | UnOp (opc, opr, _) ->
      (match opc with
       | BNot -> true
-      | _ -> isnonlinear opr
+      | _ -> isnonlinear opr false
      )
   | Const _ | Lval _ -> false
   | _ -> true
@@ -61,16 +61,34 @@ class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list
 end
 
 
+let nonlinearInstr nonhash i =
+  match i with
+  | Set (lv, expr, loc) ->
+     if isnonlinear expr false
+     then (Hashtbl.add nonhash loc expr; nonhash)
+     else nonhash
+  | _ -> nonhash
+
+
+(* class nonlinearVisitor nonhash = object(self)
+ *   inherit nopcilVisitor
+ *   method vinst (i : instr) =
+ *     match i with
+ *     | Set (lv, expr, loc) ->
+ *        if isnonlinear expr false
+ *        then (Hashtbl.add nonhash loc expr; SkipChildren)
+ *        else SkipChildren
+ *     | _ -> SkipChildren
+ * end *)
+
 class nonlinearVisitor nonhash = object(self)
   inherit nopCilVisitor
-  method vinst (i : instr) =
-    match i with
-    | Set (lv, expr, loc) ->
-       if isnonlinear expr 
-       then (Hashtbl.add nonhash loc expr; SkipChildren)
-       else SkipChildren
-    | _ -> SkipChildren
-  
+  method vstmt (s: stmt) =
+    let skind = s.skind in
+    (match skind with
+     | Instr instr_list -> (List.fold_left nonlinearInstr nonhash instr_list; DoChildren)
+     | _ -> DoChildren
+    )    
 end
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
@@ -84,10 +102,11 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
       let nonVis = new nonlinearVisitor nonlinear in
       ignore(visitCilFunction vis fd);
       ignore(visitCilFunction nonVis fd);
-      (* let expPinter = new cilPrinter in *)
-      Hashtbl.iter (fun x y -> Printf.printf "linear location at line : %s \n" (string_of_int x.line)
-        (* printExpr expPrinter () y *))
-        nonlinear
+      (* let expPinter = new defaultCILPrinter in *)
+      Hashtbl.iter (fun x y ->
+          let string_expr = Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () y) in
+          Printf.printf "linear location at line : %s, %s \n" (string_of_int x.line) string_expr;
+          ) nonlinear
       
     end
 
