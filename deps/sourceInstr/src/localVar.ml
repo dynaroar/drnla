@@ -57,7 +57,6 @@ class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list
        let injectVis = [i; vtraceCall] in
        ChangeTo injectVis
     | _ -> SkipChildren
-
 end
 
 
@@ -81,15 +80,25 @@ let nonlinearInstr nonhash i =
  *     | _ -> SkipChildren
  * end *)
 
+(* class nonlinearVisitor nonhash = object(self)
+ *   inherit nopCilVisitor
+ *   method vstmt (s: stmt) =
+ *     let skind = s.skind in
+ *     (match skind with
+ *      | Instr instr_list -> (List.fold_left nonlinearInstr nonhash instr_list; DoChildren)
+ *      | _ -> DoChildren
+ *     )    
+ * end *)
+
+
 class nonlinearVisitor nonhash = object(self)
   inherit nopCilVisitor
-  method vstmt (s: stmt) =
-    let skind = s.skind in
-    (match skind with
-     | Instr instr_list -> (List.fold_left nonlinearInstr nonhash instr_list; DoChildren)
-     | _ -> DoChildren
-    )    
+  method vexpr (e: exp) =
+    if isnonlinear e false
+    then (Hashtbl.add nonhash !currentLoc e; SkipChildren)
+    else SkipChildren
 end
+
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> tf then () else begin
@@ -105,7 +114,7 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
       (* let expPinter = new defaultCILPrinter in *)
       Hashtbl.iter (fun x y ->
           let string_expr = Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () y) in
-          Printf.printf "linear location at line : %s, %s \n" (string_of_int x.line) string_expr;
+          Printf.printf "nonlinear location at line : %s, %s \n" (string_of_int x.line) string_expr;
           ) nonlinear
       
     end
