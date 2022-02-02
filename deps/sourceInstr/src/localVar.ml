@@ -23,18 +23,45 @@ let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
   let f = var(mkVi ~ftype:ftype fname) in
   Call(av, Lval f, args, !currentLoc)
 
-let rec isnonlinear (expr : exp) (base: bool) : bool =
+let rec hasVar (expr : exp) : bool =
+  match expr with
+  | BinOp (_, opr1, opr2, _) -> (hasVar opr1) || (hasVar opr2)
+  | AlignOfE opr -> hasVar opr
+  | UnOp (_, opr, _) -> hasVar opr
+  | CastE (_, opr) -> hasVar opr
+  | AddrOf lval -> true
+  | StartOf lval -> true
+  | Lval _ -> true
+  | _ -> false
+  
+let rec isnonlinear (expr : exp) : bool =
   match expr with
   | BinOp (opc, opr1, opr2, _) ->
      (match opc with
-      | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr | LAnd
-        | LOr | PlusPI | IndexPI | MinusPI | MinusPP -> true
-       | _ -> (isnonlinear opr1 false) || (isnonlinear opr2 false) 
+      | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr
+        | PlusPI | IndexPI | MinusPI | MinusPP ->
+         ( match opr1 with
+           | Lval _ ->
+              (match opr2 with
+               | Lval _ -> true
+               | _ -> isnonlinear opr2
+              )
+           | Const _ -> isnonlinear opr2
+           | _ ->
+              (match opr2 with
+               | Const _ -> isnonlinear opr1
+               | _ ->
+                  if (hasVar opr1 && hasVar opr2 )
+                  then true
+                  else (isnonlinear opr1) || (isnonlinear opr2) 
+              )
+         ) 
+      | _ -> (isnonlinear opr1) || (isnonlinear opr2)
      )
   | UnOp (opc, opr, _) ->
      (match opc with
       | BNot -> true
-      | _ -> isnonlinear opr false
+      | _ -> isnonlinear opr
      )
   | Const _ | Lval _ -> false
   | _ -> true
@@ -63,7 +90,7 @@ end
 let nonlinearInstr nonhash i =
   match i with
   | Set (lv, expr, loc) ->
-     if isnonlinear expr false
+     if isnonlinear expr
      then (Hashtbl.add nonhash loc expr; nonhash)
      else nonhash
   | _ -> nonhash
@@ -94,7 +121,7 @@ let nonlinearInstr nonhash i =
 class nonlinearVisitor nonhash = object(self)
   inherit nopCilVisitor
   method vexpr (e: exp) =
-    if isnonlinear e false
+    if isnonlinear e 
     then (Hashtbl.add nonhash !currentLoc e; SkipChildren)
     else SkipChildren
 end
