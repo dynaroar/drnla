@@ -128,45 +128,39 @@ let negExp e =
   | UnOp (LNot, opr, _) -> opr
   | _ -> failwith "expecting a negate of loop condition expression!"
 
-(*index hashtable*)
+
 class loopVisitor tmpVarHash = object(self)
   inherit nopCilVisitor
+  val mutable nonlinearExpr = mkString "nonliear"
   method vstmt (s: stmt) =
-    let skind = s.skind in
-    (match skind with
-     | Instr instr_list -> SkipChildren
-     | Loop (bk, loc, stmt1, stmt2) ->
+    let action s =
+      match s.skind with
+      | Loop (bk, loc, stmt1, stmt2) ->
+         
         let stmtsBk = bk.bstmts in
         let loopIf = headList stmtsBk in
-        let transBk = 
         (match loopIf.skind with
-         | If (exp, bk1, bk2, loc) ->
-            (* let cond = negExp exp in *)
-            let cond = exp in
-            printf "while loop condition, %s.\n" (stringOfExp cond);
-            if isnonlinear cond
+         | If (expr, bk1, bk2, loc) ->
+            if isnonlinear expr
             then
-              (let nonStmt = loopIf in
-               let tmpVarInfo = Hashtbl.find tmpVarHash loc in
-               let nonLval = (Var tmpVarInfo, NoOffset) in
-               let nonInstr = Instr [(Set (nonLval, cond, loc))] in
-               nonStmt.skind <- nonInstr;
-               let tail = tailList stmtsBk in
-               let ifTransKind = If (Lval nonLval, bk1, bk2, loc) in
-               loopIf.skind <- ifTransKind;
-               bk.bstmts <- (nonStmt :: loopIf :: tail);
-               bk
-              )
-            else bk
-         | _ -> bk
-        ) in
-     
-        let lkind = Loop (transBk, loc, stmt1, stmt2) in
-        s.skind <- lkind;
-        ChangeTo s
-      | _ ->
-         SkipChildren
-    )    
+              let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+              printf "while loop nonlinear condition, %s.\n" (stringOfExp expr);
+              nonlinearExpr <- expr;            
+              let tail = tailList stmtsBk in
+              let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
+              loopIf.skind <- ifTransKind;
+              bk.bstmts <- (loopIf :: tail);
+              let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
+              let nb = mkBlock [nonStmt; mkStmt s.skind] in
+              s.skind <- Block nb;
+              s
+            else s
+         | _ -> s
+        )
+      | _ -> s
+    in
+    ChangeDoChildrenPost(s, action)
+       
 end
 
 
