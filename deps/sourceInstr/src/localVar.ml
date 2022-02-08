@@ -1,6 +1,6 @@
 open Cil
 open Eutils
-
+open Printf
 open Int64
 open String
 module E = Errormsg
@@ -10,11 +10,13 @@ let mkAtomic (vi: varinfo) : exp =
    BinOp (Eq, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 0), TInt (IInt, []))
 
   (* create tmperate variable to be assigned atomic proposition to *)
+
+
 let mkVis (fd: fundec) (exprs: exp list): (varinfo * exp) list =
   L.mapi (fun i expr ->
-      (* ((makeLocalVar fd ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr) *)
+      ((makeLocalVar fd ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr)
 (* not adding to funciton's slocals. *)
-      ((makeLocalVar fd ~insert:false ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr)
+      (* ((makeLocalVar fd ~insert:false ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr) *)
     ) exprs
 
 
@@ -95,36 +97,78 @@ let nonlinearInstr nonhash i =
      else nonhash
   | _ -> nonhash
 
-
-(* class nonlinearVisitor nonhash = object(self)
- *   inherit nopcilVisitor
- *   method vinst (i : instr) =
- *     match i with
- *     | Set (lv, expr, loc) ->
- *        if isnonlinear expr false
- *        then (Hashtbl.add nonhash loc expr; SkipChildren)
- *        else SkipChildren
- *     | _ -> SkipChildren
- * end *)
-
-(* class nonlinearVisitor nonhash = object(self)
- *   inherit nopCilVisitor
- *   method vstmt (s: stmt) =
- *     let skind = s.skind in
- *     (match skind with
- *      | Instr instr_list -> (List.fold_left nonlinearInstr nonhash instr_list; DoChildren)
- *      | _ -> DoChildren
- *     )    
- * end *)
-
-
+ 
 class nonlinearVisitor nonhash = object(self)
   inherit nopCilVisitor
   method vexpr (e: exp) =
     if isnonlinear e 
-    then (Hashtbl.add nonhash !currentLoc e; SkipChildren)
+    then (Hashtbl.add nonhash !currentLoc e;          
+          SkipChildren)
     else SkipChildren
 end
+
+
+(* let inserTmp bkstmt:stmt list = *)
+
+let headList l =
+  match l with
+   | [h] -> h
+   | h :: t -> h
+   | [] -> failwith "empty statement list!"
+let tailList l =
+  match l with
+  | h :: t -> t
+  | [h] -> []
+  | [] -> failwith "empty list!"
+let stringOfExp e =
+  Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () e)  
+  
+let negExp e =
+  match e with
+  | UnOp (LNot, opr, _) -> opr
+  | _ -> failwith "expecting a negate of loop condition expression!"
+
+(*index hashtable*)
+class loopVisitor tmpVarHash = object(self)
+  inherit nopCilVisitor
+  method vstmt (s: stmt) =
+    let skind = s.skind in
+    (match skind with
+     | Instr instr_list -> SkipChildren
+     | Loop (bk, loc, stmt1, stmt2) ->
+        let stmtsBk = bk.bstmts in
+        let loopIf = headList stmtsBk in
+        let transBk = 
+        (match loopIf.skind with
+         | If (exp, bk1, bk2, loc) ->
+            (* let cond = negExp exp in *)
+            let cond = exp in
+            printf "while loop condition, %s.\n" (stringOfExp cond);
+            if isnonlinear cond
+            then
+              (let nonStmt = loopIf in
+               let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+               let nonLval = (Var tmpVarInfo, NoOffset) in
+               let nonInstr = Instr [(Set (nonLval, cond, loc))] in
+               nonStmt.skind <- nonInstr;
+               let tail = tailList stmtsBk in
+               let ifTransKind = If (Lval nonLval, bk1, bk2, loc) in
+               loopIf.skind <- ifTransKind;
+               bk.bstmts <- (nonStmt :: loopIf :: tail);
+               bk
+              )
+            else bk
+         | _ -> bk
+        ) in
+     
+        let lkind = Loop (transBk, loc, stmt1, stmt2) in
+        s.skind <- lkind;
+        ChangeTo s
+      | _ ->
+         SkipChildren
+    )    
+end
+
 
 
 let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
@@ -134,15 +178,25 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
        *     ignore(visitCilFunction vis fd) *)
       let varInfos = mkVis fd exprs in
       let nonlinear = Hashtbl.create 10 in
-      let vis = new assignAtomicVisitor varInfos fd.slocals in
       let nonVis = new nonlinearVisitor nonlinear in
-      ignore(visitCilFunction vis fd);
       ignore(visitCilFunction nonVis fd);
       (* let expPinter = new defaultCILPrinter in *)
+
+      let nonTmpVars = Hashtbl.fold (fun key _ tmpVars ->
+                           (Hashtbl.add tmpVars key (makeLocalVar fd ("tmpVar"^(string_of_int key.line)) (TInt (IInt, []))));
+                           tmpVars
+                         ) nonlinear (Hashtbl.create 10) in
+      let vStmts = new loopVisitor nonTmpVars in
+      ignore(visitCilFunction vStmts fd);
+
+      let vis = new assignAtomicVisitor varInfos fd.slocals in
+      ignore(visitCilFunction vis fd);
+      
       Hashtbl.iter (fun x y ->
-          let string_expr = Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () y) in
-          Printf.printf "nonlinear location at line : %s, %s \n" (string_of_int x.line) string_expr;
-          ) nonlinear
+          let sExpr = stringOfExp y in
+          Printf.printf "nonlinear location at line : %s, %s \n" (string_of_int x.line) sExpr;
+        ) nonlinear;
+        Hashtbl.iter (fun _ y -> Printf.printf "tmp var name: %s\n" y.vname) nonTmpVars
       
     end
 
