@@ -157,9 +157,25 @@ class loopVisitor tmpVarHash = object(self)
             else s
          | _ -> s
         )
+      | If (expr, bk1, bk2, loc) ->
+         if isnonlinear expr
+         then
+           let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+           nonlinearExpr <- expr;
+           printf "for nonlinear condition, %s.\n" (stringOfExp expr);
+           let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
+           let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
+           s.skind <- ifTransKind;
+           let nb = mkBlock [nonStmt; mkStmt s.skind] in
+           s.skind <- Block nb;
+           s    
+         else s
+  
       | _ -> s
     in
     ChangeDoChildrenPost(s, action)
+
+    (* ChangeTo s *)
        
 end
 
