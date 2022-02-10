@@ -34,8 +34,7 @@ let rec hasVar (expr : exp) : bool =
   | AddrOf lval -> true
   | StartOf lval -> true
   | Lval _ -> true
-  | _ -> false
-  
+  | _ -> false  
 let rec isnonlinear (expr : exp) : bool =
   match expr with
   | BinOp (opc, opr1, opr2, _) ->
@@ -69,25 +68,6 @@ let rec isnonlinear (expr : exp) : bool =
   | _ -> true
 
 
-(* class assignAddVisitor (vinfos : varinfo list) = object(self) *)
-class assignAtomicVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list)= object(self)
-  inherit nopCilVisitor
-
-  method vinst (i : instr) =
-    match i with
-    | Set(_, _, loc) | Call(_, _, _, loc) ->
-       let inject = L.map (fun (vi, exp) -> Set((Var vi, NoOffset), exp, loc)) vexprs in
-       (* let atomFormals = L.map (fun (vi, _) -> Lval (Var vi, NoOffset)) vexprs in *)
-       let localFormals = L.map (fun x -> Lval (Var x, NoOffset)) flocals in
-       let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
-       let vtraceCall = mkCall traceName localFormals in
-       (* let injectVis = i::inject@[vtraceCall] in *)
-       (* without injecting a auxiliary variables *)
-       let injectVis = [i; vtraceCall] in
-       ChangeTo injectVis
-    | _ -> SkipChildren
-end
-
 
 let nonlinearInstr nonhash i =
   match i with
@@ -106,28 +86,7 @@ class nonlinearVisitor nonhash = object(self)
           SkipChildren)
     else SkipChildren
 end
-
-
-(* let inserTmp bkstmt:stmt list = *)
-
-let headList l =
-  match l with
-   | [h] -> h
-   | h :: t -> h
-   | [] -> failwith "empty statement list!"
-let tailList l =
-  match l with
-  | h :: t -> t
-  | [h] -> []
-  | [] -> failwith "empty list!"
-let stringOfExp e =
-  Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () e)  
-  
-let negExp e =
-  match e with
-  | UnOp (LNot, opr, _) -> opr
-  | _ -> failwith "expecting a negate of loop condition expression!"
-
+ 
 
 class loopVisitor tmpVarHash = object(self)
   inherit nopCilVisitor
@@ -135,34 +94,34 @@ class loopVisitor tmpVarHash = object(self)
   method vstmt (s: stmt) =
     let action s =
       match s.skind with
-      | Loop (bk, loc, stmt1, stmt2) ->
-         
-        let stmtsBk = bk.bstmts in
-        let loopIf = headList stmtsBk in
-        (match loopIf.skind with
-         | If (expr, bk1, bk2, loc) ->
-            if isnonlinear expr
-            then
-              let tmpVarInfo = Hashtbl.find tmpVarHash loc in
-              printf "while loop nonlinear condition, %s.\n" (stringOfExp expr);
-              nonlinearExpr <- expr;            
-              let tail = tailList stmtsBk in
-              let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
-              loopIf.skind <- ifTransKind;
-              bk.bstmts <- (loopIf :: tail);
-              let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
-              let nb = mkBlock [nonStmt; mkStmt s.skind] in
-              s.skind <- Block nb;
-              s
-            else s
-         | _ -> s
-        )
+      (* | Loop (bk, loc, stmt1, stmt2) ->
+       *    
+       *   let stmtsBk = bk.bstmts in
+       *   let loopIf = headList stmtsBk in
+       *   (match loopIf.skind with
+       *    | If (expr, bk1, bk2, loc) ->
+       *       if isnonlinear expr
+       *       then
+       *         let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+       *         printf "while loop nonlinear condition, %s.\n" (stringOfExp expr);
+       *         nonlinearExpr <- expr;            
+       *         let tail = tailList stmtsBk in
+       *         let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
+       *         loopIf.skind <- ifTransKind;
+       *         bk.bstmts <- (loopIf :: tail);
+       *         let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
+       *         let nb = mkBlock [nonStmt; mkStmt s.skind] in
+       *         s.skind <- Block nb;
+       *         s
+       *       else s
+       *    | _ -> s
+       *   ) *)
       | If (expr, bk1, bk2, loc) ->
          if isnonlinear expr
          then
            let tmpVarInfo = Hashtbl.find tmpVarHash loc in
            nonlinearExpr <- expr;
-           printf "for nonlinear condition, %s.\n" (stringOfExp expr);
+           printf "if nonlinear condition, %s.\n" (stringOfExp expr);
            let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
            let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
            s.skind <- ifTransKind;
@@ -174,24 +133,41 @@ class loopVisitor tmpVarHash = object(self)
       | _ -> s
     in
     ChangeDoChildrenPost(s, action)
+    (* s <- action s; *)
 
-    (* ChangeTo s *)
+    (* DoChildren *)
+    (* ChangeTo (action s) *)
        
 end
 
+ (* class vtraceVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list)= object(self) *)
+
+class vtraceVisitor (flocals: varinfo list)= object(self)
+  inherit nopCilVisitor
+
+  method vinst (i : instr) =
+    match i with
+    | Set(_, _, loc) | Call(_, _, _, loc) ->
+       let localFormals = L.map v2e flocals in
+       let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
+       let vtraceCall = mkCall traceName localFormals in
+       (* let injectVis = i::inject@[vtraceCall] in *)
+       (* without injecting a auxiliary variables *)
+       let injectVis = [i; vtraceCall] in
+       ChangeTo injectVis
+    | _ -> SkipChildren
+end
 
 
-let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit =
-  if fd.svar.vname <> tf then () else begin
-      (* let varInfos = L.map (fun s -> makeLocalVar fd s (TInt (IInt, []))) tvs in  (\* empty attribute for locals injected *\)
-       * let vis = new assignAddVisitor varInfos in
-       *     ignore(visitCilFunction vis fd) *)
-      let varInfos = mkVis fd exprs in
+(* let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit = *)
+
+let processFunction (mf: string) (fd : fundec) (loc : location) : unit =
+  if fd.svar.vname <> mf then () else begin
+
       let nonlinear = Hashtbl.create 10 in
       let nonVis = new nonlinearVisitor nonlinear in
       ignore(visitCilFunction nonVis fd);
-      (* let expPinter = new defaultCILPrinter in *)
-
+ 
       let nonTmpVars = Hashtbl.fold (fun key _ tmpVars ->
                            (Hashtbl.add tmpVars key (makeLocalVar fd ("tmpVar"^(string_of_int key.line)) (TInt (IInt, []))));
                            tmpVars
@@ -199,7 +175,7 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
       let vStmts = new loopVisitor nonTmpVars in
       ignore(visitCilFunction vStmts fd);
 
-      let vis = new assignAtomicVisitor varInfos fd.slocals in
+      let vis = new vtraceVisitor fd.slocals in
       ignore(visitCilFunction vis fd);
       
       Hashtbl.iter (fun x y ->
@@ -210,6 +186,9 @@ let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : locat
       
     end
 
-let varInject (funvars : string * exp list) (f : file) : unit =
-(* let varInject (funvars : string * string list) (f : file) : unit = *)
-  funvars |> processFunction |> onlyFunctions |> iterGlobals f
+(* let varInject (funvars : string * exp list) (f : file) : unit =
+ * (\* let varInject (funvars : string * string list) (f : file) : unit = *\)
+ *   funvars |> processFunction |> onlyFunctions |> iterGlobals f *)
+
+let nonlinearTrans (mf : string) (f : file) : unit =
+  mf |> processFunction |> onlyFunctions |> iterGlobals f

@@ -1,6 +1,6 @@
 open Cil
 open Pretty
-
+open Int64
 module E = Errormsg
 module S = Str
 
@@ -15,6 +15,25 @@ let var (v: varinfo): lval = (Var v, NoOffset)
 let v2e (v : varinfo) : exp = Lval(var v)
  
 let (|>) (a : 'a) (f : 'a -> 'b) : 'b = f a
+
+let headList l =
+  match l with
+  | [h] -> h
+  | h :: t -> h
+  | [] -> failwith "empty statement list!"
+let tailList l =
+  match l with
+  | h :: t -> t
+  | [h] -> []
+  | [] -> failwith "empty list!"
+let stringOfExp e =
+  Pretty.sprint (Int64.to_int max_int) (printExp defaultCilPrinter () e)  
+
+let negExp e =
+  match e with
+  | UnOp (LNot, opr, _) -> opr
+  | _ -> failwith "expecting a negate of loop condition expression!"
+
 
 let fst3 (a,_,_) = a
 let snd3 (_,b,_) = b
