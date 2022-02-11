@@ -161,7 +161,7 @@ end
 
 (* let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit = *)
 
-let processFunction (mf: string) (fd : fundec) (loc : location) : unit =
+let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> mf then () else begin
 
       let nonlinear = Hashtbl.create 10 in
@@ -175,7 +175,8 @@ let processFunction (mf: string) (fd : fundec) (loc : location) : unit =
       let vStmts = new loopVisitor nonTmpVars in
       ignore(visitCilFunction vStmts fd);
 
-      let vis = new vtraceVisitor fd.slocals in
+      
+      let vis = new vtraceVisitor (gvars @ fd.slocals) in
       ignore(visitCilFunction vis fd);
       
       Hashtbl.iter (fun x y ->
@@ -190,5 +191,5 @@ let processFunction (mf: string) (fd : fundec) (loc : location) : unit =
  * (\* let varInject (funvars : string * string list) (f : file) : unit = *\)
  *   funvars |> processFunction |> onlyFunctions |> iterGlobals f *)
 
-let nonlinearTrans (mf : string) (f : file) : unit =
+let nonlinearTrans (mf : string * varinfo list) (f : file) : unit =
   mf |> processFunction |> onlyFunctions |> iterGlobals f

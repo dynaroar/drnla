@@ -203,6 +203,17 @@ let rec findGlobalVar (gl : global list) (varname : string) : varinfo =
   | GVarDecl(vi, _) :: _ when vi.vname = varname -> vi
   | GVar(vi, _, _) :: _ when vi.vname = varname -> vi
   | _ :: rst -> findGlobalVar rst varname
+let isGlobalVar (g : global) : bool =
+  match g with
+  | GVar(vi, _, _)  | GVarDecl(vi, _) ->  true
+  | _ -> false
+let rec getGlobalVars (gl : global list) (base: varinfo list): varinfo list =
+  match gl with
+  | [] -> base
+  | GVarDecl(vi, _) :: rst -> getGlobalVars rst (vi :: base)
+  | GVar(vi, _, _) :: rst -> getGlobalVars rst (vi :: base)
+  | _ :: rst -> getGlobalVars rst base
+
 
 let mallocType (f : file) : typ =
   let size_t = findType f.globals "size_t" in

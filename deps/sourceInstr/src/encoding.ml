@@ -2,7 +2,7 @@ open Cil
 open Printf
 open Int64
 open Ctl
-
+open Eutils
 module F = Frontc
 module E = Errormsg
 module CM = Common
@@ -72,6 +72,7 @@ let main () =
   let includes = L.map(fun x -> "#include \"" ^ x ^ "\"") includes in
   let adds = S.concat "\n" includes in
   ast.globals <- (GText adds):: ast.globals;
+  let gvs = getGlobalVars (ast.globals) [] in
 
   let () =
     (* (match ctlProperty with
@@ -80,7 +81,7 @@ let main () =
      *    LocalVar.varInject(mainQ, exprs) ast
      * | _ -> ()
      * ) in *)
-  (Dltl.nonlinearTrans mainQ ast) in
+    (Dltl.nonlinearTrans (mainQ, gvs) ast) in
   outputFile ast
  ;;
 
