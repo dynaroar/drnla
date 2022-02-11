@@ -6,87 +6,6 @@ open String
 module E = Errormsg
 module L = List
 
-let mkAtomic (vi: varinfo) : exp =
-   BinOp (Eq, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 0), TInt (IInt, []))
-
-  (* create tmperate variable to be assigned atomic proposition to *)
-
-
-let mkVis (fd: fundec) (exprs: exp list): (varinfo * exp) list =
-  L.mapi (fun i expr ->
-      ((makeLocalVar fd ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr)
-(* not adding to funciton's slocals. *)
-      (* ((makeLocalVar fd ~insert:false ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr) *)
-    ) exprs
-
-
-let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
-  let mkVi ?(ftype=TVoid []) fname: varinfo = makeVarinfo true fname ftype in
-  let f = var(mkVi ~ftype:ftype fname) in
-  Call(av, Lval f, args, !currentLoc)
-
-let rec hasVar (expr : exp) : bool =
-  match expr with
-  | BinOp (_, opr1, opr2, _) -> (hasVar opr1) || (hasVar opr2)
-  | AlignOfE opr -> hasVar opr
-  | UnOp (_, opr, _) -> hasVar opr
-  | CastE (_, opr) -> hasVar opr
-  | AddrOf lval -> true
-  | StartOf lval -> true
-  | Lval _ -> true
-  | _ -> false  
-let rec isnonlinear (expr : exp) : bool =
-  match expr with
-  | BinOp (opc, opr1, opr2, _) ->
-     (match opc with
-      | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr
-        | PlusPI | IndexPI | MinusPI | MinusPP ->
-         ( match opr1 with
-           | Lval _ ->
-              (match opr2 with
-               | Lval _ -> true
-               | _ -> isnonlinear opr2
-              )
-           | Const _ -> isnonlinear opr2
-           | _ ->
-              (match opr2 with
-               | Const _ -> isnonlinear opr1
-               | _ ->
-                  if (hasVar opr1 && hasVar opr2 )
-                  then true
-                  else (isnonlinear opr1) || (isnonlinear opr2) 
-              )
-         ) 
-      | _ -> (isnonlinear opr1) || (isnonlinear opr2)
-     )
-  | UnOp (opc, opr, _) ->
-     (match opc with
-      | BNot -> true
-      | _ -> isnonlinear opr
-     )
-  | Const _ | Lval _ -> false
-  | _ -> true
-
-
-
-let nonlinearInstr nonhash i =
-  match i with
-  | Set (lv, expr, loc) ->
-     if isnonlinear expr
-     then (Hashtbl.add nonhash loc expr; nonhash)
-     else nonhash
-  | _ -> nonhash
-
- 
-class nonlinearVisitor nonhash = object(self)
-  inherit nopCilVisitor
-  method vexpr (e: exp) =
-    if isnonlinear e 
-    then (Hashtbl.add nonhash !currentLoc e;          
-          SkipChildren)
-    else SkipChildren
-end
- 
 
 class loopVisitor tmpVarHash = object(self)
   inherit nopCilVisitor
@@ -144,17 +63,17 @@ end
 
 class vtraceVisitor (flocals: varinfo list)= object(self)
   inherit nopCilVisitor
-
   method vinst (i : instr) =
     match i with
-    | Set(_, _, loc) | Call(_, _, _, loc) ->
-       let localFormals = L.map v2e flocals in
-       let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
-       let vtraceCall = mkCall traceName localFormals in
-       (* let injectVis = i::inject@[vtraceCall] in *)
-       (* without injecting a auxiliary variables *)
-       let injectVis = [i; vtraceCall] in
-       ChangeTo injectVis
+    | Set(_, expr, loc) ->
+       if isnonlinear expr
+       then
+         let localFormals = L.map v2e flocals in
+         let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
+         let vtraceCall = mkCall traceName localFormals in
+         let injectVis = [i; vtraceCall] in
+         ChangeTo injectVis
+       else SkipChildren
     | _ -> SkipChildren
 end
 

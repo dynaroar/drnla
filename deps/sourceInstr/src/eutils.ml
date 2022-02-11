@@ -3,6 +3,7 @@ open Pretty
 open Int64
 module E = Errormsg
 module S = Str
+module L = List
 
 module SM = Map.Make(struct
   type t = string
@@ -16,6 +17,7 @@ let v2e (v : varinfo) : exp = Lval(var v)
  
 let (|>) (a : 'a) (f : 'a -> 'b) : 'b = f a
 
+(* fucntions for nonlinear expression process *)
 let headList l =
   match l with
   | [h] -> h
@@ -33,6 +35,89 @@ let negExp e =
   match e with
   | UnOp (LNot, opr, _) -> opr
   | _ -> failwith "expecting a negate of loop condition expression!"
+
+let mkAtomic (vi: varinfo) : exp =
+   BinOp (Eq, Lval (Var vi, NoOffset), kinteger64 IInt (of_int 0), TInt (IInt, []))
+ 
+let mkVis (fd: fundec) (exprs: exp list): (varinfo * exp) list =
+  L.mapi (fun i expr ->
+      ((makeLocalVar fd ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr)
+(* not adding to funciton's slocals. *)
+      (* ((makeLocalVar fd ~insert:false ("atomic"^(string_of_int i)) (TInt (IInt, []))), expr) *)
+    ) exprs
+
+let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
+  let mkVi ?(ftype=TVoid []) fname: varinfo = makeVarinfo true fname ftype in
+  let f = var(mkVi ~ftype:ftype fname) in
+  Call(av, Lval f, args, !currentLoc)
+
+let rec hasVar (expr : exp) : bool =
+  match expr with
+  | BinOp (_, opr1, opr2, _) -> (hasVar opr1) || (hasVar opr2)
+  | AlignOfE opr -> hasVar opr
+  | UnOp (_, opr, _) -> hasVar opr
+  | CastE (_, opr) -> hasVar opr
+  | AddrOf lval -> true
+  | StartOf lval -> true
+  | Lval _ -> true
+  | _ -> false  
+let rec isnonlinear (expr : exp) : bool =
+  match expr with
+  | BinOp (opc, opr1, opr2, _) ->
+     (match opc with
+      | Mult | Div | Mod | Shiftlt | Shiftrt | BAnd | BXor | BOr
+        | PlusPI | IndexPI | MinusPI | MinusPP ->
+         ( match opr1 with
+           | Lval _ ->
+              (match opr2 with
+               | Lval _ -> true
+               | _ -> isnonlinear opr2
+              )
+           | Const _ -> isnonlinear opr2
+           | _ ->
+              (match opr2 with
+               | Const _ -> isnonlinear opr1
+               | _ ->
+                  if (hasVar opr1 && hasVar opr2 )
+                  then true
+                  else (isnonlinear opr1) || (isnonlinear opr2) 
+              )
+         ) 
+      | _ -> (isnonlinear opr1) || (isnonlinear opr2)
+     )
+  | UnOp (opc, opr, _) ->
+     (match opc with
+      | BNot -> true
+      | _ -> isnonlinear opr
+     )
+  | Const _ | Lval _ -> false
+  | _ -> true
+
+let nonlinearInstr nonhash i =
+  match i with
+  | Set (lv, expr, loc) ->
+     if isnonlinear expr
+     then (Hashtbl.add nonhash loc expr; nonhash)
+     else nonhash
+  | _ -> nonhash
+let isNonlinearIns i =
+  match i with
+  | Set (lv, expr, loc) ->
+     if isnonlinear expr
+     then true
+     else false
+  | _ -> false
+  
+  
+class nonlinearVisitor nonhash = object(self)
+  inherit nopCilVisitor
+  method vexpr (e: exp) =
+    if isnonlinear e 
+    then (Hashtbl.add nonhash !currentLoc e;          
+          SkipChildren)
+    else SkipChildren
+end
+
 
 
 let fst3 (a,_,_) = a
