@@ -6,8 +6,18 @@ open String
 module E = Errormsg
 module L = List
 
+class nonlinearVisitor nonhash = object(self)
+  inherit nopCilVisitor
+  method vexpr (e: exp) =
+    if isnonlinear e 
+    then (Hashtbl.add nonhash !currentLoc e;          
+          SkipChildren)
+    else SkipChildren
+end
 
-class loopVisitor tmpVarHash = object(self)
+
+(* class loopVisitor tmpVarHash = object(self) *)
+class loopVisitor fd = object(self)
   inherit nopCilVisitor
   val mutable nonlinearExpr = mkString "nonliear"
   method vstmt (s: stmt) =
@@ -38,7 +48,8 @@ class loopVisitor tmpVarHash = object(self)
       | If (expr, bk1, bk2, loc) ->
          if isnonlinear expr
          then
-           let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+           (* let tmpVarInfo = Hashtbl.find tmpVarHash loc in *)
+           let tmpVarInfo = makeLocalVar fd ("tmpVar"^(string_of_int loc.line)) (TInt (IInt, [])) in
            nonlinearExpr <- expr;
            printf "if nonlinear condition, %s.\n" (stringOfExp expr);
            let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
@@ -48,6 +59,24 @@ class loopVisitor tmpVarHash = object(self)
            s.skind <- Block nb;
            s    
          else s
+      (* | Instr instrList ->
+       *    let changeIns =
+       *      List.fold_left (fun insL i ->
+       *          match i with
+       *          | Set (lv, expr, loc) ->
+       *             if isnonlinear expr
+       *             then
+       *               let tmpVarInfo = Hashtbl.find tmpVarHash loc in
+       *               nonlinearExpr <- expr;
+       *               printf "set instruction nonlinear, %s.\n" (stringOfExp expr);
+       *               let nonInstr = Set(var tmpVarInfo, nonlinearExpr, loc) in
+       *               [nonInstr; (Set (lv, v2e tmpVarInfo, loc))] @ insL
+       *             else
+       *               i :: insL
+       *           | _ -> i :: insL
+       *        ) [] instrList in
+       *    s.skind <- (Instr changeIns);
+       *    s *)
   
       | _ -> s
     in
@@ -87,11 +116,12 @@ let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : lo
       let nonVis = new nonlinearVisitor nonlinear in
       ignore(visitCilFunction nonVis fd);
  
-      let nonTmpVars = Hashtbl.fold (fun key _ tmpVars ->
-                           (Hashtbl.add tmpVars key (makeLocalVar fd ("tmpVar"^(string_of_int key.line)) (TInt (IInt, []))));
-                           tmpVars
-                         ) nonlinear (Hashtbl.create 10) in
-      let vStmts = new loopVisitor nonTmpVars in
+      (* let nonTmpVars = Hashtbl.fold (fun key _ tmpVars ->
+       *                      (Hashtbl.add tmpVars key (makeLocalVar fd ("tmpVar"^(string_of_int key.line)) (TInt (IInt, []))));
+       *                      tmpVars
+       *                    ) nonlinear (Hashtbl.create 10) in *)
+      (* let vStmts = new loopVisitor nonTmpVars in *)
+      let vStmts = new loopVisitor fd in
       ignore(visitCilFunction vStmts fd);
 
       
@@ -102,7 +132,7 @@ let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : lo
           let sExpr = stringOfExp y in
           Printf.printf "nonlinear location at line : %s, %s \n" (string_of_int x.line) sExpr;
         ) nonlinear;
-        Hashtbl.iter (fun _ y -> Printf.printf "tmp var name: %s\n" y.vname) nonTmpVars
+        (* Hashtbl.iter (fun _ y -> Printf.printf "tmp var name: %s\n" y.vname) nonTmpVars *)
       
     end
 

@@ -107,18 +107,9 @@ let isNonlinearIns i =
      then true
      else false
   | _ -> false
-  
-  
-class nonlinearVisitor nonhash = object(self)
-  inherit nopCilVisitor
-  method vexpr (e: exp) =
-    if isnonlinear e 
-    then (Hashtbl.add nonhash !currentLoc e;          
-          SkipChildren)
-    else SkipChildren
-end
 
 
+  
 
 let fst3 (a,_,_) = a
 let snd3 (_,b,_) = b
