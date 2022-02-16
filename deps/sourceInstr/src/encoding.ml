@@ -68,10 +68,10 @@ let main () =
   let vtrace = "vtrace" in
   let vassume = "vassume" in
 
-  let includes = ["stdio.h"; "stdlib.h"; "assert.h"; "math.h"] in
-  let includes = L.map(fun x -> "#include \"" ^ x ^ "\"") includes in
-  let adds = S.concat "\n" includes in
-  ast.globals <- (GText adds):: ast.globals;
+  (* let includes = ["stdio.h"; "stdlib.h"; "assert.h"; "math.h"] in
+   * let includes = L.map(fun x -> "#include \"" ^ x ^ "\"") includes in
+   * let adds = S.concat "\n" includes in
+   * ast.globals <- (GText adds):: ast.globals; *)
   let gvs = getGlobalVars (ast.globals) [] in
 
   let () =
@@ -81,7 +81,9 @@ let main () =
      *    LocalVar.varInject(mainQ, exprs) ast
      * | _ -> ()
      * ) in *)
-    (Dltl.nonlinearTrans (mainQ, gvs) ast) in
+    (Dltl.nonlinearTrans (ast, mainQ, gvs) ast;
+     ignore ()
+    ) in
   outputFile ast
  ;;
 

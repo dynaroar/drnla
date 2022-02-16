@@ -1,7 +1,7 @@
 //https://github.com/letonchanh/dynamite/blob/master/benchmarks/nla-term/cohencu1-both-t.c
 
 //@ ltl invariant positive: [](<>AP(y == 0));
-extern int __VERIFIER_nondet_int(void);
+int __VERIFIER_nondet_int(void){}
 
 int a, n, x, y, z;
 int main() {

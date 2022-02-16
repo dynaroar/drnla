@@ -48,6 +48,7 @@ let mkVis (fd: fundec) (exprs: exp list): (varinfo * exp) list =
 
 let mkCall ?(ftype=TVoid []) ?(av=None) (fname:string) args : instr =
   let mkVi ?(ftype=TVoid []) fname: varinfo = makeVarinfo true fname ftype in
+  (* let mkVi ?(ftype=TVoid []) fname: varinfo = findOrCreateFunc ast fname ftype in *)
   let f = var(mkVi ~ftype:ftype fname) in
   Call(av, Lval f, args, !currentLoc)
 

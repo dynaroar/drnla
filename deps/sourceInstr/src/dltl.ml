@@ -90,15 +90,18 @@ end
 
  (* class vtraceVisitor (vexprs : (varinfo * exp) list) (flocals: varinfo list)= object(self) *)
 
-class vtraceVisitor (flocals: varinfo list)= object(self)
+class vtraceVisitor (ast: file) (flocals: varinfo list)= object(self)
   inherit nopCilVisitor
   method vinst (i : instr) =
     match i with
     | Set(_, expr, loc) ->
        if isnonlinear expr
        then
-         let localFormals = L.map v2e flocals in
          let traceName = "vtrace"^(string_of_int (!currentLoc).line) in
+         let vtraceFunc = emptyFunction traceName in
+         setFormals vtraceFunc flocals;
+         ast.globals <- GFun(vtraceFunc, loc) :: ast.globals;
+         let localFormals = L.map v2e flocals in
          let vtraceCall = mkCall traceName localFormals in
          let injectVis = [i; vtraceCall] in
          ChangeTo injectVis
@@ -109,7 +112,7 @@ end
 
 (* let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit = *)
 
-let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : location) : unit =
+let processFunction ((ast, mf, gvars): file * string * varinfo list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> mf then () else begin
 
       let nonlinear = Hashtbl.create 10 in
@@ -125,7 +128,7 @@ let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : lo
       ignore(visitCilFunction vStmts fd);
 
       
-      let vis = new vtraceVisitor (gvars @ fd.slocals) in
+      let vis = new vtraceVisitor ast (gvars @ fd.slocals) in
       ignore(visitCilFunction vis fd);
       
       Hashtbl.iter (fun x y ->
@@ -140,5 +143,6 @@ let processFunction ((mf, gvars): string * varinfo list) (fd : fundec) (loc : lo
  * (\* let varInject (funvars : string * string list) (f : file) : unit = *\)
  *   funvars |> processFunction |> onlyFunctions |> iterGlobals f *)
 
-let nonlinearTrans (mf : string * varinfo list) (f : file) : unit =
+let nonlinearTrans (mf : file * string * varinfo list) (f : file) : unit =
   mf |> processFunction |> onlyFunctions |> iterGlobals f
+
