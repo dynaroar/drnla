@@ -6,6 +6,7 @@ open String
 module E = Errormsg
 module L = List
 
+ 
 class nonlinearVisitor nonhash = object(self)
   inherit nopCilVisitor
   method vexpr (e: exp) =
@@ -16,75 +17,111 @@ class nonlinearVisitor nonhash = object(self)
 end
 
 
-(* class loopVisitor tmpVarHash = object(self) *)
-class loopVisitor fd = object(self)
+let notCompExp exp =
+  match exp with
+  | BinOp (opc, _, _, _) ->
+     (match opc with
+      | Lt | Gt | Le | Ge | Eq | Ne -> false
+      | _  -> true
+     )
+  | _ -> true
+
+let rec subNonlinear fd binExp loc counter tmpList =
+  match binExp with
+  | BinOp (opc, opr1, opr2, typ) ->
+     (match opc with
+      | Lt | Gt | Le | Ge | Eq | Ne ->
+         if isnonlinear opr1 && notCompExp opr1
+         then
+           let tmpVarInfo = makeLocalVar fd ("tmpVar"^(string_of_int loc.line)^"_"^(string_of_int !counter)) (TInt (IInt, [])) in
+           let tmpInstr = Set(var tmpVarInfo, opr1, loc) in
+           counter := !counter + 1;
+           tmpList := tmpInstr :: !tmpList;
+           let (tmpListOpr2, tmpOpr2) = subNonlinear fd opr2 loc counter tmpList in
+             (!tmpList @ tmpListOpr2, BinOp (opc, v2e tmpVarInfo, tmpOpr2, typ))
+         else if isnonlinear opr2 && notCompExp opr2
+         then
+           let tmpVarInfo = makeLocalVar fd ("tmpVar"^(string_of_int loc.line)^"_"^(string_of_int !counter)) (TInt (IInt, [])) in
+           let tmpInstr = Set(var tmpVarInfo, opr2, loc) in
+           counter := !counter + 1 ;
+           tmpList := tmpInstr :: !tmpList;
+           let (tmpListOpr1, tmpOpr1) = subNonlinear fd opr1 loc counter tmpList in
+           (!tmpList @ tmpListOpr1, BinOp (opc, tmpOpr1, v2e tmpVarInfo, typ))
+         else
+           let (tmpListOpr1, tmpOpr1) = subNonlinear fd opr1 loc counter tmpList in
+           let (tmpListOpr2, tmpOpr2) = subNonlinear fd opr2 loc counter tmpList in
+           (tmpListOpr1 @ tmpListOpr2, BinOp (opc, tmpOpr1, tmpOpr2, typ))
+      | _ -> ([], binExp)
+     )
+  | _ -> ([], binExp)
+ 
+class stmtVisitor fd = object(self)
   inherit nopCilVisitor
   val mutable nonlinearExpr = mkString "nonliear"
+  val mutable vassert = "assert"
+    
   method vstmt (s: stmt) =
     let action s =
       match s.skind with
-      (* | Loop (bk, loc, stmt1, stmt2) ->
-       *    
-       *   let stmtsBk = bk.bstmts in
-       *   let loopIf = headList stmtsBk in
-       *   (match loopIf.skind with
-       *    | If (expr, bk1, bk2, loc) ->
-       *       if isnonlinear expr
-       *       then
-       *         let tmpVarInfo = Hashtbl.find tmpVarHash loc in
-       *         printf "while loop nonlinear condition, %s.\n" (stringOfExp expr);
-       *         nonlinearExpr <- expr;            
-       *         let tail = tailList stmtsBk in
-       *         let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
-       *         loopIf.skind <- ifTransKind;
-       *         bk.bstmts <- (loopIf :: tail);
-       *         let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
-       *         let nb = mkBlock [nonStmt; mkStmt s.skind] in
-       *         s.skind <- Block nb;
-       *         s
-       *       else s
-       *    | _ -> s
-       *   ) *)
-      | If (expr, bk1, bk2, loc) ->
+       | If (expr, bk1, bk2, loc) ->
          if isnonlinear expr
          then
-           (* let tmpVarInfo = Hashtbl.find tmpVarHash loc in *)
-           let tmpVarInfo = makeLocalVar fd ("tmpVar"^(string_of_int loc.line)) (TInt (IInt, [])) in
+           let (tempList, tmpExp) = subNonlinear fd expr loc (ref 0) (ref []) in
            nonlinearExpr <- expr;
            printf "if nonlinear condition, %s.\n" (stringOfExp expr);
-           let nonStmt = i2s (Set(var tmpVarInfo, nonlinearExpr, loc)) in
-           let ifTransKind = If (v2e tmpVarInfo, bk1, bk2, loc) in
+           let ifTransKind = If (tmpExp, bk1, bk2, loc) in
            s.skind <- ifTransKind;
-           let nb = mkBlock [nonStmt; mkStmt s.skind] in
+           let nonStmtList = L.map i2s tempList in
+           let nb = mkBlock (nonStmtList @ [mkStmt s.skind]) in
            s.skind <- Block nb;
            s    
          else s
-      (* | Instr instrList ->
-       *    let changeIns =
-       *      List.fold_left (fun insL i ->
-       *          match i with
-       *          | Set (lv, expr, loc) ->
-       *             if isnonlinear expr
-       *             then
-       *               let tmpVarInfo = Hashtbl.find tmpVarHash loc in
-       *               nonlinearExpr <- expr;
-       *               printf "set instruction nonlinear, %s.\n" (stringOfExp expr);
-       *               let nonInstr = Set(var tmpVarInfo, nonlinearExpr, loc) in
-       *               [nonInstr; (Set (lv, v2e tmpVarInfo, loc))] @ insL
-       *             else
-       *               i :: insL
-       *           | _ -> i :: insL
-       *        ) [] instrList in
-       *    s.skind <- (Instr changeIns);
-       *    s *)
+      | Instr instrList ->
+         let changeIns =
+           List.fold_left (fun insL i ->
+               match i with
+               | Call (lv, fvname, args, loc) ->
+                  let fvi = e2v fvname in
+                  if fvi.vname <> vassert then i :: insL else begin
+                      match args with
+                      | [prop] ->
+                         if isnonlinear prop
+                         then
+                           let (tmpList, tmpExp) = subNonlinear fd prop loc (ref 0) (ref []) in
+                           printf "set instruction nonlinear, %s.\n" (stringOfExp prop);
+                           tmpList @ [Call (lv, fvname, [tmpExp], loc)] @ insL
+                         else  i :: insL
+                      | _ -> failwith "assume call expecting proposition argument!"
+                    end
+               | _ -> i :: insL
+             ) [] instrList in
+         s.skind <- (Instr changeIns);
+         s
   
       | _ -> s
     in
     ChangeDoChildrenPost(s, action)
-    (* s <- action s; *)
+ end
 
-    (* DoChildren *)
-    (* ChangeTo (action s) *)
+class assertVisitor  = object(slef)
+  inherit nopCilVisitor
+  val mutable vassert = "assert"
+  val mutable nonlinearExpr= mkString "nonlinear"
+  method vinst (i:instr) =
+    match i with
+    | Call (_, fvname, args, loc) ->
+       let fvi = e2v fvname in
+       if fvi.vname <> vassert then SkipChildren else begin
+           match args with
+           | [pros] ->
+              if isnonlinear pros
+              then
+                (* ignore (printf("ToDo, another visitor pass for assert call? ")); *)
+                SkipChildren
+              else  SkipChildren
+           | _ -> failwith "assume call expecting proposition argument!"
+         end
+    | _ -> SkipChildren    
        
 end
 
@@ -92,6 +129,7 @@ end
 
 class vtraceVisitor (ast: file) (flocals: varinfo list)= object(self)
   inherit nopCilVisitor
+  val mutable vassume = "assert"
   method vinst (i : instr) =
     match i with
     | Set(_, expr, loc) ->
@@ -106,37 +144,27 @@ class vtraceVisitor (ast: file) (flocals: varinfo list)= object(self)
          let injectVis = [i; vtraceCall] in
          ChangeTo injectVis
        else SkipChildren
-    | _ -> SkipChildren
+     | _ -> SkipChildren
 end
 
-
-(* let processFunction ((tf, exprs) : string * exp list) (fd : fundec) (loc : location) : unit = *)
-
+ 
 let processFunction ((ast, mf, gvars): file * string * varinfo list) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> mf then () else begin
 
       let nonlinear = Hashtbl.create 10 in
       let nonVis = new nonlinearVisitor nonlinear in
       ignore(visitCilFunction nonVis fd);
- 
-      (* let nonTmpVars = Hashtbl.fold (fun key _ tmpVars ->
-       *                      (Hashtbl.add tmpVars key (makeLocalVar fd ("tmpVar"^(string_of_int key.line)) (TInt (IInt, []))));
-       *                      tmpVars
-       *                    ) nonlinear (Hashtbl.create 10) in *)
-      (* let vStmts = new loopVisitor nonTmpVars in *)
-      let vStmts = new loopVisitor fd in
-      ignore(visitCilFunction vStmts fd);
-
-      
-      let vis = new vtraceVisitor ast (gvars @ fd.slocals) in
-      ignore(visitCilFunction vis fd);
-      
       Hashtbl.iter (fun x y ->
           let sExpr = stringOfExp y in
           Printf.printf "nonlinear location at line : %s, %s \n" (string_of_int x.line) sExpr;
         ) nonlinear;
-        (* Hashtbl.iter (fun _ y -> Printf.printf "tmp var name: %s\n" y.vname) nonTmpVars *)
-      
+
+      let vStmts = new stmtVisitor fd in
+      ignore(visitCilFunction vStmts fd);
+
+      let vis = new vtraceVisitor ast (gvars @ fd.slocals) in
+      ignore(visitCilFunction vis fd);
+        
     end
 
 (* let varInject (funvars : string * exp list) (f : file) : unit =

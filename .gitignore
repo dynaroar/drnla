@@ -8,6 +8,5 @@ _tags
 *.native
 myocamlbuild.ml
 setup.*
-*.c
 *.tcs
 .vscode

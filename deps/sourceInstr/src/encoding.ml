@@ -64,7 +64,7 @@ let main () =
   outFile := (src ^ ".encode.c");
   let ast = parseOneFile src in
 
-  let mainQ = "main" in
+  let mainQ = "mainQ" in
   let vtrace = "vtrace" in
   let vassume = "vassume" in
 

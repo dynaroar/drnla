@@ -14,6 +14,10 @@ end)
 let i2s (i : instr) : stmt = mkStmt(Instr [i])
 let var (v: varinfo): lval = (Var v, NoOffset)
 let v2e (v : varinfo) : exp = Lval(var v)
+let e2v (e: exp) : varinfo =
+  match e with
+  | Lval (Var vi, _) -> vi
+  | _ -> failwith "expecting a variable expression!"
  
 let (|>) (a : 'a) (f : 'a -> 'b) : 'b = f a
 
