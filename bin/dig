@@ -1,0 +1,9 @@
+#!/bin/bash 
+# create tmp folder
+DTmp=$HOME/dig-tmp/
+mkdir $DTmp
+
+# one commandline for Dig to run on source and trace files.
+DHome='/tools/dig'
+cd $DHome
+/tools/miniconda3/bin/python3 -O src/dig.py $1 -log 4 -noss --writevtraces $DTmp/vtrace.csv
