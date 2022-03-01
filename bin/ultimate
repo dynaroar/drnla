@@ -1,0 +1,9 @@
+#!/bin/bash 
+# create tmp folder
+UTmp=$HOME/ultimate-tmp/
+mkdir $UTmp
+
+# one commandline for ultimate to run on reachability check.
+UHome='/tools/ultimate/releaseScripts/default/UAutomizer-linux'
+cd $UHome
+./run-ultimate.sh -s config/svcomp-Reach-64bit-Automizer_Default.epf -tc config/AutomizerReach.xml -i $1
