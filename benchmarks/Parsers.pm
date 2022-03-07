@@ -27,9 +27,10 @@ sub find_benchmarks {
         if ($#{$bnames} > -1) {
             next unless $fn ~~ @{$bnames};
         }
-        if ($bdir =~ /nla-term/) {
-            next unless $fn =~ m/-both-t/;
-        } elsif ($bdir =~ /termination-crafted-lit/) {
+        #if ($bdir =~ /nla-term/) {
+        #    next unless $fn =~ m/-both-t/;
+        #} elsif ($bdir =~ /termination-crafted-lit/) {
+        if ($bdir =~ /termination-crafted-lit/) {
             # check to see if there is a YML file:
             my $ymlfn = "$benchdir/$fn"; $ymlfn =~ s/\.c$/\.yml/;
             #print "yamlfn: $ymlfn\n";
