@@ -48,8 +48,9 @@ my $CFG = {
         PARSE => sub { return Parsers::dynamo($_[0]); },
     },
     ultimate => {
-        DIR    => qq{$DYNAMITE_DEPS/ultimate/releaseScripts/default/UAutomizer-linux},
-        CMD    => sub { return qq($KILL timeout ${TIMEOUT}s ./Ultimate.py --file $_[0]  --spec $SPECFILE --architecture 32bit); },
+        DIR    => qq{$DYNAMITE_DEPS/ultimate/releaseScripts/default/UAutomizer-linux/},
+#        CMD    => sub { return qq($KILL timeout ${TIMEOUT}s ./Ultimate.py --file $_[0]  --spec $SPECFILE --architecture 32bit); },
+        CMD => sub { return qq(./run-ultimate.sh -s config-poly/svcomp-LTL-64bit-Automizer_Default.epf -tc config/AutomizerLTL.xml -i $_[0]); },
         FETCH  => sub { return qq(cp Ultimate.log $_[0]); },
         PARSE  => sub { return Parsers::ult($_[0]); },
     },
