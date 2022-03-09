@@ -110,6 +110,7 @@ sub toTex {
 }
 
 my $b2desc = {
+    "simple-cav2015" => "simple/cav2015",
     "cohendiv" => "int div",
         "divbin1" => "int div",
         "manna" => "int div",

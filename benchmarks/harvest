@@ -25,9 +25,9 @@ my ($bdir,$outdir) = split '/', $a3 or die $!;
 #########################################################
 
 print "*\n";
-print "* DynamiTe Benchmarking -- Harvest Results\n";
+print "* Benchmarking -- Harvest Results\n";
 print "*\n";
-print "* Paper: DynamiTe: Dynamic Termination and Non-termination Proofs\n";
+print "* Paper: Dynamite LTL\n";
 print "* Authors: (omitted for blind)\n";
 print "*\n";
 print "* Configuration:\n";

@@ -1,20 +1,26 @@
 #!/usr/bin/perl
 
 #use local::lib;
+my $USERHOME = $ENV{HOME};
+my $USERREPO = "$USERHOME/dynamiteLTL";
+my $SPECFILE_TERM = qq{$USERREPO/benchmarks/termination.prp};
+my $SPECFILE_NONTERM = qq{$USERREPO/benchmarks/nontermination.prp};
+my $SPECFILE = qq{$USERREPO/benchmarks/termination.prp};
+my $NT_SPECFILE = qq{$USERREPO/benchmarks/nontermination.prp};
 
 ###############################################################
 
-die "must set DYNAMITE_HOME\n   e.g.  export DYNAMITE_HOME=~/dynamo\n" unless $ENV{DYNAMITE_HOME};
-die "must set DYNAMITE_DEPS\n   e.g.  export DYNAMITE_DEPS=~/tools\n" unless $ENV{DYNAMITE_DEPS};
+# die "must set DYNAMITE_HOME\n   e.g.  export DYNAMITE_HOME=~/dynamo\n" unless $ENV{DYNAMITE_HOME};
+# die "must set DYNAMITE_DEPS\n   e.g.  export DYNAMITE_DEPS=~/tools\n" unless $ENV{DYNAMITE_DEPS};
 my $DYNAMITE_HOME = $ENV{DYNAMITE_HOME};
 my $DYNAMITE_DEPS = $ENV{DYNAMITE_DEPS};
-my $SPECFILE = qq{$DYNAMITE_DEPS/termination.prp};
-my $NT_SPECFILE = qq{$DYNAMITE_DEPS/nontermination.prp};
+# my $SPECFILE = qq{$DYNAMITE_DEPS/termination.prp};
+# my $NT_SPECFILE = qq{$DYNAMITE_DEPS/nontermination.prp};
 
 ###############################################################
 use strict;
 use warnings;
-use File::Temp qw/ tempfile tempdir /;
+use File::Temp qw(tempfile tempdir);
 use Time::Out qw(timeout) ;
 use Time::HiRes qw(gettimeofday tv_interval);
 
@@ -34,7 +40,7 @@ my $t0;
 my $CFG = {
     dynamo => {
         DIR => qq{$DYNAMITE_HOME/src},
-        CMD => sub { my $arg = ($SPECFILE =~ m/\/term/ ? '-t' : '-nt');
+        CMD => sub { my $arg = ($SPECFILE_TERM =~ m/\/term/ ? '-t' : '-nt');
 		     $arg = '' if $INTEGRATED == 1;
                      $t0 = [gettimeofday];
                      return qq($KILL python3 dynamo.py --timeout=$TIMEOUT $_[0] $arg 2>\&1 | tee $TMPFILE);
@@ -48,9 +54,9 @@ my $CFG = {
         PARSE => sub { return Parsers::dynamo($_[0]); },
     },
     ultimate => {
-        DIR    => qq{$DYNAMITE_DEPS/ultimate/releaseScripts/default/UAutomizer-linux/},
+        DIR    => qq{$USERREPO/bin},
 #        CMD    => sub { return qq($KILL timeout ${TIMEOUT}s ./Ultimate.py --file $_[0]  --spec $SPECFILE --architecture 32bit); },
-        CMD => sub { return qq(./run-ultimate.sh -s config-poly/svcomp-LTL-64bit-Automizer_Default.epf -tc config/AutomizerLTL.xml -i $_[0]); },
+        CMD => sub { return qq(./ultimate-ltl-nla $_[0] 2>&1 > Ultimate.log); },
         FETCH  => sub { return qq(cp Ultimate.log $_[0]); },
         PARSE  => sub { return Parsers::ult($_[0]); },
     },
@@ -62,7 +68,7 @@ my $CFG = {
     },
     seahorn => {
         DIR    => qq{$DYNAMITE_DEPS/seahorn/build/run/bin},
-        CMD    => sub { return qq($DYNAMITE_DEPS/seahorn/build/run/bin/sea_svcomp --cpu=10 --cex=error-witness.graphml -m64 --spec=$SPECFILE $_[0] > /tmp/seahorn.log); },
+        CMD    => sub { return qq($DYNAMITE_DEPS/seahorn/build/run/bin/sea_svcomp --cpu=10 --cex=error-witness.graphml -m64 --spec=$SPECFILE_TERM $_[0] > /tmp/seahorn.log); },
         FETCH  => sub { return qq(mv /tmp/seahorn.log $_[0]); },
         PARSE  => sub { return Parsers::seahorn($_[0]); }
     }
