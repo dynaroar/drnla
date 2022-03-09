@@ -1,3 +1,25 @@
 #!/bin/bash 
 
-echo "todo - need to use Ultimate LTL not Automizer"
+# Location of this script
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+# Location of the C input file
+CFILE=$(readlink -f "$1")
+CFILEPATH=$(dirname "$SCRIPT")
+
+# Temporary folder in user's home
+UTmp=$HOME/ultimate-tmp/
+mkdir -p $UTmp
+
+# one commandline for ultimate to run on reachability check.
+UHome='/tools/UAutomizer-linux'
+cd $UHome
+
+java \
+-Dosgi.configuration.area=$SCRIPTPATH/config/ \
+-Xmx10G -Xss4m \
+-jar plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar \
+-data $UTmp/data \
+-s $SCRIPTPATH/config/NLA-svcomp-LTL-64bit-Automizer_Default.epf \
+-tc $SCRIPTPATH/config/AutomizerLTL.xml -i $CFILE
