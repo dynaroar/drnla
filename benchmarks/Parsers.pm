@@ -22,8 +22,9 @@ sub find_benchmarks {
         my $fn = $_;
         next unless $fn =~ m/\.c$/; 
         next if $fn =~ /~$/;
-        $b2expect{$fn} = 'true'  if $fn =~ /-t\.c/;
-        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
+        $b2expect{$fn} = 'true' if $fn =~ /^safe-/;
+#        $b2expect{$fn} = 'true'  if $fn =~ /-t\.c/;
+#        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
         if ($#{$bnames} > -1) {
             next unless $fn ~~ @{$bnames};
         }
