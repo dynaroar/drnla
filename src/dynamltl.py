@@ -70,8 +70,8 @@ if __name__ == "__main__":
     config = analysis.Setup(inp)
     def prove():
         ou = analysis.OUAnalysis(config)
-        ou.run()            
-
+        result, nla_ou = ou.run()            
+        mlog.info(f'OU analysis result: \n {result}\n nla mapping:\n {nla_ou}')
     prove_process = multiprocessing.Process(target=prove)
     prove_process.start()
     mlog.debug('prove_process: {}'.format(prove_process.pid))
