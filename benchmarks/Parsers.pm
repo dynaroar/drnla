@@ -22,14 +22,16 @@ sub find_benchmarks {
         my $fn = $_;
         next unless $fn =~ m/\.c$/; 
         next if $fn =~ /~$/;
-        $b2expect{$fn} = 'true'  if $fn =~ /-t\.c/;
-        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
+        $b2expect{$fn} = 'true' if $fn =~ /^safe-/;
+#        $b2expect{$fn} = 'true'  if $fn =~ /-t\.c/;
+#        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
         if ($#{$bnames} > -1) {
             next unless $fn ~~ @{$bnames};
         }
-        if ($bdir =~ /nla-term/) {
-            next unless $fn =~ m/-both-t/;
-        } elsif ($bdir =~ /termination-crafted-lit/) {
+        #if ($bdir =~ /nla-term/) {
+        #    next unless $fn =~ m/-both-t/;
+        #} elsif ($bdir =~ /termination-crafted-lit/) {
+        if ($bdir =~ /termination-crafted-lit/) {
             # check to see if there is a YML file:
             my $ymlfn = "$benchdir/$fn"; $ymlfn =~ s/\.c$/\.yml/;
             #print "yamlfn: $ymlfn\n";
@@ -109,6 +111,7 @@ sub toTex {
 }
 
 my $b2desc = {
+    "simple-cav2015" => "simple/cav2015",
     "cohendiv" => "int div",
         "divbin1" => "int div",
         "manna" => "int div",
