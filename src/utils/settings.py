@@ -46,7 +46,7 @@ class Dynamic:
 # -jar $ultimatePath/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar \
 # -data config/data \
 class Static:
-    java_ultimate = f'java --Dosgi.configuration.area=config -Xmx10G -Xss4m -jar $UltimateHome/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
+    java_ultimate = f'java -Dosgi.configuration.area=config -Xmx10G -Xss4m -jar {UltimateHome}/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
     ultimate_bash = UltimateHome / 'run-ultimate.sh'
     reach_toolchain = UltimateHome / 'config/AutomizerReach.xml'
     reach_setting = UltimateHome / 'config/svcomp-Reach-64bit-Automizer_Default.epf'
