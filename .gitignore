@@ -1,5 +1,6 @@
 !*.*
 Makefile
+deps
 configure
 _build
 _tags

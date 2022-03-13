@@ -33,20 +33,18 @@ class CTransform(object):
     def dtrans(self, nla_ou):
         dtrans_cmd = settings.Cil.dtrans(self.source)
         mlog.info(f'------run CIL instrument for dynamic analysis:------')
-        # common.runCmd(dtrans_cmd)
-        cp = subprocess.run(shlex.split(dtrans_cmd), capture_output=True, text=True)
-        nla_info = cp.stdout.splitlines()[1]
+        outp = common.runCmd(dtrans_cmd)
+        nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')
         nla_ou[nla[0].strip()]=(nla[1].strip(), '', '')
         
-        print(f'------nla expression output:\n {nla_ou}')
+        mlog.info(f'------nla expression output:\n {nla_ou}')
   
     def strans(self, invars):
         strans_cmd = settings.Cil.strans(self.source, invars)
         mlog.info(f'------run CIL instrument for static analysis:------')
-        subprocess.run(shlex.split(strans_cmd), capture_output=True)
- 
-        
+        common.runCmd(strans_cmd)
+  
 class DynamicAnalysis(object):
     def __init__(self, config):
         self.source = config.src_instr
@@ -56,12 +54,12 @@ class DynamicAnalysis(object):
     def runTrace(self):
         vtrace_cmd = settings.Dynamic.vtrace_run(self.vtrace_processed, self.invarsf)
         mlog.info(f'------run DIG dynamic on vtrace file:------')
-        subprocess.run(shlex.split(vtrace_cmd), capture_output=True)
+        common.runCmd(vtrace_cmd)
     def runSource(self):
         source_cmd = settings.Dynamic.source_run(self.source, self.invarsf, self.vtracef)
         mlog.info(f'------run DIG dynamic with source file:-------')
-        subprocess.run(shlex.split(source_cmd), capture_output=True)
-
+        common.runCmd(source_cmd)
+  
 class StaticResult(Enum):
     UNSOUND = 1
     CORRECT = 2
@@ -74,8 +72,8 @@ class StaticAnalysis(object):
     def run(self, result):
         static_cmd = settings.Static.run(self.source)
         mlog.info(f'------run Ultimate static analysis:------')
-        cp = subprocess.run(shlex.split(static_cmd), capture_output=True, text=True)
-        results = cp.stdout.splitlines()
+        outp=common.runCmd(static_cmd)
+        results = outp.splitlines()
         for line in results:
             if "RESULT:" in line:
                 result = line

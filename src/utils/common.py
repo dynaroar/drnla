@@ -28,10 +28,13 @@ def getLogLevel(level):
 
 
 def runCmd(cmd):
-    subprocess.run(shlex.split(cmd), capture_output=True, check=True, text=True)
-
-    # subprocess.run(shlex.split(cmd), check=True, text=True, shell=True)
+    try:
+        result = subprocess.run(shlex.split(cmd), check=True, capture_output=True, text=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f'command run failed:\n{e.stderr}')
     
+     
 def gettcs(prog, iter):
     """run .
     Args:

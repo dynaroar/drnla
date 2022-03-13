@@ -68,6 +68,7 @@ if __name__ == "__main__":
 
     # main(args.inp, args.n, args.vs)
     config = analysis.Setup(inp)
+
     def prove():
         ou = analysis.OUAnalysis(config)
         result, nla_ou = ou.run()            
