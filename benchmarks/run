@@ -30,7 +30,7 @@ sub specfile {
 }
 ###############################################################
 use lib '.';
-use Parsers qw{ult dynamo};
+use Parsers qw{ult ultreach dynamo};
 
 my $t0;
 my $CFG = {
@@ -55,6 +55,13 @@ my $CFG = {
         CMD => sub { return qq(./ultimate-ltl-nla $_[0] 2>&1 > Ultimate.log); },
         FETCH  => sub { return qq(cp Ultimate.log $_[0]); },
         PARSE  => sub { return Parsers::ult($_[0]); },
+    },
+    ultimatereach => {
+        DIR    => qq{$USERREPO/bin},
+#        CMD    => sub { return qq($KILL timeout ${TIMEOUT}s ./Ultimate.py --file $_[0]  --spec $SPECFILE --architecture 32bit); },
+        CMD => sub { return qq(./ultimate-reach-lin $_[0] 2>&1 > Ultimate.log); },
+        FETCH  => sub { return qq(cp Ultimate.log $_[0]); },
+        PARSE  => sub { return Parsers::ultreach($_[0]); },
     },
     aprove => {
         DIR    => qq{$TOOLSDIR/aprove},

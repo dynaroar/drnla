@@ -8,7 +8,7 @@ use Statistics::Basic;
 
 #use File::Temp qw/ tempfile tempdir /;
 
-our @EXPORT_OK = qw{ult find_benchmarks parse seahorn aprove expected};
+our @EXPORT_OK = qw{ult ultreach find_benchmarks parse seahorn aprove expected};
 
 sub find_benchmarks {
     my ($bdir,$bnames) = @_;
@@ -31,6 +31,9 @@ sub find_benchmarks {
         #if ($bdir =~ /nla-term/) {
         #    next unless $fn =~ m/-both-t/;
         #} elsif ($bdir =~ /termination-crafted-lit/) {
+        if($bdir =~ /reachability/) {
+            $b2expect{$fn} = 'safe';
+        }
         if ($bdir =~ /termination-crafted-lit/) {
             # check to see if there is a YML file:
             my $ymlfn = "$benchdir/$fn"; $ymlfn =~ s/\.c$/\.yml/;
@@ -275,11 +278,15 @@ sub dynDetail {
     #prove: 27.762s
 }
 
+sub ultreach { return ult(@_); }
 sub ult {
     my ($logfn) = @_;
     open(F,"$logfn") or warn "file $logfn - $!";
     my ($time,$result) = (-1,'UNK');
     while (<F>) {
+        if (/RESULT: Ultimate could not prove your program: unable to determine feasibility of some traces/) {
+            $result = 'UNK';
+        }
         if (/TerminationAnalysisResult: Unable to decide termination/) {
             #$result = '"Unable to decide termination"';
             $result = 'UNK';

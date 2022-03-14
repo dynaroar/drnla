@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use lib '.';
-my @tools = qw/ultimate/; #dynamo ultimate aprove seahorn/;
+my @tools = qw/ultimatereach/; #dynamo ultimate aprove seahorn/;
 use Parsers qw{parse find_benchmarks};
 
 ################### Arguments
@@ -69,7 +69,10 @@ foreach my $tool (@tools) {
 #
 # Generate LaTeX
 #
-print "\n% RESULTS:\nBenchmark & Ult Res & Ult Time \\\\\n\\hline\n";
+print "\n% RESULTS:\nBenchmark & ".
+   join(" & ", map("$_ Res & $_ Time",@tools))."\\\\\n\\hline\n";
 foreach my $b (keys %$compare) {
-    print "$b & $compare->{$b}->{ultimate}->{result} & $compare->{$b}->{ultimate}->{time}\\\\\n";
+  foreach my $tool (@tools) {
+    print "$b & $compare->{$b}->{$tool}->{result} & $compare->{$b}->{$tool}->{time}\\\\\n";
+  }
 }
