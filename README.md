@@ -10,6 +10,7 @@ sudo cpan -i YAML::Tiny
 #### Instrumentation
 
 ```
+opam init
 opam switch create 4.05.0
 opam install dune cil num csv ocamlbuild ocamlfind menhir
 cd deps/dyn_instr
@@ -36,6 +37,7 @@ export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
 
 
 ```
+  $ cd src/
   $ dynamltl.py --inp <filename> 
 ```
 

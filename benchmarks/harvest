@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use lib '.';
-my @tools = qw/ultimatereach/; #dynamo ultimate aprove seahorn/;
+my @tools = qw/ultimatereach dynamltl/; #dynamo ultimate aprove seahorn/;
 use Parsers qw{parse find_benchmarks};
 
 ################### Arguments

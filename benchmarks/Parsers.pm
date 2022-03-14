@@ -8,7 +8,7 @@ use Statistics::Basic;
 
 #use File::Temp qw/ tempfile tempdir /;
 
-our @EXPORT_OK = qw{ult ultreach find_benchmarks parse seahorn aprove expected};
+our @EXPORT_OK = qw{ult ultreach dynamltl find_benchmarks parse seahorn aprove expected};
 
 sub find_benchmarks {
     my ($bdir,$bnames) = @_;
@@ -88,6 +88,17 @@ sub seahorn {
     return { time => tm2str($time), result => $result };
 }
 
+sub dynamltl {
+    my ($logfn) = @_;
+    open(F,"$logfn") or warn "file $logfn - $!";
+    my ($time,$result) = (-1,'\rUNK');
+    while (<F>) {
+#        $result = '\rTRUE' if /Termination result: True/;
+        $time   = $1 if /HARD TIMER: (\d+\.\d+)$/;
+    }
+    close F;
+    return { time => tm2str($time), result => $result };
+}
 sub dynamo {
     my ($logfn) = @_;
     open(F,"$logfn") or warn "file $logfn - $!";

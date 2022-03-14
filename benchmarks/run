@@ -30,7 +30,7 @@ sub specfile {
 }
 ###############################################################
 use lib '.';
-use Parsers qw{ult ultreach dynamo};
+use Parsers qw{ult ultreach dynamo dynamltl};
 
 my $t0;
 my $CFG = {
@@ -49,6 +49,12 @@ my $CFG = {
 	# 	       return qq(cp $TMPFILE $_[0]); },
     #     PARSE => sub { return Parsers::dynamo($_[0]); },
     # },
+    dynamltl => {
+        DIR    => qq{$USERREPO/src},
+        CMD => sub { return qq(./dynamltl.py --inp  $_[0] 2>&1 > dynamltl.log); },
+        FETCH  => sub { return qq(cp dynamltl.log $_[0]); },
+        PARSE  => sub { return Parsers::dynamltl($_[0]); },
+    },
     ultimate => {
         DIR    => qq{$USERREPO/bin},
 #        CMD    => sub { return qq($KILL timeout ${TIMEOUT}s ./Ultimate.py --file $_[0]  --spec $SPECFILE --architecture 32bit); },
