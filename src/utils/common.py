@@ -91,7 +91,7 @@ def processInvars(file_invs, file_processed, nla_ou):
             ifOu = '&&'.join(invars)
             nla_ou[loc] = (nla, ifOu, elseOu)
         if 'vtrace_else_' in traceVars[0]:
-            loc = traceVars[0][-1]
+            loc = re.findall(r'\d+', traceVars[0])[0]
             (nla, ifOu, elseOu) = nla_ou[loc]
             elseOu = '&&'.join(invars)
             nla_ou[loc] = (nla, ifOu, elseOu)
@@ -101,7 +101,17 @@ def processInvars(file_invs, file_processed, nla_ou):
 
 def processTrace(fileTrace):
     pass
-  
+
+
+def clean():
+    cwd = os.path.dirname(__file__)
+    items = os.listdir(cwd)
+    for item in items:
+        if item.endswith(".i") or item.endswith(".o"):
+            os.remove(os.path.join(cwd, item))
+
+
+            
 if __name__ == "__main__":
     aparser = argparse.ArgumentParser("Run c program to collect traces.")
     ag = aparser.add_argument
