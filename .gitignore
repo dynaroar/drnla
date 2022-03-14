@@ -1,6 +1,4 @@
-*
-!*.*
-Makefile
+**/\.*
 configure
 _build
 _tags
