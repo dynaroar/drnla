@@ -28,10 +28,13 @@ def getLogLevel(level):
 
 
 def runCmd(cmd):
-    subprocess.run(shlex.split(cmd), capture_output=True, check=True, text=True)
-
-    # subprocess.run(shlex.split(cmd), check=True, text=True, shell=True)
+    try:
+        result = subprocess.run(shlex.split(cmd), check=True, capture_output=True, text=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f'command run failed:\n{e.stderr}')
     
+     
 def gettcs(prog, iter):
     """run .
     Args:
@@ -64,7 +67,7 @@ def gettcs(prog, iter):
 
  
 
-def processInvars(file_invs, file_processed):
+def processInvars(file_invs, file_processed, nla_ou):
     fr = open(file_invs, "r")
     # x = fileInvs.split(".")
     # outInvs = x[0]+"_refine.inv"
@@ -82,6 +85,16 @@ def processInvars(file_invs, file_processed):
             if inv[-1] == "1":
                 invars.append(inv[:-1])
         # print(';'.join(invars))
+        if 'vtrace_if_' in traceVars[0]:
+            loc = traceVars[0][-1]
+            (nla, ifOu, elseOu) = nla_ou[loc]
+            ifOu = '&&'.join(invars)
+            nla_ou[loc] = (nla, ifOu, elseOu)
+        if 'vtrace_else_' in traceVars[0]:
+            loc = traceVars[0][-1]
+            (nla, ifOu, elseOu) = nla_ou[loc]
+            elseOu = '&&'.join(invars)
+            nla_ou[loc] = (nla, ifOu, elseOu)
         fw.writelines(traceVars[0]+';'+'&&'.join(invars)+'\n')
     fw.close            
     print (invsList)

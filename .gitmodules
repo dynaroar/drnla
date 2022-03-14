@@ -1,0 +1,3 @@
+[submodule "deps/dyn_instr"]
+	path = deps/dyn_instr
+	url = git@github.com:dynaroar/dyn_instr.git
