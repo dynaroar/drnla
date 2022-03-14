@@ -27,8 +27,8 @@ dune build src/instr.exe
 If you would like to install dependencies as your prefernce, setup environment veriables:
 
 ```
-export CONDA_HOME="/path/to/miniconda"
-export DIG_HOME="/path/to/dig"
+export CONDA_HOME="/tools/miniconda3/bin/python3"
+export DIG_HOME="/tools/dig/src/dig.py"
 export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
 
 ```

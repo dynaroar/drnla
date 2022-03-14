@@ -351,7 +351,10 @@ sub averageTimeResult {
 sub parse {
     my ($tool,$logfn,$iters) = @_;
     return averageTimeResult(map { dynamo($logfn.".".$_) } (1..$iters)) if $tool eq 'dynamo';
-    return ult($logfn); # for now, we don't iterate on ultimate
+    return dynamltl($logfn) if $tool eq 'dynamltl';
+    return ult($logfn) if $tool eq 'ultimate';
+    return ultreach($logfn) if $tool eq 'ultimatereach';
+    # for now, we don't iterate on ultimate
     #return aprove($logfn)  if $tool eq 'aprove';
     #return seahorn($logfn) if $tool eq 'seahorn';
     die "parse: unknown tool: $tool\n";

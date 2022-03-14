@@ -5,6 +5,9 @@ my $USERHOME = $ENV{HOME};
 my $USERREPO = "$USERHOME/dynamiteLTL";
 my $TOOLSDIR = '/tools';
 
+$ENV{"CONDA_HOME"} = "/tools/miniconda3/bin/python3";
+$ENV{"DIG_HOME"} ="/tools/dig/src/dig.py";
+
 ###############################################################
 use strict;
 use warnings;
@@ -167,11 +170,13 @@ if ($arg1 eq 'run') {
             }
         }
     }
-    print "*\n* you may now harvest the results:\n ./harvest --iters=1 nocsvs $bdir/$outdir\n*\n";
+    my $ts = join ',', @tools;
+    my $hcmd = qq(./harvest --iters=1 --tools=$ts nocsvs $bdir/$outdir);
+    print "*\n* you may now harvest the results:\n $hcmd\n*\n";
     print "Timedout:  \n".join("\n   ",@timedout)."\n" if $#timedout >= 0;
     if ($HARVEST == 1 ){
         chdir "$USERREPO/benchmarks";
-        print qx(./harvest --iters=1 nocsvs $bdir/$outdir);
+        print qx($hcmd);
     }
 }
 
