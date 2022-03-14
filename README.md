@@ -7,15 +7,35 @@ sudo cpan -i YAML::Tiny
 
 ### Installation
 
+#### Instrumentation
+
+```
+opam switch create 4.05.0
+opam install dune cil num csv ocamlbuild ocamlfind menhir
+cd deps/dyn_instr
+dune build src/instr.exe
+```
+
+#### Install dynamic and static analysis tools
+
  * Install Ultimate to `/tools/ultimate`
- * Install DIG to `/tools/dig`
+ * Install DIG to `/tools/dig`, refer to [dockfile](https://github.com/dynaroars/dig/blob/4ee9b94ed1117db312cb5eeb305c710809e0a7f8/Dockerfile)  
  * copy `scripts/*` to `/usr/local/bin` (or somewhere in your PATH)
+
+If you would like to install dependencies as your prefernce, setup environment veriables:
+
+```
+export CONDA_HOME="/path/to/miniconda"
+export DIG_HOME="/path/to/dig"
+export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
+
+```
 
 ### Usage
 
 
 ```
-  $ dynamltl.py <filename> 
+  $ dynamltl.py --inp <filename> 
 ```
 
 ### Benchmarks

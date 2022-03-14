@@ -20,24 +20,7 @@ from utils import settings, common
 
 # A main driver to run the sub-components.
 
-dynamltl_path = os.path.realpath(os.path.dirname(__file__))
-dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
-instr_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/sourceInstr/'))
-
-sys.path.insert(0, dig_path)
-sys.path.insert(0, instr_path)
-
-
     
-# def main (program, iter_num, predicate, value):
-# def main (program, iter_num, invs):
-#     #run the program with random number to generate traces
-#     # init_prog(program)
-#     # traces = gettcs(program, iter_num)
-#     invars = parse_results(invs)
-#     print("parse all invariants into a list:")
-#     print('\n'.join(map(str, invars)))
-  
 if __name__ == "__main__":
     aparser = argparse.ArgumentParser(description='Dynamltl', prog='dynamltl')
     ag = aparser.add_argument
@@ -79,24 +62,17 @@ if __name__ == "__main__":
     inp = os.path.realpath(os.path.expanduser(args.inp))
 
     mlog = common.getLogger(__name__, settings.logger_level)
-    mlog.info(f'DynamLTL log level: {settings.logger_level}')
-    mlog.info(f'Timeout: {settings.timeout}s')
+    mlog.info(f'DynamLTL log level: {settings.LoggerLevel}')
+    mlog.info(f'Timeout: {settings.TimeOut}s')
     mlog.info(f'{datetime.datetime.now()}, {sys.argv}')
 
     # main(args.inp, args.n, args.vs)
     config = analysis.Setup(inp)
-    def prove():
-        if settings.gen_tcs:
-            trace = analysis.GENTRACE(config)
-            trace.gen()
-        cil_intr = analysis.CINSTR(config)
-        cil_intr.transform()
-        dynamic = analysis.DIG(config)
-        dynamic.run()
-        ultimate = analysis.ULTIMATE(config)
-        ultimate.run()
-             
 
+    def prove():
+        ou = analysis.OUAnalysis(config)
+        result, nla_ou = ou.run()            
+        mlog.info(f'OU analysis result: \n {result}\n nla mapping:\n {nla_ou}')
     prove_process = multiprocessing.Process(target=prove)
     prove_process.start()
     mlog.debug('prove_process: {}'.format(prove_process.pid))
