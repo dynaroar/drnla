@@ -33,7 +33,9 @@ class CTransform(object):
     def dtrans(self, nla_ou):
         dtrans_cmd = settings.Cil.dtrans(self.source)
         mlog.info(f'------run CIL instrument for dynamic analysis:------')
+        print(dtrans_cmd)
         outp = common.runCmd(dtrans_cmd)
+        print(outp)
         nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')
         nla_ou[nla[0].strip()]=(nla[1].strip(), '', '')
@@ -72,13 +74,26 @@ class StaticAnalysis(object):
     def run(self, result):
         static_cmd = settings.Static.run(self.source)
         mlog.info(f'------run Ultimate static analysis:------')
-        outp=common.runCmd(static_cmd)
-        results = outp.splitlines()
-        for line in results:
+        outp = common.runCmd(static_cmd)
+        result_str = ""
+        for line in outp.splitlines():
             if "RESULT:" in line:
-                result = line
+                result_str = line
                 mlog.info(f'------static analysis result (counterexample process):-------\n {line}')
-        return result
+        if "incorrect" in result_str:
+            cex = common.getCex(outp.splitlines())
+            print(f'counterexample: \n {cex}') 
+            result = StaticResult.INCORRECT
+            return result, cex
+        elif "correct" in result_str:
+            result = StaticResult.CORRECT
+            return result, []
+        else:
+            cex = common.getCex(outp.splitlines())
+            print(f'unable to prove counterexample: \n {cex}') 
+            result = StaticResult.UNKNOWN
+            return result, []
+ 
     
 class OUAnalysis(object):
     def __init__(self, config):
@@ -98,7 +113,7 @@ class OUAnalysis(object):
         common.processInvars(self.config.invarsf, self.config.invars_processed, nla_ou)
         cil_instr.strans(self.config.invars_processed)
         static = StaticAnalysis(self.config)
-        static.run(result)
+        result, cex = static.run(result)
         return result  
      
     def run(self):        
@@ -106,5 +121,5 @@ class OUAnalysis(object):
         while iter <= settings.RefineBound and self.result == StaticResult.UNSOUND:
             self.result = self.refine(iter, self.result, self.nla_ou)
             iter += 1
-        return self.result, self.nla_ou
+        # return self.result, self.nla_ou
     

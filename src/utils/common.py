@@ -66,7 +66,6 @@ def gettcs(prog, iter):
     print("trace generated!")
 
  
-
 def processInvars(file_invs, file_processed, nla_ou):
     fr = open(file_invs, "r")
     # x = fileInvs.split(".")
@@ -98,6 +97,13 @@ def processInvars(file_invs, file_processed, nla_ou):
         fw.writelines(traceVars[0]+';'+'&&'.join(invars)+'\n')
     fw.close            
     print (invsList)
+
+def getCex(outp):
+    cex=[]
+    for line in outp:
+        if re.search('^\[L\d+\]', line):
+            cex.append(line)
+    return cex
 
 def processTrace(fileTrace):
     pass
