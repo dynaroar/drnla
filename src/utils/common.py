@@ -98,12 +98,6 @@ def processInvars(file_invs, file_processed, nla_ou):
     fw.close            
     print (invsList)
 
-def getCex(outp):
-    cex=[]
-    for line in outp:
-        if re.search('^\[L\d+\]', line):
-            cex.append(line)
-    return cex
 
 def processTrace(fileTrace):
     pass
