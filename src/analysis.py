@@ -1,5 +1,5 @@
 import tempfile
-import os, re
+import os, re, ast
 import subprocess, shlex
 from enum import Enum
 from pathlib import Path
@@ -77,23 +77,38 @@ class StaticAnalysis(object):
     def __init__(self, config):
         self.source = config.src_validate
 
+    def replaceStr(self, mystr):
+        return mystr.replace("&&", "and").replace("||", "or").replace("!", "not").replace("^", "**").strip()
+            
     def getCex(self, outp):
-        cex=[]
+        cex = {}
+        vdefs = []
+        path = []
+        error = []
         for i in range(len(outp)):
             line=outp[i]
-            model_line = re.search(r'\[L(\d+)\].*COND\s(\w+)\s+(.*)', line)
-            model_error = re.search('^\[L(\d+)\].*reach_error\(\)$', line)
-            if model_line:
+            model_vdef = re.search(r'\[L(\d+)\].*int\s(\w+)\s', line)
+            model_path = re.search(r'\[L(\d+)\].*COND\s(\w+)\s+(.*)', line)
+            model_error = re.search('\[L(\d+)\].*reach_error', line)
+
+            if model_vdef:
                 line_info={}
-                location, condition, expression = model_line.groups()
-                mlog.info(f'loc:{location}, cond:{condition}, expr:{expression}')
+                location, vdef = model_vdef.groups()
+                mlog.debug(f'-----loc:{location}, variable:{vdef}\n')
+                line_info['loc'] = location
+                line_info['vdef'] = vdef
+                vdefs.append(line_info)
+            if model_path:
+                line_info={}
+                location, condition, expression = model_path.groups()
+                mlog.debug(f'------loc:{location}, cond:{condition}, expr:{expression}')
                 line_info['loc'] = location
                 line_info['cond'] = condition
-                line_info['exp'] = expression
+                line_info['exp'] = self.replaceStr(expression)
                 mregex = r'(\w+)=(-?\d+)'
                 model_val = re.findall(mregex, outp[i+1])
                 line_info['val'] = model_val
-                cex.append(line_info)
+                path.append(line_info)
             if model_error:
                 line_err={}
                 location = model_error.groups()
@@ -102,7 +117,10 @@ class StaticAnalysis(object):
                 mregex = r'(\w+)=(-?\d+)'
                 model_val = re.findall(mregex, outp[i+1])
                 line_err['val'] = model_val
-                cex.append(line_err)
+                error.append(line_err)
+        cex['vdefs'] = vdefs
+        cex['path'] = path
+        cex['error'] = error
         return cex
 
     def runStatic(self, result):
@@ -113,11 +131,9 @@ class StaticAnalysis(object):
         for line in outp.splitlines():
             if "RESULT:" in line:
                 result_str = line
-                mlog.info(f'------static analysis result (counterexample process):-------\n {line}')
         if "incorrect" in result_str:
             mlog.info(f'{outp}')
             cex = self.getCex(outp.splitlines())
-            print(f'counterexample: \n {cex}') 
             result = StaticResult.INCORRECT
             return result, cex
         elif "correct" in result_str:
@@ -126,7 +142,7 @@ class StaticAnalysis(object):
         else:
             mlog.info(f'{outp}')
             cex = self.getCex(outp.splitlines())
-            print(f'unable to prove counterexample: \n {cex}') 
+            mlog.debug(f'unable to prove counterexample: \n {cex}') 
             result = StaticResult.UNKNOWN
             return result, []
  
@@ -137,11 +153,23 @@ class OUAnalysis(object):
         self.config = config
         self.nla_ou = {}
 
-    def dyGen(self, cex):
+    def astPath(self, cex):
+        cond_list = cex['path']
+        ou_path=[]
+        for cond_line in cond_list:
+            if cond_line['cond'] == 'TRUE':
+                expr_node = ast.parse(cond_line['exp'])
+                mlog.debug(f'------cex path program ast:\n {ast.dump(expr_node, annotate_fields=False)}')
+                ou_path.append(expr_node)
+        return ou_path
+
+    def dynGen(self, cex):
+        true_path = self.astPath(cex)
+        mlog.debug(f'------condition true ast path from cex:\n{true_path}\n-----generate more model------\n')
         pass
-        
+         
     def refine(self, iter, result, nla_ou):
-        print(f"-------Refinement iteration {iter}------\n")
+        mlog.info(f"-------Refinement iteration {iter}------\n")
         cil_instr = CTransform(self.config)
         dynamic = DynamicAnalysis(self.config)
         if iter == 1:
@@ -154,6 +182,9 @@ class OUAnalysis(object):
         static = StaticAnalysis(self.config)
         sresult, cex = static.runStatic(result)
         if sresult == StaticResult.INCORRECT:
+            mlog.debug(f'------counterexample from static analysis: \n {cex}\n')
+            
+            self.dynGen(cex)
             return Result.UNSOUND
         elif sresult == StaticResult.CORRECT:
             return Result.SOUND
