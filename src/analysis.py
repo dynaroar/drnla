@@ -84,7 +84,7 @@ class StaticAnalysis(object):
         cex = {}
         vdefs = []
         path = []
-        error = []
+        error = {}
         for i in range(len(outp)):
             line=outp[i]
             model_vdef = re.search(r'\[L(\d+)\].*int\s(\w+)\s', line)
@@ -110,14 +110,12 @@ class StaticAnalysis(object):
                 line_info['val'] = model_val
                 path.append(line_info)
             if model_error:
-                line_err={}
                 location = model_error.groups()
-                line_err['loc'] = location
-                line_err['exp'] = 'reach_error()' 
+                error['loc'] = location
+                error['exp'] = 'reach_error()' 
                 mregex = r'(\w+)=(-?\d+)'
                 model_val = re.findall(mregex, outp[i+1])
-                line_err['val'] = model_val
-                error.append(line_err)
+                error['val'] = model_val
         cex['vdefs'] = vdefs
         cex['path'] = path
         cex['error'] = error
@@ -152,7 +150,24 @@ class OUAnalysis(object):
         self.result = Result.UNSOUND
         self.config = config
         self.nla_ou = {}
+        self.if_small = 'if_too_small'
+        self.if_big = 'if_too_big'
+        self.else_small = 'else_too_small'
+        self.else_big = 'else_too_big'
 
+    def getReach(self, error_vals):
+        error_case = ''
+        for (var, value) in error_vals:
+            if (self.if_small in var) and value == '1':
+                error_case = self.if_small
+            elif (self.if_big in var) and value == '1':
+                error_case = self.if_big           
+            elif (self.else_small in var) and value == '1':
+                error_case = self.else_small
+            elif (self.else_big in var) and value == '1':
+               error_case = self.else_big             
+        return error_case
+    
     def astPath(self, cex):
         cond_list = cex['path']
         ou_path=[]
@@ -165,6 +180,10 @@ class OUAnalysis(object):
 
     def dynGen(self, cex):
         true_path = self.astPath(cex)
+        if true_path:
+            pass
+        else:
+            mlog.error(f'cannot generate more trace for empty error path')
         mlog.debug(f'------condition true ast path from cex:\n{true_path}\n-----generate more model------\n')
         pass
          
@@ -183,7 +202,17 @@ class OUAnalysis(object):
         sresult, cex = static.runStatic(result)
         if sresult == StaticResult.INCORRECT:
             mlog.debug(f'------counterexample from static analysis: \n {cex}\n')
-            
+            error_state = cex['error']
+            error_vals = error_state['val']
+            error_case = self.getReach(error_vals)
+            if error_case == self.else_big:
+                mlog.debug(f'----strengthen C2 on iteration {iter}------\n')
+            if error_case == self.if_small:
+                mlog.debug(f'----widen C1 on iteration {iter}------\n')
+            if error_case == self.if_big:
+                mlog.debug(f'----strengthen C1 on iteration {iter}------\n')
+            if error_case == self.else_small:
+                mlog.debug(f'----widen C2 on iteration {iter}------\n')            
             self.dynGen(cex)
             return Result.UNSOUND
         elif sresult == StaticResult.CORRECT:

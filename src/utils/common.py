@@ -68,9 +68,6 @@ def gettcs(prog, iter):
  
 def processInvars(file_invs, file_processed, nla_ou):
     fr = open(file_invs, "r")
-    # x = fileInvs.split(".")
-    # outInvs = x[0]+"_refine.inv"
-    # print(outInvs)
     invsList = []
     for line in fr:
         itermList = re.split(";", line.rstrip('\n'))
@@ -78,12 +75,9 @@ def processInvars(file_invs, file_processed, nla_ou):
     fw = open(file_processed, 'w')
     for traceVars in invsList:
         invars = []
-        # invars.append(traceVars[0])
         for inv in traceVars[1:]:
-            # print(inv[-1])
             if inv[-1] == "1":
                 invars.append(inv[:-1])
-        # print(';'.join(invars))
         if 'vtrace_if_' in traceVars[0]:
             loc = traceVars[0][-1]
             (nla, ifOu, elseOu) = nla_ou[loc]
