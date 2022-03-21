@@ -66,34 +66,43 @@ def gettcs(prog, iter):
     print("trace generated!")
 
  
-def processInvars(file_invs, file_processed, nla_ou):
+def processInvars(file_invs):
     fr = open(file_invs, "r")
-    invsList = []
+    invs_list = []
     for line in fr:
-        itermList = re.split(";", line.rstrip('\n'))
-        invsList.append(itermList)
-    fw = open(file_processed, 'w')
-    for traceVars in invsList:
-        invars = []
-        for inv in traceVars[1:]:
+        invars=[]
+        iterms = re.split(";", line.rstrip('\n'))        
+        for inv in iterms[1:]:
             if inv[-1] == "1":
-                invars.append(inv[:-1])
-        if 'vtrace_if_' in traceVars[0]:
-            loc = traceVars[0][-1]
-            (nla, ifOu, elseOu) = nla_ou[loc]
-            ifOu = '&&'.join(invars)
-            nla_ou[loc] = (nla, ifOu, elseOu)
-        if 'vtrace_else_' in traceVars[0]:
-            loc = re.findall(r'\d+', traceVars[0])[0]
-            (nla, ifOu, elseOu) = nla_ou[loc]
-            elseOu = '&&'.join(invars)
-            nla_ou[loc] = (nla, ifOu, elseOu)
-        fw.writelines(traceVars[0]+';'+'&&'.join(invars)+'\n')
+                invars.append(inv[:-1].strip())
+        invs_list.append((iterms[0].strip(),invars))
+    return invs_list
+
+def initInvars(file_processed, invs_list, nla_ou):
+    fw = open(file_processed, 'w')
+    for loc_str, invars in invs_list:
+        if 'vtrace_if_' in loc_str:
+            loc_if = re.findall(r'\d+', loc_str)[0]
+            (nla, if_ou, else_ou) = nla_ou[loc_if]
+            if_ou = invars
+            nla_ou[loc_if] = (nla, if_ou, else_ou)
+        if 'vtrace_else_' in loc_str:
+            loc_else = re.findall(r'\d+', loc_str)[0]
+            (nla, if_ou, else_ou) = nla_ou[loc_else]
+            else_ou = invars
+            nla_ou[loc_else] = (nla, if_ou, else_ou)
+    
+    for loc, (nla, if_ou, else_ou) in nla_ou.items():
+        loc_if = 'vtrace_if_'+loc
+        loc_else = 'vtrace_else_'+loc
+        if_ou, else_ou = list(set(if_ou).difference(else_ou)), list(set(else_ou).difference(if_ou))
+        nla_ou[loc] = (nla, if_ou, else_ou)
+        fw.writelines(loc_if+';'+'&&'.join(if_ou)+'\n')
+        fw.writelines(loc_else+';'+'&&'.join(else_ou)+'\n')
     fw.close            
-    print (invsList)
+  
 
-
-def processTrace(fileTrace):
+def processTrace(file_trace):
     pass
 
 

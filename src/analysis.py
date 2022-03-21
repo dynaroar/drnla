@@ -130,7 +130,7 @@ class StaticAnalysis(object):
             if "RESULT:" in line:
                 result_str = line
         if "incorrect" in result_str:
-            mlog.info(f'{outp}')
+            # mlog.info(f'{outp}')
             cex = self.getCex(outp.splitlines())
             result = StaticResult.INCORRECT
             return result, cex
@@ -138,7 +138,7 @@ class StaticAnalysis(object):
             result = StaticResult.CORRECT
             return result, []
         else:
-            mlog.info(f'{outp}')
+            # mlog.info(f'{outp}')
             cex = self.getCex(outp.splitlines())
             mlog.debug(f'unable to prove counterexample: \n {cex}') 
             result = StaticResult.UNKNOWN
@@ -191,12 +191,17 @@ class OUAnalysis(object):
         mlog.info(f"-------Refinement iteration {iter}------\n")
         cil_instr = CTransform(self.config)
         dynamic = DynamicAnalysis(self.config)
+
         if iter == 1:
             cil_instr.dtrans(nla_ou)
             dynamic.runSource()
+            invar_list = common.processInvars(self.config.invarsf)
+            mlog.debug(f'------processed invars from dig: \n{invar_list}')
+            common.initInvars(self.config.invars_processed, invar_list, nla_ou)
         else:
             dynamic.runTrace()
-        common.processInvars(self.config.invarsf, self.config.invars_processed, nla_ou)
+
+
         cil_instr.strans(self.config.invars_processed)
         static = StaticAnalysis(self.config)
         sresult, cex = static.runStatic(result)
