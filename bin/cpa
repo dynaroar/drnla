@@ -1,0 +1,23 @@
+#!/bin/bash 
+
+# Location of this script
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+# Location of the C input file
+CFILE=$(readlink -f "$1")
+CFILEPATH=$(dirname "$SCRIPT")
+
+# Temporary folder in user's home
+CPAtmp=$HOME/cpa-tmp/
+mkdir -p $CPAtmp
+
+/tools/CPAchecker-2.1.1-unix/scripts/cpa.sh \
+  $CFILE \
+  -predicateAnalysis \
+  -outputpath $CPAtmp \
+  -spec /tools/CPAchecker-2.1.1-unix/config/specification/default.spc 
+
+echo ""
+echo " *** REMEMBER! You need to use __VERIFIER_error() not reach_error() ***"
+echo ""
