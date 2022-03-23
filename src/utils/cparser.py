@@ -152,14 +152,7 @@ class UltCexParser(CexParser, Transformer):
 
     sym_tab = {}
     ssa_id = defaultdict(int)
-    ops = {
-        '+': lambda l, r: l + r,
-        '-': lambda l, r: l - r,
-        '*': lambda l, r: l * r,
-        '/': lambda l, r: l / r,
-        '%': lambda l, r: l % r
-    }
-
+    
     def mk_lvar(self, id):
         sid = str(id)
         if sid not in self.ssa_id:
