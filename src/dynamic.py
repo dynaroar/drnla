@@ -6,9 +6,9 @@ class DynamicAnalysis(object):
         self.source = config.src_instr
         self.invarsf = config.invarsf
         self.vtracef = config.vtracef
-        self.vtrace_processed = config.vtrace_processed
-    def runTrace(self):
-        vtrace_cmd = settings.Dynamic.vtrace_run(self.vtrace_processed, self.invarsf)
+        self.vtrace_genf = config.vtrace_genf
+    def runTrace(self, trace_file):
+        vtrace_cmd = settings.Dynamic.vtrace_run(trace_file, self.invarsf)
         # mlog.info(f'------run DIG dynamic on vtrace file:------') 
         common.runCmd(vtrace_cmd)
     def runSource(self):
