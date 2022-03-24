@@ -145,7 +145,7 @@ class UltCexParser(CexParser, Transformer):
         ERROR: "reach_error"
 
         %import common.CNAME -> ID
-        %import common.INT -> NUM
+        %import common.SIGNED_NUMBER -> NUM
         %import common.WS
         %ignore WS
         """

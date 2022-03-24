@@ -76,6 +76,7 @@ def processInvars(file_invs):
             if inv[-1] == "1":
                 invars.append(inv[:-1].strip())
         invs_list.append((iterms[0].strip(),invars))
+    fr.close()
     return invs_list
 
 def initInvars(file_processed, invs_list, nla_ou):
@@ -99,7 +100,7 @@ def initInvars(file_processed, invs_list, nla_ou):
         nla_ou[loc] = (nla, if_ou, else_ou)
         fw.writelines(loc_if+';'+'&&'.join(if_ou)+'\n')
         fw.writelines(loc_else+';'+'&&'.join(else_ou)+'\n')
-    fw.close            
+    fw.close()            
   
 
 def processTrace(file_trace):
