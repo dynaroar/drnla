@@ -24,7 +24,7 @@ ops = {
     '<=': operator.le,
     '>': operator.gt,
     '>=': operator.ge,
-    '=': operator.eq,
+    '==': operator.eq,
     '!=': operator.ne }
 
 class UltCexParser(CexParser, Transformer):
@@ -50,7 +50,7 @@ class UltCexParser(CexParser, Transformer):
         ?assignment_instr: 
             | lvar INC -> trans_inc_assign
             | lvar DEC -> trans_dec_assign
-            | lvar EQ pexpr -> trans_assign
+            | lvar ASSIGN pexpr -> trans_assign
             | lvar ADDEQ pexpr -> trans_op_assign
             | lvar SUBEQ pexpr -> trans_op_assign
             | lvar MULEQ pexpr -> trans_op_assign
@@ -97,7 +97,7 @@ class UltCexParser(CexParser, Transformer):
 
         ?val_lst: OBRACKET [val (COMMA val)*] CBRACKET
 
-        ?val: var EQ num
+        ?val: var ASSIGN num
 
         ?var: ID
 
@@ -108,6 +108,7 @@ class UltCexParser(CexParser, Transformer):
         ?error_instr: ERROR OPAREN CPAREN -> trans_none
 
         INT_TYP: "int"
+        ASSIGN: "="
         INC: "++"
         DEC: "--"
         ADDEQ: "+="
@@ -124,7 +125,7 @@ class UltCexParser(CexParser, Transformer):
         LE: "<="
         GT: ">"
         GE: ">="
-        EQ: "="
+        EQ: "=="
         NE: "!="
         AND: "&&"
         OR: "||"
