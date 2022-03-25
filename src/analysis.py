@@ -8,7 +8,6 @@ from transform import CTransform
 from dynamic import DynamicAnalysis
 from static import StaticAnalysis, StaticResult
 from utils import settings, common
-from utils.cparser import *
 from solver import *
 
 
@@ -61,9 +60,8 @@ class OUAnalysis(object):
         return error_case
          
  
-    def dynGen(self, cex_z3, error_case):
-        mlog.debug(f'more model for formula:\n {cex_z3}')
-        dsolver = DynSolver(cex_z3)
+    def dynGen(self, dsolver, error_case):
+        mlog.debug(f'more model for formula:\n {dsolver.formula}')
         models = dsolver.gen_model()
         dsolver.write_vtrace(error_case, self.config.vtrace_genf)
         gen_dynamic = DynamicAnalysis(self.config)
@@ -91,13 +89,11 @@ class OUAnalysis(object):
         if sresult == StaticResult.INCORRECT:
             mlog.debug(f'------counterexample from static analysis: \n {cex}\n')
                 
-            cex_parser = UltCexParser()
-            cex_z3 = cex_parser.to_z3(cex)
-            cex_vars = [*cex_parser.sym_tab]
-            mlog.debug(f'symbols from cex formula:\n{cex_vars}')
-            error_case = self.getReach(cex_vars) 
+            dsolver = DynSolver(cex)
+            mlog.debug(f'symbols from cex formula:\n{dsolver.cex_vars}')
+            error_case = self.getReach(dsolver.cex_vars) 
             mlog.debug(f'error case: \n {error_case}')
-            self.dynGen(cex_z3, error_case)
+            self.dynGen(dsolver, error_case)
             
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen C2 on iteration {iter}------\n')
