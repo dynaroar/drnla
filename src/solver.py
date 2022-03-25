@@ -1,14 +1,21 @@
 # from helpers.z3utils import Z3
 from z3 import *
 from utils import settings, common
+from utils.cparser import*
 import ast, operator
 
 mlog = common.getLogger(__name__, settings.LoggerLevel)
 
 class DynSolver(object):
 
-    def __init__(self, formula):
-        self.formula = formula
+    def __init__(self, cex):
+        cex_parser = UltCexParser()
+        cex_z3 = cex_parser.to_z3(cex)
+        self.parser = cex_parser
+        self.symbols = cex_parser.sym_tab
+        self.cex_vars = [*cex_parser.sym_tab]
+        self.ssa_id = cex_parser.ssa_id
+        self.formula = cex_z3
         self.models = []
              
     def gen_model(self):
@@ -38,22 +45,23 @@ class DynSolver(object):
  
     def write_vtrace(self, error_case, vtrace_genf):
         model_list = self.models
-        mlog.debug(f'------writing vtrace file for models: \n {model_list}')
-        dnames = model_list[0].decls()
-        ssa_id = []
-        for d in dnames:
-            vname = d.name()
-            if error_case not in vname:
-                ssa_id.append(vname)
-
-        decls = list(map(lambda x: f'I {x}', ssa_id))
+        # mlog.debug(f'------writing vtrace file for models: \n {model_list}')
+        mlog.debug(f'------variables from cex_z3 parser: \n {self.cex_vars}')
+        vnames = self.cex_vars 
+        cvars = []
+        for var in vnames:
+            if error_case not in var:
+                cvars.append(var)
+       
+        decls = list(map(lambda x: f'I {x}', cvars))
         decls_str = '; '.join(decls)
         vtrace_decs = f'{error_case}; {decls_str}\n'
         vtrace_fw = open(vtrace_genf, 'w+')
+        mlog.debug(f'---vtrace variables: \n {vtrace_decs}')
         vtrace_fw.write(vtrace_decs)
 
         for m in model_list:
-            vals = list(map(lambda d: f'{m[z3.Int(d)]}', ssa_id))
+            vals = list(map(lambda sid: f'{m[self.symbols[sid]]}', cvars))
             vals_str = '; '.join(vals)
             vtrace_vals = f'{error_case}; {vals_str}\n'
             # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
