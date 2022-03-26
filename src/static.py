@@ -84,11 +84,11 @@ class StaticAnalysis(object):
             return result, cex_text
         elif "correct" in result_str:
             result = StaticResult.CORRECT
-            return result, []
+            return result, ''
         else:
              # cex = self.getCex(outp)
             cex_text = self.get_cex_text(outp)
             mlog.debug(f'unknown result, unable to prove counterexample: \n {cex_text}') 
             result = StaticResult.UNKNOWN
-            return result, []
+            return result, cex_text
  

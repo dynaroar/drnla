@@ -28,6 +28,6 @@ class CTransform(object):
   
     def vtrans(self, pre, case):
         vtrans_cmd = settings.Cil.vtrans(self.source, self.invars, pre, case)
-        mlog.info(f'------run CIL instrument with predicate cmd:------\n{vtrans_cmd}')
+        mlog.info(f'------run CIL instrument with predicate:------\n')
         common.run_cmd(vtrans_cmd)
   

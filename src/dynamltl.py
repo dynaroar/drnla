@@ -21,7 +21,8 @@ from utils import settings, common
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
-    
+
+  
 if __name__ == "__main__":
     aparser = argparse.ArgumentParser(description='Dynamltl', prog='dynamltl')
     ag = aparser.add_argument

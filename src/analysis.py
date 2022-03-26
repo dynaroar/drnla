@@ -73,9 +73,15 @@ class OUAnalysis(object):
         iter = 0
         gen_cex = dsolver.get_cex_text()
         cex_formula = dsolver.formula
-        pre = '1'
-        while iter <= 0 and (not gen_cex == ''):
-            dsolver.update_formula(cex_formula)
+        pre = '(1 != 0)'
+        while iter <= 5 and (not gen_cex == ''):
+            dsolver.update_cex(gen_cex)
+            dsolver.parse_to_z3()
+            pre = pre.strip('"')
+            pre_z3 = dsolver.parse(pre)
+            gen_z3f = And(pre_z3, dsolver.formula)
+            dsolver.update_formula(gen_z3f)
+            mlog.debug(f'------find models of: pre /\ cex_z3:\n {gen_z3f}')
             dsolver.gen_model()
             dsolver.update_vtrace()
             self.dynamic.run_trace(self.config.vtrace_genf)
