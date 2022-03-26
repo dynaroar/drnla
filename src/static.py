@@ -15,10 +15,10 @@ class StaticAnalysis(object):
     def __init__(self, config):
         self.source = config.src_validate
 
-    def replaceStr(self, mystr):
+    def replace_str(self, mystr):
         return mystr.replace("&&", "and").replace("||", "or").replace("!", "not").replace("^", "**").replace('++','+=1').strip()
             
-    def getCex(self, outp):
+    def get_cex(self, outp):
         cex = {}
         vdefs = []
         path = []
@@ -42,7 +42,7 @@ class StaticAnalysis(object):
                 mlog.debug(f'------loc:{location}, cond:{condition}, expr:{expression}')
                 line_info['loc'] = location
                 line_info['cond'] = condition
-                line_info['exp'] = self.replaceStr(expression)
+                line_info['exp'] = self.replace_str(expression)
                 mregex = r'(\w+)=(-?\d+)'
                 model_val = re.findall(mregex, outp[i+1])
                 line_info['val'] = model_val
@@ -59,7 +59,7 @@ class StaticAnalysis(object):
         cex['error'] = error
         return cex
     
-    def getCexText(self, outp):
+    def get_cex_text(self, outp):
         cex = []
         for line in outp:
             model_loc = re.search(r'\[L\d+\]', line)
@@ -69,17 +69,17 @@ class StaticAnalysis(object):
         return '\n'.join(cex)
   
         
-    def runStatic(self, result):
+    def run_static(self):
         static_cmd = settings.Static.run(self.source)
         mlog.info(f'------run Ultimate static analysis:------')
-        outp = common.runCmd(static_cmd).splitlines()
+        outp = common.run_cmd(static_cmd).splitlines()
         result_str = ""
         for line in outp:
             if "RESULT:" in line:
                 result_str = line
         if "incorrect" in result_str:
              # cex = self.getCex(outp)
-            cex_text = self.getCexText(outp)
+            cex_text = self.get_cex_text(outp)
             result = StaticResult.INCORRECT
             return result, cex_text
         elif "correct" in result_str:
@@ -87,8 +87,8 @@ class StaticAnalysis(object):
             return result, []
         else:
              # cex = self.getCex(outp)
-            cex_text = self.getCexText(outp)
-            mlog.debug(f'unable to prove counterexample: \n {cex_text}') 
+            cex_text = self.get_cex_text(outp)
+            mlog.debug(f'unknown result, unable to prove counterexample: \n {cex_text}') 
             result = StaticResult.UNKNOWN
             return result, []
  

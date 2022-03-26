@@ -18,8 +18,10 @@ class Cil:
     cil_exe = trans_dir / f'{trans_dir}/_build/default/src/instr.exe'
     dcmd = partial('{exe} -dig -nopre {inp}'.format, exe=cil_exe)
     scmd = partial('{exe} -val {inp} -inv {invars}'.format, exe=cil_exe)
+    vcmd = partial('{exe} -val {inp} -inv {invars} -pre {pre} -case {case}'.format, exe=cil_exe)
     dtrans = lambda inp: Cil.dcmd(inp=inp)
     strans = lambda inp, invars: Cil.scmd(inp=inp, invars=invars)
+    vtrans = lambda inp, invars, pre, case: Cil.vcmd(inp=inp, invars=invars, pre = pre, case=case)
 
  # with running file
 # ~/miniconda3/bin/python3 -O src/dig.py ~/tmp/poly2/poly2-case1-2.csv --noss --nocongruences --noeqts --nominmaxplus --maxdeg 1 --log_level 4 --writeresults ~/tmp/poly2/poly2-case1-2.v --writevtraces ~/tmp/poly2/poly2-case1-2.tmp.csv

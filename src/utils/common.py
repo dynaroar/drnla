@@ -27,7 +27,7 @@ def getLogLevel(level):
         return logging.DEBUG
 
 
-def runCmd(cmd):
+def run_cmd(cmd):
     try:
         result = subprocess.run(shlex.split(cmd), check=True, capture_output=True, text=True)
         return result.stdout
@@ -66,7 +66,7 @@ def gettcs(prog, iter):
     print("trace generated!")
 
  
-def processInvars(file_invs):
+def process_invars(file_invs):
     fr = open(file_invs, "r")
     invs_list = []
     for line in fr:
@@ -79,7 +79,7 @@ def processInvars(file_invs):
     fr.close()
     return invs_list
 
-def initInvars(file_processed, invs_list, nla_ou):
+def init_invars(file_processed, invs_list, nla_ou):
     fw = open(file_processed, 'w')
     for loc_str, invars in invs_list:
         if 'vtrace_if_' in loc_str:
@@ -98,12 +98,12 @@ def initInvars(file_processed, invs_list, nla_ou):
         loc_else = 'vtrace_else_'+loc
         if_ou, else_ou = list(set(if_ou).difference(else_ou)), list(set(else_ou).difference(if_ou))
         nla_ou[loc] = (nla, if_ou, else_ou)
-        fw.writelines(loc_if+';'+'&&'.join(if_ou)+'\n')
-        fw.writelines(loc_else+';'+'&&'.join(else_ou)+'\n')
+        fw.writelines(loc_if+';'+' && '.join(if_ou)+'\n')
+        fw.writelines(loc_else+';'+' && '.join(else_ou)+'\n')
     fw.close()            
   
 
-def processTrace(file_trace):
+def process_trace(file_trace):
     pass
 
 

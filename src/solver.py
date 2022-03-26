@@ -7,17 +7,35 @@ import ast, operator
 mlog = common.getLogger(__name__, settings.LoggerLevel)
 
 class DynSolver(object):
+    vtrace_genf = ''
 
     def __init__(self, cex):
+        self.cex_text = cex
+        self.symbols = {}
+        self.cex_vars = []
+        self.ssa_id = {}
+        self.formula = True
+        self.error_case = ''
+        self.cvars = []
+        self.models = []
+    
+    def parse_to_z3(self):
         cex_parser = UltCexParser()
-        cex_z3 = cex_parser.to_z3(cex)
-        self.parser = cex_parser
+        cex_z3 = cex_parser.to_z3(self.cex_text)
         self.symbols = cex_parser.sym_tab
         self.cex_vars = [*cex_parser.sym_tab]
         self.ssa_id = cex_parser.ssa_id
         self.formula = cex_z3
-        self.models = []
-             
+
+    def update_cex(self, cex):
+        self.cex_text = cex
+
+    def get_cex_text(self):
+        return self.cex_text
+
+    def update_formula(self, f):
+        self.formula = f
+        
     def gen_model(self):
         c = 0
         constr = True
@@ -41,29 +59,33 @@ class DynSolver(object):
                 s.pop()
                 break
         self.models = models
-        return self.models
- 
-    def write_vtrace(self, error_case, vtrace_genf):
-        model_list = self.models
-        # mlog.debug(f'------writing vtrace file for models: \n {model_list}')
+        # return self.models
+
+    def init_vtrace(self, error_case, vtrace_genf):
+        self.error_case = error_case
+        vnames = self.cex_vars
         mlog.debug(f'------variables from cex_z3 parser: \n {self.cex_vars}')
-        vnames = self.cex_vars 
-        cvars = []
         for var in vnames:
             if error_case not in var:
-                cvars.append(var)
+                self.cvars.append(var)
        
-        decls = list(map(lambda x: f'I {x}', cvars))
+        decls = list(map(lambda x: f'I {x}', self.cvars))
         decls_str = '; '.join(decls)
-        vtrace_decs = f'{error_case}; {decls_str}\n'
+        vtrace_decs = f'{self.error_case}; {decls_str}\n'
         vtrace_fw = open(vtrace_genf, 'w+')
-        mlog.debug(f'---vtrace variables: \n {vtrace_decs}')
+        mlog.debug(f'------init single vtrace file: \n {vtrace_decs}')
         vtrace_fw.write(vtrace_decs)
-
+        vtrace_fw.close()
+        DynSolver.vtrace_genf = vtrace_genf
+        
+        
+    def update_vtrace(self):
+        model_list = self.models
+        vtrace_fw = open(DynSolver.vtrace_genf, 'a+')
         for m in model_list:
-            vals = list(map(lambda sid: f'{m[self.symbols[sid]]}', cvars))
+            vals = list(map(lambda sid: f'{m[self.symbols[sid]]}', self.cvars))
             vals_str = '; '.join(vals)
-            vtrace_vals = f'{error_case}; {vals_str}\n'
+            vtrace_vals = f'{self.error_case}; {vals_str}\n'
             # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()
