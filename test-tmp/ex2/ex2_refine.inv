@@ -1,0 +1,2 @@
+vtrace_if_3;x <= 7 && -x <= -7
+vtrace_else_3;-x <= -1
