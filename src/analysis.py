@@ -74,7 +74,7 @@ class OUAnalysis(object):
         gen_cex = dsolver.get_cex_text()
         cex_formula = dsolver.formula
         pre = '(1 != 0)'
-        while iter <= 5 and (not gen_cex == ''):
+        while iter <= 8 and (not gen_cex == ''):
             dsolver.update_cex(gen_cex)
             dsolver.parse_to_z3()
             pre = pre.strip('"')
@@ -105,10 +105,7 @@ class OUAnalysis(object):
             invar_list = self.dynamic.get_invars()
             mlog.debug(f'------invars from dig (initial refinement): \n{invar_list}')
             self.dynamic.init_invars(invar_list, nla_ou)
-        else:
-            self.dynamic.run_trace()
-
-
+ 
         self.cil_trans.strans()
         sresult, cex = self.static.run_static()
         if sresult == StaticResult.INCORRECT:
@@ -123,7 +120,14 @@ class OUAnalysis(object):
             
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen C2 on iteration {iter}------\n')
-                self.dynamic.join_vtrace(error_case)
+                # self.dynamic.join_vtrace(error_case)
+                self.dynamic.run_trace(self.config.vtrace_genf)
+                [(ref_case, ref_invars)] = self.dynamic.get_invars()
+                # select conjunction? ....
+                gen_invars = ' && '.join(ref_invars)
+                ref_invars = f'!({gen_invars})'
+                mlog.debug(f'------ negated invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
+                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)      
                 
                 
             elif self.if_small in error_case:

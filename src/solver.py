@@ -110,13 +110,6 @@ class DynSolver(object):
  
     @classmethod
     def parse(cls, node):
-        """
-        Parse sage expr to z3
-        e.g., parse(str(sage_expr), use_reals=False)
-        Note cannot parse something like tCtr == y - 1/2*sqrt(4*y**2 - 8*x + 4*y + 1) + 1/2
-        """
-        # print(ast.dump(node))
-
         if isinstance(node, str):
             node = node.replace("^", "**").replace("&&", "and").replace("||", "or").replace("!(", "not(").replace('++','+=1').strip()
 

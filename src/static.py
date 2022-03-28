@@ -68,7 +68,7 @@ class StaticAnalysis(object):
                 cex.append(line)
         return '\n'.join(cex)
   
-        
+     
     def run_static(self):
         static_cmd = settings.Static.run(self.source)
         mlog.info(f'------run Ultimate static analysis:------')
@@ -91,4 +91,5 @@ class StaticAnalysis(object):
             mlog.debug(f'unknown result, unable to prove counterexample: \n {cex_text}') 
             result = StaticResult.UNKNOWN
             return result, cex_text
- 
+
+    

@@ -61,6 +61,44 @@ class DynamicAnalysis(object):
             invs_list.append((iterms[0].strip(),invars))
         fr.close()
         return invs_list
+
+    def replace_invars(self, vtrace_name, vtrace_list):
+        fr = open(self.invars_refine, 'r')
+        static_invars = fr.readlines()
+        fr.close()
+        fw = open(self.invars_refine, 'w+')
+    
+        for line in static_invars:
+            if vtrace_name in line:
+                fw.writelines(vtrace_name + ';' + ' && '.join(vtrace_list)+'\n')
+            else:
+                fw.writelines(line)
+        fw.close()
+        
+    def conj_ou(self, ref_case, ref_invars, nla_ou):
+        """Update ou mapping for conjunction refinement.
+        This will also update refine.inv file for static run. 
+        """
+        
+        [ref_loc] = re.findall(r'\d+', ref_case) 
+        (nla, if_ou, else_ou) = nla_ou[ref_loc]
+        if 'if' in ref_case:
+            if_ou.append(ref_invars)
+            vtrace_name = f'vtrace_if_{ref_loc}'
+            nla_ou[ref_loc] = (nla, if_ou, else_ou)
+            self.replace_invars(vtrace_name, if_ou)
+        elif 'else' in ref_case:
+            else_ou.append(ref_invars)
+            vtrace_name = f'vtrace_else_{ref_loc}'
+            nla_ou[ref_loc] = (nla, if_ou, else_ou)
+            self.replace_invars(vtrace_name, else_ou)
+       
+    def disj_ou(self, ref_case, ref_invars, nla_ou):
+        """Update ou mapping for disjunction refinement.
+         This will also update refine.inv file for static run. 
+        """
+          
+        pass
     
     
     def join_vtrace(self, error_case):
@@ -70,8 +108,9 @@ class DynamicAnalysis(object):
         vtrace_list = vtrace_fr.readlines()
         vtrace = CM.vtrace_case(error_case)
         mlog.debug(f'------ vtrance to union: {vtrace}------')
-        for i in range(len(vtrace_list)):
-            if vtrace in vtrace_list[i] and vtrace in vtrace_list[i+1] and (i < len(vtrace_list)):
+        vtrace_len = len(vtrace_list)
+        for i in range(vtrace_len):
+            if vtrace in vtrace_list[i] and vtrace in vtrace_list[i+1] and (i < len(vtrace_list)-1):
                 gen_fw.write(vtrace_list[i+1])
         vtrace_fr.close()
         gen_fw.close()
