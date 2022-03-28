@@ -68,9 +68,9 @@ if __name__ == "__main__":
     mlog.info(f'Timeout: {settings.TimeOut}s')
     mlog.info(f'{datetime.datetime.now()}, {sys.argv}')
 
-    # main(args.inp, args.n, args.vs)
     config = analysis.Setup(inp)
-
+    mlog.info(f'analysis files stored in: {config.tmpdir}')
+ 
     def prove():
         ou = analysis.OUAnalysis(config)
         ou.run()            

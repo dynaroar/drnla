@@ -72,6 +72,7 @@ class DynSolver(object):
 
     def init_vtrace(self, error_case, vtrace_genf):
         self.error_case = error_case
+        vtrace = common.vtrace_case(error_case)
         vnames = self.cex_vars
         mlog.debug(f'------variables from cex_z3 parser: \n {self.cex_vars}')
         for var in vnames:
@@ -80,7 +81,7 @@ class DynSolver(object):
        
         decls = list(map(lambda x: f'I {x}', self.cvars))
         decls_str = '; '.join(decls)
-        vtrace_decs = f'{self.error_case}; {decls_str}\n'
+        vtrace_decs = f'{vtrace}; {decls_str}\n'
         vtrace_fw = open(vtrace_genf, 'w+')
         mlog.debug(f'------init single vtrace file: \n {vtrace_decs}')
         vtrace_fw.write(vtrace_decs)
@@ -91,10 +92,11 @@ class DynSolver(object):
     def update_vtrace(self):
         model_list = self.models
         vtrace_fw = open(DynSolver.vtrace_genf, 'a+')
+        vtrace = common.vtrace_case(self.error_case)
         for m in model_list:
             vals = list(map(lambda sid: f'{m[self.symbols[sid]]}', self.cvars))
             vals_str = '; '.join(vals)
-            vtrace_vals = f'{self.error_case}; {vals_str}\n'
+            vtrace_vals = f'{vtrace}; {vals_str}\n'
             # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()

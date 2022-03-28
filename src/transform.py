@@ -5,14 +5,13 @@ mlog = common.getLogger(__name__, settings.LoggerLevel)
 class CTransform(object):
     def __init__(self, config):
         self.source = config.inp
-        self.invars = config.invars_processed
+        self.invars = config.invars_refine
         self.instr = config.src_instr
         self.validate = config.src_validate
         
     def dtrans(self, nla_ou):
         dtrans_cmd = settings.Cil.dtrans(self.source)
         mlog.info(f'------run CIL instrument for dynamic analysis:------')
-        print(dtrans_cmd)
         outp = common.run_cmd(dtrans_cmd)
         print(outp)
         nla_info = outp.splitlines()[1]

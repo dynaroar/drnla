@@ -33,7 +33,12 @@ def run_cmd(cmd):
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f'command run failed:\n{e.stderr}')
-    
+
+def vtrace_case(error_case):
+    model_case = re.search(r'(\w+)_too_.*_(\d+)', error_case)
+    if model_case:
+        case, loc = model_case.groups()
+        return f'vtrace_{case}_{loc}'
      
 def gettcs(prog, iter):
     """run .

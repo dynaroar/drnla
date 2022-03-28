@@ -30,7 +30,7 @@ class Setup(object):
         self.src_validate = self.source_path[0] + "_validate.c"
         self.tmpdir = Path(tempfile.mkdtemp(dir=settings.Tmpdir, prefix="dltl_"))
         self.invarsf = str(self.tmpdir / os.path.basename(self.inp)) + ".inv"
-        self.invars_processed = (self.invarsf.split("."))[0] + "_refine.inv"
+        self.invars_refine = (self.invarsf.split("."))[0] + "_refine.inv"
         self.vtracef = str(self.tmpdir / os.path.basename(self.inp)) + ".csv"
         self.vtrace_genf = (self.invarsf.split("."))[0] + "_gen.csv"
         self.symstates = None
@@ -104,7 +104,7 @@ class OUAnalysis(object):
             self.dynamic.run_source()
             invar_list = self.dynamic.get_invars()
             mlog.debug(f'------invars from dig (initial refinement): \n{invar_list}')
-            common.init_invars(self.config.invars_processed, invar_list, nla_ou)
+            self.dynamic.init_invars(invar_list, nla_ou)
         else:
             self.dynamic.run_trace()
 
@@ -123,6 +123,9 @@ class OUAnalysis(object):
             
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen C2 on iteration {iter}------\n')
+                self.dynamic.join_vtrace(error_case)
+                
+                
             elif self.if_small in error_case:
                 mlog.debug(f'----widen C1 on iteration {iter}------\n')
             elif self.if_big in error_case:
