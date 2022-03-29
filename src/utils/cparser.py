@@ -150,9 +150,9 @@ class UltCexParser(CexParser, Transformer):
         %import common.WS
         %ignore WS
         """
-
-    sym_tab = {}
-    ssa_id = defaultdict(int)
+    def __init__(self):
+        self.sym_tab = {}
+        self.ssa_id = defaultdict(int)
     
     def mk_lvar(self, id):
         sid = str(id)

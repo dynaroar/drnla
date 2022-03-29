@@ -66,7 +66,10 @@ class OUAnalysis(object):
         return error_case
          
  
-    def dyn_gen(self, dsolver, error_case):
+    def dyn_gen(self, cex_str):
+        dsolver = DynSolver(cex_str)
+        dsolver.parse_to_z3()
+        error_case = self.get_reach(dsolver.cex_vars) 
         mlog.debug(f'more model for formula:\n {dsolver.formula}')
         # models = dsolver.gen_model()
         dsolver.init_vtrace(error_case, self.config.vtrace_genf)
@@ -107,16 +110,16 @@ class OUAnalysis(object):
             self.dynamic.init_invars(invar_list, nla_ou)
  
         self.cil_trans.strans()
-        sresult, cex = self.static.run_static()
+        sresult, cex_str = self.static.run_static()
         if sresult == StaticResult.INCORRECT:
-            mlog.debug(f'------counterexample from static analysis: \n {cex}\n')
+            mlog.debug(f'------counterexample from static analysis: \n {cex_str}\n')
                 
-            dsolver = DynSolver(cex)
-            dsolver.parse_to_z3()
-            mlog.debug(f'symbols from cex formula:\n{dsolver.cex_vars}')
-            error_case = self.get_reach(dsolver.cex_vars) 
+            rsolver = DynSolver(cex_str)
+            rsolver.parse_to_z3()
+            mlog.debug(f'symbols from cex formula:\n{rsolver.cex_vars}')
+            error_case = self.get_reach(rsolver.cex_vars) 
             mlog.debug(f'error case: \n {error_case}')
-            genf = self.dyn_gen(dsolver, error_case)
+            genf = self.dyn_gen(cex_str)
             
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen C2 on iteration {iter}------\n')
@@ -131,6 +134,8 @@ class OUAnalysis(object):
                 
                 
             elif self.if_small in error_case:
+
+                
                 mlog.debug(f'----widen C1 on iteration {iter}------\n')
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen C1 on iteration {iter}------\n')

@@ -6,7 +6,7 @@ LoggerLevel = 4
 GenTcs = False
 Tmpdir = Path().home()/'tmp'
 TimeOut =  5 * 1000
-RefineBound = 1
+RefineBound = 2
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent
@@ -30,7 +30,8 @@ class Dynamic:
     if 'CONDA_HOME' in os.environ:
         DigPython = Path(os.getenv('CONDA_HOME'))
     else:
-        DigPython = Path().home()/'miniconda3/bin/python3'
+        # DigPython = Path().home()/'miniconda3/bin/python3'
+        DigPython = 'python3'
     if 'DIG_HOME' in os.environ:
         DigPy = Path(os.getenv('DIG_HOME'))
     else:
