@@ -15,6 +15,7 @@ mlog = common.getLogger(__name__, settings.LoggerLevel)
 
 class DynSolver(object):
     vtrace_genf = ''
+    vtrace_cexf = ''
 
     def __init__(self, cex):
         self.cex_text = cex
@@ -70,7 +71,9 @@ class DynSolver(object):
         self.models = models
         # return self.models
 
-    def init_vtrace(self, error_case, vtrace_genf):
+    def init_vtrace(self, error_case, vtrace_file):
+        ''' side effect to change both vtrace files of gen and cex
+        '''
         self.error_case = error_case
         vtrace = common.vtrace_case(error_case)
         vnames = self.cex_vars
@@ -82,14 +85,14 @@ class DynSolver(object):
         decls = list(map(lambda x: f'I {x}', self.cvars))
         decls_str = '; '.join(decls)
         vtrace_decs = f'{vtrace}; {decls_str}\n'
-        vtrace_fw = open(vtrace_genf, 'w+')
+        vtrace_fw = open(vtrace_file, 'w+')
         mlog.debug(f'------init single vtrace file: \n {vtrace_decs}')
         vtrace_fw.write(vtrace_decs)
         vtrace_fw.close()
-        DynSolver.vtrace_genf = vtrace_genf
+        DynSolver.vtrace_genf = vtrace_file
         
         
-    def update_vtrace(self):
+    def update_vtrace_gen(self):
         model_list = self.models
         vtrace_fw = open(DynSolver.vtrace_genf, 'a+')
         vtrace = common.vtrace_case(self.error_case)
@@ -101,6 +104,19 @@ class DynSolver(object):
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()
 
+    def update_vtrace_cex(self):
+        model_list = self.models
+        vtrace_fw = open(DynSolver.vtrace_cexf, 'a+')
+        vtrace = common.vtrace_case(self.error_case)
+        cvars0 = list(map(lambda sid: f'{sid}0', self.cvars))
+        for m in model_list:
+            vals = list(map(lambda sid0: f'{m[self.symbols[sid0]]}', cvars0))
+            vals_str = '; '.join(vals)
+            vtrace_vals = f'{vtrace}; {vals_str}\n'
+            # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
+            vtrace_fw.write(vtrace_vals)
+        vtrace_fw.close()
+        
     # @classmethod
     # def to_z3(cls, s):
     #     s = s.replace("&&", "and").replace("||", "or").replace("!(", "not(").replace("^", "**").replace('++','+=1').strip()
@@ -208,7 +224,7 @@ class DynSolver(object):
 #     for x in model.decls():
 #         print(f'-----item in each model:{x.name()} = {model[x]}')
 
-invar = "!(x>=0)"
-z3f = DynSolver.parse(invar)
+# invar = "!(x>=0)"
+# z3f = DynSolver.parse(invar)
 
-print(f'------z3 formula------\n {z3f}')
+# print(f'------z3 formula------\n {z3f}')

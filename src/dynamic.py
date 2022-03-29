@@ -12,6 +12,7 @@ class DynamicAnalysis(object):
         self.invars_refine = config.invars_refine
         self.vtracef = config.vtracef
         self.vtrace_genf = config.vtrace_genf
+        self.vtrace_cexf = config.vtrace_cexf
 
         
          
