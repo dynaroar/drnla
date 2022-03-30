@@ -54,13 +54,14 @@ class OUAnalysis(object):
         error_case = self.get_reach(dsolver.cex_vars) 
         mlog.debug(f'more model for formula:\n {dsolver.formula}')
         # models = dsolver.gen_model()
+        dsolver.init_cvars(error_case)
         dsolver.init_vtrace(error_case, self.config.vtrace_genf)
         iter = 0
         gen_cex = dsolver.get_cex_text()
         cex_formula = dsolver.formula
         pre = '(1 != 0)'
         while iter <= 8 and (not gen_cex == ''):
-            # dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
+            dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
             dsolver.update_cex(gen_cex)
             dsolver.parse_to_z3()
             pre = pre.strip('"')
@@ -69,10 +70,10 @@ class OUAnalysis(object):
             dsolver.update_formula(gen_z3f)
             mlog.debug(f'------find models of: pre /\ cex_z3:\n {gen_z3f}')
             dsolver.gen_model()
-            dsolver.update_vtrace_gen()
-            # dsolver.update_vtrace_cex()
-            # self.dynamic.run_trace(self.config.vtrace_cexf)
-            self.dynamic.run_trace(self.config.vtrace_genf)
+            dsolver.update_vtrace_gen(self.config.vtrace_genf)
+            dsolver.update_vtrace_cex(self.config.vtrace_cexf)
+            self.dynamic.run_trace(self.config.vtrace_cexf)
+            # self.dynamic.run_trace(self.config.vtrace_genf)
             [(gen_case, gen_invars)] = self.dynamic.get_invars()
             mlog.debug(f'------invars from cex generalized (dig):\n {error_case}; {gen_invars}')
             pre_learn = ' && '.join(gen_invars)
@@ -83,7 +84,7 @@ class OUAnalysis(object):
             mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
             
             iter += 1
-        return dsolver.vtrace_genf
+        # return dsolver.vtrace_genf
      
     def refine(self, iter, result, nla_ou):
         mlog.info(f"-------Refinement iteration {iter}------\n")
