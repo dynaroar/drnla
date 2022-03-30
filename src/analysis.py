@@ -108,25 +108,25 @@ class OUAnalysis(object):
             mlog.debug(f'symbols from cex formula:\n{rsolver.cex_vars}')
             error_case = self.get_reach(rsolver.cex_vars) 
             mlog.debug(f'error case: \n {error_case}')
-            genf = self.dyn_gen(cex_str)
-            
+            self.dyn_gen(cex_str)
+
+
+            self.dynamic.run_trace(self.config.vtrace_genf)
+            [(ref_case, ref_invars)] = self.dynamic.get_invars()
+          
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen ELSE on iteration {iter}------\n')
-                # self.dynamic.join_vtrace(error_case)
-                self.dynamic.run_trace(self.config.vtrace_genf)
-                [(ref_case, ref_invars)] = self.dynamic.get_invars()
-                # select conjunction? ....
-                gen_invars = ' && '.join(ref_invars)
-                ref_invars = f'!({gen_invars})'
-                mlog.debug(f'------ negated invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
-                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)      
-                
-                
+                mlog.debug(f'------ invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
+                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
+                 
             elif self.if_small in error_case:                
                 mlog.debug(f'----widen IF on iteration {iter}------\n')
-                
+                mlog.debug(f'------invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
+                self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
+                 
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen IF on iteration {iter}------\n')
+                
                 
             elif self.else_small in error_case:
                 mlog.debug(f'----widen ELSE on iteration {iter}------\n')

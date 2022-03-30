@@ -121,14 +121,56 @@ class DynSolver(object):
             # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()
+
+    @classmethod
+    def select_or(cls, c_list, i_list):
+        c1 = []
+        ref_conj = And(i_list)
+        mlog.debug(f'i conjunction formula: {ref_conj}')
+        for zinv in c_list:
+                if cls.is_imply(ref_conj, zinv):
+                    c1.append(zinv)
+        mlog.debug(f'c1 formula: {c1}')
+        c2 = list(set(c_list)-set(c1))
+        mlog.debug(f'c2 formula: {c2}')
+        r = []
+        for c in c2:
+            for i in i_list:
+                if not cls.is_sat(And(c,i)):
+                    r.append(Or(c,i))
+        mlog.debug(f'r formula: {r}')
+        return And(c1+r)
+   
+    @classmethod
+    def is_equal(cls, f1, f2):
+        s = Solver()
+        s.add(Not(f1 == f2))
+        r = s.check()
+        if r == unsat:
+            return True
+        else:
+            return False
         
-    # @classmethod
-    # def to_z3(cls, s):
-    #     s = s.replace("&&", "and").replace("||", "or").replace("!(", "not(").replace("^", "**").replace('++','+=1').strip()
- 
-    #     z3f = Z3.parse(s)
-    #     return z3f 
- 
+    @classmethod
+    def is_imply(cls, f1, f2):
+        s = Solver()
+        s.add(Not(Implies (f1, f2)))
+        r = s.check()
+        if r == unsat:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def is_sat(cls, f):
+        s = Solver()
+        s.add(f)
+        r = s.check()
+        if r == sat:
+            return True
+        else:
+            return False
+        
     @classmethod
     def parse(cls, node):
         if isinstance(node, str):
@@ -214,6 +256,19 @@ class DynSolver(object):
         else:
             raise NotImplementedError(ast.dump(node))
         
+
+# target, [x >= 7, 7 >= x] 
+# refine candidate: [x <= -7, x >= -7]
+x=z3.Int('x')
+
+c_list = [x>= 7, 7>=x]
+i_list = [x<=-7, x>=-7]
+
+select_or_z3 = DynSolver.select_or(i_list, c_list)
+print(f'select result: \n{select_or_z3}')
+
+
+
 
 # k0, n0, x0, y0, z0 = Ints('k0 n0 x0 y0 z0')            
 # test_f = And(n0 == 0, x0 == 0, y0 == 1, z0 == 6,

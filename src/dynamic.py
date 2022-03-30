@@ -1,6 +1,7 @@
 import re
 from utils import settings
 import utils.common as CM
+from solver import *
 
 mlog = CM.getLogger(__name__, settings.LoggerLevel)
 
@@ -80,7 +81,9 @@ class DynamicAnalysis(object):
         """Update ou mapping for conjunction refinement.
         This will also update refine.inv file for static run. 
         """
-        
+        gen_invars = ' && '.join(ref_invars)
+        ref_invars = f'!({gen_invars})'
+            
         [ref_loc] = re.findall(r'\d+', ref_case) 
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
         if 'if' in ref_case:
@@ -92,13 +95,31 @@ class DynamicAnalysis(object):
             else_ou.append(ref_invars)
             vtrace_name = f'vtrace_else_{ref_loc}'
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
+
+
             self.replace_invars(vtrace_name, else_ou)
-       
+
+        
     def disj_ou(self, ref_case, ref_invars, nla_ou):
         """Update ou mapping for disjunction refinement.
          This will also update refine.inv file for static run. 
         """
-          
+
+        ref_invars_z3 = list(map(lambda inv: DynSolver.parse(inv), ref_invars))
+        [ref_loc] = re.findall(r'\d+', ref_case)
+        (nla, if_ou, else_ou) = nla_ou[ref_loc]
+         
+        if 'if' in ref_case:
+            if_ou_z3 = list(map(lambda inv: DynSolver.parse(inv), if_ou))
+            mlog.debug(f'z3 formula for refine case: \n target, {if_ou_z3} \n refine candidate: {ref_invars_z3}')
+            select_or_z3 = DynSolver.select_or(ref_invars_z3, if_ou_z3)
+            refined_if_z3 = Or(And(if_ou_z3), select_or_z3)
+            mlog.debug(f'final refined formula :\n {refined_if_z3}')
+             
+            pass
+        if 'else' in ref_case:
+            pass
+        
         pass
     
     
