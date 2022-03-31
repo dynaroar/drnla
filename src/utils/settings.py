@@ -6,7 +6,7 @@ LoggerLevel = 4
 GenTcs = False
 Tmpdir = Path().home()/'tmp'
 TimeOut =  5 * 1000
-RefineBound = 2
+RefineBound = 4
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent

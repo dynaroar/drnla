@@ -60,7 +60,7 @@ class OUAnalysis(object):
         gen_cex = dsolver.get_cex_text()
         cex_formula = dsolver.formula
         pre = '(1 != 0)'
-        while iter <= 8 and (not gen_cex == ''):
+        while iter <= 5 and (not gen_cex == ''):
             dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
             dsolver.update_cex(gen_cex)
             dsolver.parse_to_z3()
@@ -81,13 +81,13 @@ class OUAnalysis(object):
             mlog.debug(f'------conjunction of all previous invars predicate:\n {pre}')
             self.cil_trans.vtrans(pre, f'\"{error_case}\"')
             gen_result, gen_cex = self.static.run_static()
-            mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
+            # mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
             
             iter += 1
         # return dsolver.vtrace_genf
      
     def refine(self, iter, result, nla_ou):
-        mlog.info(f"-------Refinement iteration {iter}------\n")
+        mlog.info(f"\n-------Refinement iteration {iter}------\n")
         if iter == 1:
             self.cil_trans.dtrans(nla_ou)
             self.dynamic.run_source()
@@ -126,10 +126,12 @@ class OUAnalysis(object):
                  
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen IF on iteration {iter}------\n')
-                
+                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                 
             elif self.else_small in error_case:
                 mlog.debug(f'----widen ELSE on iteration {iter}------\n')
+                self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
+ 
             else:
                 raise ValueError(f'Reach error case unable to handle: {error_case}')
      

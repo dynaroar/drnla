@@ -140,7 +140,27 @@ class DynSolver(object):
                     r.append(Or(c,i))
         mlog.debug(f'r formula: {r}')
         return And(c1+r)
+
+    # @classmethod
+    # def select_or(cls, c_list, i_list):
+    #     i1 = []
+    #     c_conj = And(c_list)
+    #     mlog.debug(f'c conjunction formula: {c_conj}')
+    #     for zinv in i_list:
+    #             if cls.is_imply(c_conj, zinv):
+    #                 i1.append(zinv)
+    #     mlog.debug(f'i1 formula: {i1}')
+    #     i2 = list(set(i_list)-set(i1))
+    #     mlog.debug(f'i2 formula: {i2}')
+    #     r = []
+    #     for i in i2:
+    #         for c in c_list:
+    #             if not cls.is_sat(And(c,i)):
+    #                 r.append(Or(c,i))
+    #     mlog.debug(f'r formula: {r}')
+    #     return And(i1+r)
    
+    
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()
@@ -259,13 +279,13 @@ class DynSolver(object):
 
 # target, [x >= 7, 7 >= x] 
 # refine candidate: [x <= -7, x >= -7]
-x=z3.Int('x')
+# x=z3.Int('x')
 
-c_list = [x>= 7, 7>=x]
-i_list = [x<=-7, x>=-7]
+# c_list = [x>= 7, 7>=x]
+# i_list = [x<=-7, x>=-7]
 
-select_or_z3 = DynSolver.select_or(i_list, c_list)
-print(f'select result: \n{select_or_z3}')
+# select_or_z3 = DynSolver.select_or(c_list, i_list)
+# print(f'select result: \n{select_or_z3}')
 
 
 
@@ -288,3 +308,18 @@ print(f'select result: \n{select_or_z3}')
 # z3f = DynSolver.parse(invar)
 
 # print(f'------z3 formula------\n {z3f}')
+
+# x, y = Reals('x y')
+
+ 
+# compl =  Or(And(7 >= x, x >= 7), And(x >= -7, Or(x >= 7, x <= -7)))
+# sim1 = Or(x==7, Or(x>=7, x==-7))
+# sim2 = Or(x>=7, x==-7)
+
+# g  = Goal()
+# g.add(Or(x < 0, x > 0), x == y + 1, y < 0)
+
+# t = Tactic('split-clause')
+# r = t(g)
+# for g in r: 
+#     print (g)
