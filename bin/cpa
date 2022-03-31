@@ -16,7 +16,7 @@ mkdir -p $CPAtmp
   $CFILE \
   -predicateAnalysis \
   -outputpath $CPAtmp \
-  -spec /tools/CPAchecker-2.1.1-unix/config/specification/default.spc 
+  -spec /tools/CPAchecker-2.1.1-unix/config/specification/sv-comp-reachability.spc
 
 echo ""
 echo " *** REMEMBER! You need to use __VERIFIER_error() not reach_error() ***"

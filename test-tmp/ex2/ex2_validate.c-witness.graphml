@@ -26,13 +26,13 @@
 <key id="assumption" attr.name="assumption" for="edge"/>
 <key id="tokens" attr.name="tokens" for="edge"/>
 <key id="originfile" attr.name="originfile" for="edge">
-<default>/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex2/ex2_validate.c</default>
+<default>/home/chanhle/repo/dynamiteLTL/test-tmp/ex2/ex2_validate.c</default>
 </key>
 <key id="sourcecode" attr.name="sourcecode" for="edge"/>
 <graph edgedefault="directed">
-<data key="programfile">/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex2/ex2_validate.c</data>
+<data key="programfile">/home/chanhle/repo/dynamiteLTL/test-tmp/ex2/ex2_validate.c</data>
 <data key="sourcecodelang">C</data>
-<data key="creationtime">2022-03-26T23:31:09Z</data>
+<data key="creationtime">2022-03-27T00:01:54Z</data>
 <data key="witness-type">correctness_witness</data>
 <node id="N0">
 <data key="entry">true</data>
@@ -56,7 +56,7 @@
 <node id="N17"/>
 <node id="N18"/>
 <node id="N19">
-<data key="invariant">!(x &lt;= 7) || !(7 &lt;= x)</data>
+<data key="invariant">x &lt; 7 || 7 &lt; x</data>
 </node>
 <edge id="E0" source="N0" target="N1">
 <data key="endline">355</data>
