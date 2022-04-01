@@ -7,7 +7,7 @@ from static import StaticAnalysis, StaticResult
 from solver import *
 
 
-mlog = common.getLogger(__name__, settings.LoggerLevel)
+mlog = common.getLogger(__name__, settings.logger_level)
 
 class Result(Enum):
     CORRECT = 1
@@ -90,11 +90,20 @@ class OUAnalysis(object):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
         if iter == 1:
             self.cil_trans.dtrans(nla_ou)
-            self.dynamic.run_source()
-            invar_list = self.dynamic.get_invars()
-            mlog.debug(f'------invars from dig (initial refinement): \n{invar_list}')
-            self.dynamic.init_invars(invar_list, nla_ou)
-  
+            if settings.init_ou:
+                invar_list = []
+                for loc, value in nla_ou.items():
+                    (_, if_ou, else_ou) = value
+                    init_invar = [(f'vtrace_if_{loc}', ['0 == 0']), (f'vtrace_else_{loc}', ['1 == 0'])]
+                    invar_list = invar_list + init_invar
+                mlog.debug(f'------initial OU True/False: \n{invar_list}')
+                self.dynamic.init_invars(invar_list, nla_ou)
+            else:
+                self.dynamic.run_source()
+                invar_list = self.dynamic.get_invars()
+                mlog.debug(f'------invars from dig (initial refinement): \n{invar_list}')
+                self.dynamic.init_invars(invar_list, nla_ou)
+   
         self.config.update_basename(iter)
         self.init_tools()
     
@@ -116,12 +125,12 @@ class OUAnalysis(object):
           
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen ELSE on iteration {iter}------\n')
-                mlog.debug(f'------ invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
+                # mlog.debug(f'------ invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
                 self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                  
             elif self.if_small in error_case:                
                 mlog.debug(f'----widen IF on iteration {iter}------\n')
-                mlog.debug(f'------invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
+                # mlog.debug(f'------invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
                 self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
                  
             elif self.if_big in error_case:
@@ -143,7 +152,7 @@ class OUAnalysis(object):
       
     def run(self):        
         iter= 1        
-        while iter <= settings.RefineBound and self.result == Result.UNSOUND:
+        while iter <= settings.refine_bound and self.result == Result.UNSOUND:
             self.result = self.refine(iter, self.result, self.nla_ou)
             iter += 1
         # return self.result, self.nla_ou

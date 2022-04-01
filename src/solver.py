@@ -11,7 +11,7 @@ sys.path.insert(0, dig_path)
 from helpers.z3utils import Z3
 # print(f'----------------system path here(solver): \n {sys.path}')
  
-mlog = common.getLogger(__name__, settings.LoggerLevel)
+mlog = common.getLogger(__name__, settings.logger_level)
 
 class DynSolver(object):
     # vtrace_genf = ''

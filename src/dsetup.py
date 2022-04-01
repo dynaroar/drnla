@@ -6,7 +6,7 @@ import shutil
 
 from utils import settings, common
 
-mlog = common.getLogger(__name__, settings.LoggerLevel)
+mlog = common.getLogger(__name__, settings.logger_level)
 
 class Setup(object):
     # source_path= []
@@ -23,7 +23,7 @@ class Setup(object):
         self.is_c_inp = inp.endswith(".c")
         assert (self.is_c_inp), "\n Please input a C program: "+ inp
         
-        self.tmpdir = Path(tempfile.mkdtemp(dir=settings.Tmpdir, prefix="dltl_"))
+        self.tmpdir = Path(tempfile.mkdtemp(dir=settings.tmpdir, prefix="dltl_"))
         shutil.copy(inp, self.tmpdir)
 
         self.input_base = os.path.basename(inp)

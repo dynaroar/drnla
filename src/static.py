@@ -3,7 +3,7 @@ from enum import Enum
 from utils import settings, common
 from utils.cparser import *
 
-mlog = common.getLogger(__name__, settings.LoggerLevel)
+mlog = common.getLogger(__name__, settings.logger_level)
 
 
 class StaticResult(Enum):

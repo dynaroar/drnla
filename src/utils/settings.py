@@ -2,11 +2,12 @@ from pathlib import Path
 from functools import partial
 import os
 
-LoggerLevel = 4
-GenTcs = False
-Tmpdir = Path().home()/'tmp'
-TimeOut =  5 * 1000
-RefineBound = 4
+logger_level = 4
+gen_tcs = False
+init_ou = False
+tmpdir = Path().home()/'tmp'
+timeout =  5 * 1000
+refine_bound = 4
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent

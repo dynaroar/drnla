@@ -3,7 +3,7 @@ from utils import settings
 import utils.common as CM
 from solver import *
 
-mlog = CM.getLogger(__name__, settings.LoggerLevel)
+mlog = CM.getLogger(__name__, settings.logger_level)
 
 
 class DynamicAnalysis(object):
@@ -133,9 +133,9 @@ class DynamicAnalysis(object):
             else_ou_str = ' && '.join(else_ou)
             else_ou = [f'({else_ou_str}) || ({gen_invars})']
             vtrace_name = f'vtrace_else_{ref_loc}'
+            
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
-        
-        pass
+            self.replace_invars(vtrace_name, else_ou)
     
     
     def join_vtrace(self, error_case):

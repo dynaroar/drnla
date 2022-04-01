@@ -29,20 +29,15 @@ if __name__ == "__main__":
     ag("--inp", "-i",
        type=str,
        help="input c program")
+  
+    # ag("--gen_tcs", "-gen_tcs",
+    #    action="store_true",
+    #    help="generate traces with random inputs.")
     
-    ag("--n", "-n",
-       type=int,
-       default=20,
-       help="numbers of program executions")
-    
-    ag("--vs", "-v",
-       type=str,
-       help="invariants file from Dig.")
+    ag("--init-ou", "-init",
+       action = "store_true",
+       help="initial OU mapping for IF ELSE.")
 
-    ag("--gen_tcs", "-gen_tcs",
-       action="store_true",
-       help="generate traces with random inputs.")
-    
     ag("--log", "-log",
        type=int,
        choices=range(5),
@@ -56,16 +51,18 @@ if __name__ == "__main__":
 
     args = aparser.parse_args()
 
+    if args.init_ou:
+        settings.init_ou = args.init_ou
     if args.timeout:
         settings.timeout = int(args.timeout)
         
     settings.logger_level = args.log
-    settings.gen_tcs = args.gen_tcs
+  
     inp = os.path.realpath(os.path.expanduser(args.inp))
 
     mlog = common.getLogger(__name__, settings.logger_level)
-    mlog.info(f'DynamLTL log level: {settings.LoggerLevel}')
-    mlog.info(f'Timeout: {settings.TimeOut}s')
+    mlog.info(f'DynamLTL log level: {settings.logger_level}')
+    mlog.info(f'Timeout: {settings.timeout}s')
     mlog.info(f'{datetime.datetime.now()}, {sys.argv}')
 
     config = analysis.Setup(inp)

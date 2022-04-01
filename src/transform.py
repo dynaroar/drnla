@@ -1,6 +1,6 @@
 from utils import settings, common
 
-mlog = common.getLogger(__name__, settings.LoggerLevel)
+mlog = common.getLogger(__name__, settings.logger_level)
 
 class CTransform(object):
     def __init__(self, config):
@@ -16,7 +16,7 @@ class CTransform(object):
         print(outp)
         nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')
-        nla_ou[nla[0].strip()]=(nla[1].strip(), '', '')
+        nla_ou[nla[0].strip()]=(nla[1].strip(), [], [])
         
         mlog.info(f'------nla expression output:\n {nla_ou}')
   
