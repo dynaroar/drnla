@@ -68,7 +68,7 @@ class OUAnalysis(object):
             pre_z3 = dsolver.parse(pre)
             gen_z3f = And(pre_z3, dsolver.formula)
             dsolver.update_formula(gen_z3f)
-            mlog.debug(f'------find models of: pre /\ cex_z3:\n {gen_z3f}')
+            mlog.debug(f'------find models of (iter {iter}): pre /\ cex_z3:\n {gen_z3f}')
             dsolver.gen_model()
             dsolver.update_vtrace_gen(self.config.vtrace_genf)
             dsolver.update_vtrace_cex(self.config.vtrace_cexf)
@@ -82,10 +82,8 @@ class OUAnalysis(object):
             self.cil_trans.vtrans(pre, f'\"{error_case}\"')
             gen_result, gen_cex = self.static.run_static()
             # mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
-            
             iter += 1
-        # return dsolver.vtrace_genf
-     
+      
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
         if iter == 1:
@@ -117,9 +115,8 @@ class OUAnalysis(object):
             mlog.debug(f'symbols from cex formula:\n{rsolver.cex_vars}')
             error_case = self.get_reach(rsolver.cex_vars) 
             mlog.debug(f'error case: \n {error_case}')
+
             self.dyn_gen(cex_str)
-
-
             self.dynamic.run_trace(self.config.vtrace_genf)
             [(ref_case, ref_invars)] = self.dynamic.get_invars()
           

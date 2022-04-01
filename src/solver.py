@@ -8,7 +8,7 @@ dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
 
-from helpers.z3utils import Z3
+# from helpers.z3utils import Z3
 # print(f'----------------system path here(solver): \n {sys.path}')
  
 mlog = common.getLogger(__name__, settings.logger_level)
@@ -160,7 +160,16 @@ class DynSolver(object):
     #     mlog.debug(f'r formula: {r}')
     #     return And(i1+r)
    
-    
+    @classmethod
+    def remove_identical (cls, f1_list, f2_list):
+        common = []
+        for inv1 in f1_list:
+            for inv2 in f2_list:
+                if cls.is_equal(inv1, inv2):
+                    f1_list.remove(inv1)
+                    f2_list.remove(inv2)
+        return (f1_list, f2_list)
+     
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()

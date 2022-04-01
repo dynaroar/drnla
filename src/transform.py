@@ -1,4 +1,5 @@
 from utils import settings, common
+from solver import *
 
 mlog = common.getLogger(__name__, settings.logger_level)
 
@@ -16,7 +17,7 @@ class CTransform(object):
         print(outp)
         nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')
-        nla_ou[nla[0].strip()]=(nla[1].strip(), [], [])
+        nla_ou[nla[0].strip()]=(DynSolver.parse(nla[1].strip()), [], [])
         
         mlog.info(f'------nla expression output:\n {nla_ou}')
   
