@@ -56,5 +56,5 @@ class Z3(object):
             raise Exception(f'Unexpected z3 formula: {f}')
 
 # x, y = Ints('x y')
-# f = And(x > 0, Or(x < 0, x + y + x >= 0))
+# f = And(x > 0, Or(x < 0, x + y + x >= 0), y < 0)
 # print(Z3.to_string(f))

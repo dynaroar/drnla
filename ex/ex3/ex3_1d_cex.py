@@ -27,10 +27,15 @@ s = z3.Solver()
 cmodels = []
 c = 0
 x0, y0 = Ints('x0 y0')
-mconstr = Not(-x0 + y0 <= 1000) # True
+# mconstr = True
+mconstr = Not(-x0 + y0 <= 20)
 counters = defaultdict(dict)
 inp_vars = [x0, y0]
-print(f'if_too_big_3; I x; I y')
+case = "if_too_big_3"
+
+of = open("traces.tcs", "a")
+of.write(f'{case}; I x; I y\n')
+print(f'{case}; I x; I y')
 while c < 1000:
     c += 1
     mf = And(f, mconstr)
@@ -45,13 +50,14 @@ while c < 1000:
                 counters[str(v)][m[v]] = 1
             else:
                 counters[str(v)][m[v]] += 1
-            if counters[str(v)][m[v]] > 5:
+            if counters[str(v)][m[v]] > 50:
                 cconstr = And(cconstr, v != m[v])
             
         mconstr = And(mconstr, Or([z3.Int(v.name()) != m[v] for v in m.decls()]))
         x = m[z3.Int('x0')]
         y = m[z3.Int('y0')]
-        print(f'if_too_big_3; {x}; {y}')
+        print(f'{case}; {x}; {y}')
+        of.write(f'{case}; {x}; {y}\n')
         # mconstr = And(mconstr, cconstr)
         s.pop()
         # set_option('smt.random_seed', random.randint(0, 2 ** 8))
@@ -59,6 +65,7 @@ while c < 1000:
         print(mf)
         s.pop()
         break
+of.close()
 
 # for m in cmodels:
 #     x = m[z3.Int('x0')]
