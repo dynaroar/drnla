@@ -119,37 +119,26 @@ class DynamicAnalysis(object):
         [ref_loc] = re.findall(r'\d+', ref_case)
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
 
-        # gen_invars_str = ' && '.join(ref_invars_str)
-        ref_disj = And(ref_invars)
-
         if 'if' in ref_case:
-            # if_ou_z3 = list(map(lambda inv: DynSolver.parse(inv), if_ou))
-            # mlog.debug(f'z3 formula for refine case: \n target, {if_ou_z3} \n refine candidate: {ref_invars_z3}')
-            # select_or_z3 = DynSolver.select_or(if_ou_z3, ref_invars_z3)
-            # refined_if_z3 = Or(And(if_ou_z3), select_or_z3)
-            # refined_if_z3 = Or(And(if_ou_z3), And(ref_invars_z3))
-            # mlog.debug(f'final refined formula :\n {refined_if_z3}')
-
-            # if_ou.append(ref_conj)
-            # if_ou_str = ' && '.join(if_ou)
-            # if_ou = [f'({if_ou_str}) || ({gen_invars})']
-            if_ou = [Or(And(if_ou), ref_disj)]
-            vtrace_name = f'vtrace_if_{ref_loc}'
-            
+            select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
+            mlog.debug(f'final refined formula :\n {select_or_z3}')
+            # ref_disj = And(ref_invars)
+            # if_ou = [Or(And(if_ou), ref_disj)]
+            if_ou = select_or_z3
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
-            if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
 
+            vtrace_name = f'vtrace_if_{ref_loc}'
+            if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
             self.replace_invars(vtrace_name, if_ou_str)
 
         if 'else' in ref_case:
-            # else_ou_str = ' && '.join(else_ou)
-            # else_ou = [f'({else_ou_str}) || ({gen_invars})']
-            else_ou = [Or(And(else_ou), ref_disj)]
-            vtrace_name = f'vtrace_else_{ref_loc}'
-            
+            select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
+            mlog.debug(f'final refined formula :\n {select_or_z3}')
+            else_ou = select_or_z3            
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
-            else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
 
+            vtrace_name = f'vtrace_else_{ref_loc}'
+            else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
             self.replace_invars(vtrace_name, else_ou_str)
     
     
