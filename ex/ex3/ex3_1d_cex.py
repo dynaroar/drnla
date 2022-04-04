@@ -28,12 +28,30 @@ cmodels = []
 c = 0
 x0, y0 = Ints('x0 y0')
 # mconstr = True
-mconstr = Not(-x0 + y0 <= 20)
+
+# OLD
+# 1. x <= 0
+# 2. y <= 0
+# 3. -x + y <= 17
+
+# NEW
+# 1. x <= 0
+# 2. y <= 0
+# 3. -x + y <= 18
+
+# f(x, y, z, ...) <= const
+
+# ...
+# 3. -x + y <= inf <-> true
+
+# mconstr = Not(x0 <= 0)
+# mconstr = Not(y0 <= 0)
+mconstr = Not(And(-x0 + y0 <= 20))
 counters = defaultdict(dict)
 inp_vars = [x0, y0]
 case = "if_too_big_3"
 
-of = open("traces.tcs", "a")
+of = open("traces4.tcs", "a")
 of.write(f'{case}; I x; I y\n')
 print(f'{case}; I x; I y')
 while c < 1000:
