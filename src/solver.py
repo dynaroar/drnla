@@ -8,7 +8,7 @@ dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
 
-from helpers.z3utils import Z3
+# from helpers.z3utils import Z3
 # print(f'----------------system path here(solver): \n {sys.path}')
  
 mlog = common.getLogger(__name__, settings.logger_level)
@@ -139,28 +139,19 @@ class DynSolver(object):
                 if not cls.is_sat(And(c,i)):
                     r.append(Or(c,i))
         mlog.debug(f'r formula: {r}')
-        return And(c1+r)
-
-    # @classmethod
-    # def select_or(cls, c_list, i_list):
-    #     i1 = []
-    #     c_conj = And(c_list)
-    #     mlog.debug(f'c conjunction formula: {c_conj}')
-    #     for zinv in i_list:
-    #             if cls.is_imply(c_conj, zinv):
-    #                 i1.append(zinv)
-    #     mlog.debug(f'i1 formula: {i1}')
-    #     i2 = list(set(i_list)-set(i1))
-    #     mlog.debug(f'i2 formula: {i2}')
-    #     r = []
-    #     for i in i2:
-    #         for c in c_list:
-    #             if not cls.is_sat(And(c,i)):
-    #                 r.append(Or(c,i))
-    #     mlog.debug(f'r formula: {r}')
-    #     return And(i1+r)
-   
-    
+        return c1+r
+     
+    @classmethod
+    def remove_identical (cls, f1_list, f2_list):
+        common1 = []
+        common2 = []
+        for inv1 in f1_list:
+            for inv2 in f2_list:
+                if cls.is_equal(inv1, inv2):
+                    common1.append(inv1)
+                    common2.append(inv2)
+        return (list(set(f1_list)-set(common1)), list(set(f2_list)-set(common2)))
+     
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()
@@ -201,7 +192,7 @@ class DynSolver(object):
             tnode = tnode.body[0].value
             try:
                 expr = cls.parse(tnode)
-                expr = z3.simplify(expr)
+                # expr = z3.simplify(expr)
                 return expr
             except NotImplementedError:
                 mlog.error(f"cannot parse: '{node}'\n{ast.dump(tnode)}")
@@ -279,10 +270,14 @@ class DynSolver(object):
 
 # target, [x >= 7, 7 >= x] 
 # refine candidate: [x <= -7, x >= -7]
-# x=z3.Int('x')
 
-# c_list = [x>= 7, 7>=x]
-# i_list = [x<=-7, x>=-7]
+
+# x=z3.Int('x')
+# # c_list = [x==7, x<0]
+# # i_list = [x==-7]
+
+# c_list = [x>=7, x<=7]
+# i_list = [x>=-7, x<=-7]
 
 # select_or_z3 = DynSolver.select_or(c_list, i_list)
 # print(f'select result: \n{select_or_z3}')
@@ -308,10 +303,7 @@ class DynSolver(object):
 # z3f = DynSolver.parse(invar)
 
 # print(f'------z3 formula------\n {z3f}')
-
-# x, y = Reals('x y')
-
- 
+  
 # compl =  Or(And(7 >= x, x >= 7), And(x >= -7, Or(x >= 7, x <= -7)))
 # sim1 = Or(x==7, Or(x>=7, x==-7))
 # sim2 = Or(x>=7, x==-7)
