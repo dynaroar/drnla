@@ -135,7 +135,7 @@ class DynamicAnalysis(object):
             self.replace_invars(vtrace_name, if_ou_str)
 
         if 'else' in ref_case:
-            select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
+            select_or_z3 = DynSolver.select_or(else_ou, ref_invars)
             mlog.debug(f'final refined formula :\n {select_or_z3}')
             else_ou = select_or_z3
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
