@@ -99,12 +99,14 @@ class DynamicAnalysis(object):
         if 'if' in ref_case:
             if_ou.append(ref_conj)
             vtrace_name = f'vtrace_if_{ref_loc}'
+            # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
             self.replace_invars(vtrace_name, if_ou_str)
         elif 'else' in ref_case:
             else_ou.append(ref_conj)
             vtrace_name = f'vtrace_else_{ref_loc}'
+            # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
             else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
             self.replace_invars(vtrace_name, else_ou_str)
@@ -125,6 +127,7 @@ class DynamicAnalysis(object):
             # ref_disj = And(ref_invars)
             # if_ou = [Or(And(if_ou), ref_disj)]
             if_ou = select_or_z3
+            # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_if_{ref_loc}'
@@ -134,7 +137,8 @@ class DynamicAnalysis(object):
         if 'else' in ref_case:
             select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
             mlog.debug(f'final refined formula :\n {select_or_z3}')
-            else_ou = select_or_z3            
+            else_ou = select_or_z3
+            # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_else_{ref_loc}'

@@ -143,13 +143,14 @@ class DynSolver(object):
      
     @classmethod
     def remove_identical (cls, f1_list, f2_list):
-        common = []
+        common1 = []
+        common2 = []
         for inv1 in f1_list:
             for inv2 in f2_list:
                 if cls.is_equal(inv1, inv2):
-                    f1_list.remove(inv1)
-                    f2_list.remove(inv2)
-        return (f1_list, f2_list)
+                    common1.append(inv1)
+                    common2.append(inv2)
+        return (list(set(f1_list)-set(common1)), list(set(f2_list)-set(common2)))
      
     @classmethod
     def is_equal(cls, f1, f2):
