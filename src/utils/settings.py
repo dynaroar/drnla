@@ -6,8 +6,11 @@ logger_level = 4
 gen_tcs = False
 init_ou = False
 tmpdir = Path().home()/'tmp'
-timeout =  5 * 1000
-refine_bound = 4
+timeout =  600
+refine = 4
+snaps = 1000
+repeat = 50
+
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent

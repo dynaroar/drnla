@@ -29,6 +29,8 @@ class Setup(object):
         self.input_base = os.path.basename(inp)
         self.input_name, _ = str(self.input_base).split('.')
         self.inp = str(self.tmpdir/self.input_base)
+        self.vtracef = str(self.tmpdir/self.input_name) + ".csv"
+
         self.symstates = None
         self.init_files()
 
@@ -40,7 +42,7 @@ class Setup(object):
         self.src_validate = self.source_path[0] + "_validate.c"
         self.invarsf = self.source_path[0] + ".inv"
         self.invars_refine = self.source_path[0] + "_refine.inv"
-        self.vtracef = self.source_path[0] + ".csv"
+        # self.vtracef = self.source_path[0] + ".csv"
         self.vtrace_genf = self.source_path[0] + "_gen.csv"
         self.vtrace_cexf = self.source_path[0] + "_cex.csv"
 

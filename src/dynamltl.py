@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     ag("--init-ou", "-init",
        action = "store_true",
-       help="initial OU mapping for IF ELSE.")
+       help="initial OU mapping for IF ELSE")
 
     ag("--log", "-log",
        type=int,
@@ -46,17 +46,34 @@ if __name__ == "__main__":
   
     ag("--timeout", "-timeout",
        type=int,
-       default=300,
-       help="set timeout")
+       default=600,
+       help="set timeout (s)")
+
+    ag("--refine", "-refine",
+       type=int,
+       default=4,
+       help="set the number of refinement iteration")
+
+    ag("--snaps", "-snaps",
+       type=int,
+       default=1000,
+       help="set the number of snaps/model in cex generalization")
+
+    ag("--repeat", "-repeat",
+       type=int,
+       default=50,
+       help="set the repeat bound for the same variable sanp")
 
     args = aparser.parse_args()
 
     if args.init_ou:
         settings.init_ou = args.init_ou
-    if args.timeout:
-        settings.timeout = int(args.timeout)
-        
+
+    settings.timeout = args.timeout    
     settings.logger_level = args.log
+    settings.refine = args.refine
+    settings.snaps = args.snaps
+    settings.repeat = args.repeat
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 

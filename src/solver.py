@@ -60,7 +60,7 @@ class DynSolver(object):
         f=self.formula
         s.add(f)
         models=[]
-        while c < 50:
+        while c < settings.snaps:
             s.push()
             s.add(constr)
             if s.check() == sat:

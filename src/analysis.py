@@ -47,7 +47,43 @@ class OUAnalysis(object):
                 error_case = var
         return error_case
          
- 
+# old dyn_gen: 
+    # def dyn_gen(self, cex_str):
+    #     dsolver = DynSolver(cex_str)
+    #     dsolver.parse_to_z3()
+    #     error_case = self.get_reach(dsolver.cex_vars) 
+    #     mlog.debug(f'more model for formula:\n {dsolver.formula}')
+    #     # models = dsolver.gen_model()
+    #     dsolver.init_cvars(error_case)
+    #     dsolver.init_vtrace(error_case, self.config.vtrace_genf)
+    #     iter = 0
+    #     gen_cex = dsolver.get_cex_text()
+    #     cex_formula = dsolver.formula
+    #     pre = '(1 != 0)'
+    #     while iter <= 5 and (not gen_cex == ''):
+    #         dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
+    #         dsolver.update_cex(gen_cex)
+    #         dsolver.parse_to_z3()
+    #         pre = pre.strip('"')
+    #         pre_z3 = dsolver.parse(pre)
+    #         gen_z3f = And(pre_z3, dsolver.formula)
+    #         dsolver.update_formula(gen_z3f)
+    #         mlog.debug(f'------find models of (iter {iter}): pre /\ cex_z3:\n {gen_z3f}')
+    #         dsolver.gen_model()
+    #         dsolver.update_vtrace_gen(self.config.vtrace_genf)
+    #         dsolver.update_vtrace_cex(self.config.vtrace_cexf)
+    #         self.dynamic.run_trace(self.config.vtrace_cexf)
+    #         # self.dynamic.run_trace(self.config.vtrace_genf)
+    #         [(gen_case, gen_invars)] = self.dynamic.get_invars()
+    #         mlog.debug(f'------invars from cex generalized (dig):\n {error_case}; {gen_invars}')
+    #         pre_learn = ' && '.join(gen_invars)
+    #         pre = f'\"{pre} && !({pre_learn})\"'
+    #         mlog.debug(f'------conjunction of all previous invars predicate:\n {pre}')
+    #         self.cil_trans.vtrans(pre, f'\"{error_case}\"')
+    #         gen_result, gen_cex = self.static.run_static()
+    #         # mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
+    #         iter += 1
+
     def dyn_gen(self, cex_str):
         dsolver = DynSolver(cex_str)
         dsolver.parse_to_z3()
@@ -83,7 +119,8 @@ class OUAnalysis(object):
             gen_result, gen_cex = self.static.run_static()
             # mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
             iter += 1
-      
+          
+            
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
         if iter == 1:
@@ -149,7 +186,7 @@ class OUAnalysis(object):
       
     def run(self):        
         iter= 1        
-        while iter <= settings.refine_bound and self.result == Result.UNSOUND:
+        while iter <= settings.refine and self.result == Result.UNSOUND:
             self.result = self.refine(iter, self.result, self.nla_ou)
             iter += 1
         # return self.result, self.nla_ou
