@@ -101,6 +101,10 @@ class Z3(object):
                 rhs_terms = cls.split_linear_expr(f.arg(1))
                 for v in rhs_terms:
                     terms[v] -= rhs_terms[v]
+            elif kop == Z3_OP_UMINUS:
+                uminus_terms = cls.split_linear_expr(f.arg(0))
+                for v in uminus_terms:
+                    terms[v] -= uminus_terms[v]
             else:
                 raise Exception(f'[split_linear_expr]: Unsupported expression {f}')
         for v in list(terms):
@@ -108,6 +112,13 @@ class Z3(object):
                 del terms[v]
         return terms
 
+    @classmethod
+    def expr_of_terms(cls, terms):
+        term_lst = []
+        for v in terms:
+            zv = Int(v)
+            term_lst.append(terms[v] * zv)
+        return functools.reduce(lambda e1, e2: e1 + e2, term_lst)
 
     @classmethod
     def normalize(cls, f):
@@ -130,11 +141,10 @@ class Z3(object):
                             del rhs_terms[v]
                             if lhs_terms[v] == 0:
                                 del lhs_terms[v]
-                        else:
-                            rhs_terms[v] -= lhs_terms[v]
-                            del lhs_terms[v]
-                            if rhs_terms[v] == 0:
-                                del rhs_terms[v]
+                    rhs_terms[CONST_TERM_SYM] -= lhs_terms[CONST_TERM_SYM]
+                    del lhs_terms[CONST_TERM_SYM]
+                    if rhs_terms[CONST_TERM_SYM] == 0:
+                        del rhs_terms[CONST_TERM_SYM]
                     return lhs_terms, rhs_terms
                 elif kop == Z3_OP_LT:
                     return cls.normalize(lhs <= rhs - 1)
@@ -149,8 +159,28 @@ class Z3(object):
         else:
             return None
 
+    @classmethod
+    def is_same_template(cls, f1, f2):
+        norm_f1 = cls.normalize(f1)
+        norm_f2 = cls.normalize(f2)
+        if norm_f1 and norm_f2:
+            f1_lhs_terms, f1_rhs_terms = norm_f1
+            f2_lhs_terms, f2_rhs_terms = norm_f2
+            for v1 in f1_lhs_terms:
+                if v1 not in f2_lhs_terms or f1_lhs_terms[v1] != f2_lhs_terms[v1]:
+                    return False
+            for v2 in f2_lhs_terms:
+                if v2 not in f1_lhs_terms:
+                    return False
+            return f1_lhs_terms, f1_rhs_terms[CONST_TERM_SYM], f2_rhs_terms[CONST_TERM_SYM]
+        else:
+            return False
+
 x, y, z = Ints('x y z')
 # f = And(x > 0, Or(x < 0, x + y + x >= 0), y < 0)
 # print(Z3.to_string(f))
 # print(Z3.split_linear_expr(x + y + 2*x + y*2 - x*(2 + 3) + 3 + 2*y*(3 - 1*3)))
-print(Z3.normalize(x + y - 3 + 2*x < 2*y*3 + 1 - z))
+template, c1, c2 = Z3.is_same_template(-x + y <= 17, y + x < 2*x + 19)
+print(Z3.expr_of_terms(template))
+print(c1)
+print(c2)
