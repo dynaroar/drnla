@@ -1,4 +1,4 @@
-import re
+import re, shutil
 from utils import settings
 from utils.smt import *
 
@@ -17,6 +17,7 @@ class DynamicAnalysis(object):
         self.vtracef = config.vtracef
         self.vtrace_genf = config.vtrace_genf
         self.vtrace_cexf = config.vtrace_cexf
+        self.vtrace_joinf = config.vtrace_joinf
 
         
          
@@ -60,6 +61,8 @@ class DynamicAnalysis(object):
             fw.writelines(loc_else+';'+' && '.join(else_ou_str)+'\n')
         fw.close()            
 
+ 
+        
     def get_invars(self):
         fr = open(self.invarsf, "r")
         invs_list = []
@@ -146,9 +149,9 @@ class DynamicAnalysis(object):
             self.replace_invars(vtrace_name, else_ou_str)
     
     
-    def join_vtrace(self, error_case):
+    def merge_vtrace(self, error_case, from_file):
         mlog.debug(f'------union vtrance from initial to generalized: {error_case}------')
-        vtrace_fr = open(self.vtracef, 'r')
+        vtrace_fr = open(from_file, 'r')
         gen_fw = open(self.vtrace_genf, 'a')
         vtrace_list = vtrace_fr.readlines()
         vtrace = CM.vtrace_case(error_case)
@@ -160,3 +163,15 @@ class DynamicAnalysis(object):
         vtrace_fr.close()
         gen_fw.close()
      
+
+    def join_vtrace(self):
+        '''merge vtrace_gen and vtrace_cex into vtrace_join
+        '''
+        shutil.copy(self.vtrace_genf, self.vtrace_joinf)
+        fr_cex = open(self.vtrace_cexf, 'r')
+        cex_lines = fr_cex.readlines()
+        fw_join = open(self.vtrace_joinf, 'a')
+        for line in cex_lines[1:]:
+            fw_join.write(line)
+        fr_cex.close()
+        fw_join.close()

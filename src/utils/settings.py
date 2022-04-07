@@ -41,7 +41,7 @@ class Dynamic:
     else:
         DigPy = DynLTLDir/'deps/dig/src/dig.py'
  
-    dig_flags = '--noss --nocongruences --noeqts --nominmaxplus --maxdeg 1 --log_level 4'
+    dig_flags = '--noss --nocongruences --nominmaxplus --maxdeg 1 --log_level 4'
     source_opts = '{python} -O {dig_py} {source} {flags} --writeresults {invars_file} --writevtraces {vtrace_file}'
     trace_opts = '{python} -O {dig_py} {source} {flags} --writeresults {invars_file}'
     source_cmd = partial(source_opts.format, python=DigPython, dig_py=DigPy, flags=dig_flags)

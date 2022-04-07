@@ -71,7 +71,7 @@ class OUAnalysis(object):
     #         mlog.debug(f'------find models of (iter {iter}): pre /\ cex_z3:\n {gen_z3f}')
     #         dsolver.gen_model()
     #         dsolver.update_vtrace_gen(self.config.vtrace_genf)
-    #         dsolver.update_vtrace_cex(self.config.vtrace_cexf)
+    #         dsolver.update_vtrace_pre(self.config.vtrace_cexf)
     #         self.dynamic.run_trace(self.config.vtrace_cexf)
     #         # self.dynamic.run_trace(self.config.vtrace_genf)
     #         [(gen_case, gen_invars)] = self.dynamic.get_invars()
@@ -89,37 +89,34 @@ class OUAnalysis(object):
         dsolver.parse_to_z3()
         error_case = self.get_reach(dsolver.cex_vars) 
         mlog.debug(f'more model for formula:\n {dsolver.formula}')
-        # models = dsolver.gen_model()
         dsolver.init_cvars(error_case)
         dsolver.init_vtrace(error_case, self.config.vtrace_genf)
-        iter = 0
-        gen_cex = dsolver.get_cex_text()
-        cex_formula = dsolver.formula
-        pre = '(1 != 0)'
-        while iter <= 5 and (not gen_cex == ''):
+        # dsolver.init_vtrace(error_case, self.config.vtrace_joinf)
+        dsolver.gen_model()
+        dsolver.update_vtrace_gen(self.config.vtrace_genf)
+        # dsolver.update_vtrace_gen(self.config.vtrace_joinf)
+        
+        self.dynamic.run_trace(self.config.vtrace_genf)
+        [(gen_case, gen_invars_str)] = self.dynamic.get_invars()
+        gen_invars = list(map(lambda inv_str: dsolver.parse(inv_str), gen_invars_str))
+
+        # mconstr = True
+        mlog.debug(f'invars from cex-gen snaps (initial cex): \n {gen_invars}')
+        for inv in gen_invars:
+            # mlog.debug(f'Inv from cex-gen snaps: \n {inv}') # 
+            mf = And(Not (inv), dsolver.formula)
+            dsolver.update_formula(mf)
+            mlog.debug(f'more model for updated formula:\n {dsolver.formula}')
+            
             dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
-            dsolver.update_cex(gen_cex)
-            dsolver.parse_to_z3()
-            pre = pre.strip('"')
-            pre_z3 = dsolver.parse(pre)
-            gen_z3f = And(pre_z3, dsolver.formula)
-            dsolver.update_formula(gen_z3f)
-            mlog.debug(f'------find models of (iter {iter}): pre /\ cex_z3:\n {gen_z3f}')
             dsolver.gen_model()
-            dsolver.update_vtrace_gen(self.config.vtrace_genf)
-            dsolver.update_vtrace_cex(self.config.vtrace_cexf)
-            self.dynamic.run_trace(self.config.vtrace_cexf)
-            # self.dynamic.run_trace(self.config.vtrace_genf)
-            [(gen_case, gen_invars)] = self.dynamic.get_invars()
-            mlog.debug(f'------invars from cex generalized (dig):\n {error_case}; {gen_invars}')
-            pre_learn = ' && '.join(gen_invars)
-            pre = f'\"{pre} && !({pre_learn})\"'
-            mlog.debug(f'------conjunction of all previous invars predicate:\n {pre}')
-            self.cil_trans.vtrans(pre, f'\"{error_case}\"')
-            gen_result, gen_cex = self.static.run_static()
-            # mlog.debug(f'------static result for predicate: {gen_result} \n {gen_cex}')
-            iter += 1
-          
+            dsolver.update_vtrace_pre(self.config.vtrace_cexf)
+            self.dynamic.join_vtrace()
+            self.dynamic.run_trace(self.config.vtrace_joinf)
+            [(join_case, join_invars_str)] = self.dynamic.get_invars()
+            mlog.debug(f'invars from the joined traces.\n {join_invars_str}')
+            pass
+           
             
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
@@ -131,8 +128,8 @@ class OUAnalysis(object):
                     (_, if_ou, else_ou) = value
                     init_invar = [(f'vtrace_if_{loc}', ['0 == 0']), (f'vtrace_else_{loc}', ['1 == 0'])]
                     invar_list = invar_list + init_invar
-                mlog.debug(f'------initial OU True/False: \n{invar_list}')
                 self.dynamic.init_invars(invar_list, nla_ou)
+                mlog.debug(f'------initial OU Mapping: \n{nla_ou}')
             else:
                 self.dynamic.run_source()
                 invar_list = self.dynamic.get_invars()
