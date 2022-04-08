@@ -17,6 +17,7 @@ class DynamicAnalysis(object):
         self.vtracef = config.vtracef
         self.vtrace_genf = config.vtrace_genf
         self.vtrace_cexf = config.vtrace_cexf
+        self.vtrace_negf = config.vtrace_negf
         self.vtrace_joinf = config.vtrace_joinf
 
         
@@ -164,14 +165,14 @@ class DynamicAnalysis(object):
         gen_fw.close()
      
 
-    def join_vtrace(self):
-        '''merge vtrace_gen and vtrace_cex into vtrace_join
+    def join_vtrace(self, vtrace_f1, vtrace_f2, des_f):
+        '''merge vtrace1 and vtrace2 into vtrace_join
         '''
-        shutil.copy(self.vtrace_genf, self.vtrace_joinf)
-        fr_cex = open(self.vtrace_cexf, 'r')
-        cex_lines = fr_cex.readlines()
-        fw_join = open(self.vtrace_joinf, 'a')
-        for line in cex_lines[1:]:
+        shutil.copy(vtrace_f1, des_f)
+        fr2 = open(vtrace_f2, 'r')
+        vtraces2 = fr2.readlines()
+        fw_join = open(des_f, 'a')
+        for line in vtraces2[1:]:
             fw_join.write(line)
-        fr_cex.close()
+        fr2.close()
         fw_join.close()

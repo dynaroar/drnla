@@ -9,6 +9,23 @@ from solver import *
 
 mlog = common.getLogger(__name__, settings.logger_level)
 
+
+cex_test = r"""
+[L355]              int x ;
+[L356]              int y ;
+[L357]              int if_too_small_3 ;
+[L358]              int else_too_big_3 ;
+[L359]              int else_too_small_3 ;
+[L360]              int if_too_big_3 ;
+[L363]  COND FALSE  !(x * y < 0)
+        VAL         [x=0, y=0]
+[L375]              if_too_big_3 = 1
+        VAL         [if_too_big_3=1, x=0, y=0]
+[L376]              reach_error()
+        VAL         [if_too_big_3=1, x=0, y=0]
+ """
+
+
 class Result(Enum):
     CORRECT = 1
     INCORRECT = 2
@@ -86,36 +103,51 @@ class OUAnalysis(object):
 
     def dyn_gen(self, cex_str):
         dsolver = DynSolver(cex_str)
+        # dsolver = DynSolver(cex_test)
         dsolver.parse_to_z3()
+        mconstr = True
+       
         error_case = self.get_reach(dsolver.cex_vars) 
-        mlog.debug(f'more model for formula:\n {dsolver.formula}')
+        # mlog.debug(f'more model for formula:\n {dsolver.formula}')
         dsolver.init_cvars(error_case)
-        dsolver.init_vtrace(error_case, self.config.vtrace_genf)
-        # dsolver.init_vtrace(error_case, self.config.vtrace_joinf)
-        dsolver.gen_model()
-        dsolver.update_vtrace_gen(self.config.vtrace_genf)
-        # dsolver.update_vtrace_gen(self.config.vtrace_joinf)
         
-        self.dynamic.run_trace(self.config.vtrace_genf)
-        [(gen_case, gen_invars_str)] = self.dynamic.get_invars()
-        gen_invars = list(map(lambda inv_str: dsolver.parse(inv_str), gen_invars_str))
+        dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
+        dsolver.gen_model(mconstr)
+        dsolver.write_vtrace_error(self.config.vtrace_cexf)
+        self.config.vtrace_cexf = '/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex3/traces.tcs'
+        self.dynamic.run_trace(self.config.vtrace_cexf)
 
-        # mconstr = True
-        mlog.debug(f'invars from cex-gen snaps (initial cex): \n {gen_invars}')
-        for inv in gen_invars:
-            # mlog.debug(f'Inv from cex-gen snaps: \n {inv}') # 
-            mf = And(Not (inv), dsolver.formula)
-            dsolver.update_formula(mf)
-            mlog.debug(f'more model for updated formula:\n {dsolver.formula}')
+        for i in range(20):
+            print(dsolver.models[i])
+        
+        invars_i_str = self.dynamic.get_invars()
+        if invars_i_str:
+            [(cex_case, cex_invars_str)] = invars_i_str
+        else:
+            raise ValueError(f'empty invars from dynamic: {invars_str}')
             
-            dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
-            dsolver.gen_model()
-            dsolver.update_vtrace_pre(self.config.vtrace_cexf)
-            self.dynamic.join_vtrace()
+        invars_i = list(map(lambda inv_str: dsolver.parse(inv_str), cex_invars_str))
+        mlog.debug(f'invars from cex-gen snaps (initial cex): \n {invars_i}')
+
+        for ci in invars_i:
+            # mlog.debug(f'Inv from cex-gen snaps: \n {inv}') # 
+            mconstr = dsolver.error_zid(Not(ci))
+            
+            dsolver.init_vtrace(error_case, self.config.vtrace_negf)
+            dsolver.gen_model(mconstr)
+            # mlog.debug(f'models: \n {dsolver.models}')
+            dsolver.write_vtrace_error(self.config.vtrace_negf)
+            self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_negf, self.config.vtrace_joinf)
             self.dynamic.run_trace(self.config.vtrace_joinf)
-            [(join_case, join_invars_str)] = self.dynamic.get_invars()
-            mlog.debug(f'invars from the joined traces.\n {join_invars_str}')
-            pass
+            invars_j_str = self.dynamic.get_invars()
+            if invars_j_str:
+                [(join_case, join_invars_str)] = invars_j_str
+                invars_j = list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
+                mlog.debug(f'invars from the joined traces.\n {invars_j}')
+                
+
+                
+                pass
            
             
     def refine(self, iter, result, nla_ou):
@@ -142,9 +174,10 @@ class OUAnalysis(object):
         self.cil_trans.strans()
         sresult, cex_str = self.static.run_static()
         if sresult == StaticResult.INCORRECT:
-            mlog.debug(f'------counterexample from static analysis (iteration {iter}): \n {cex_str}\n')
+            mlog.debug(f'------counterexample from static analysis (iteration {iter}): \n {cex_test}\n')
                 
-            rsolver = DynSolver(cex_str)
+            # rsolver = DynSolver(cex_str)
+            rsolver = DynSolver(cex_test)
             rsolver.parse_to_z3()
             mlog.debug(f'symbols from cex formula:\n{rsolver.cex_vars}')
             error_case = self.get_reach(rsolver.cex_vars) 
