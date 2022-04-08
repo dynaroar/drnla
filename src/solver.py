@@ -22,9 +22,10 @@ class DynSolver(object):
         self.symbols = {}
         self.cex_vars = []
         self.ssa_id = {}
-        self.formula = True
+        self.zcex = True
         self.error_case = ''
         self.cvars = []
+        self.inp_vars = []
         self.models = []
     
     def parse_to_z3(self):
@@ -33,7 +34,7 @@ class DynSolver(object):
         self.symbols = cex_parser.sym_tab
         self.cex_vars = [*cex_parser.sym_tab]
         self.ssa_id = cex_parser.ssa_id
-        self.formula = cex_z3
+        self.zcex = cex_z3
     
     def init_cvars(self, error_case):
         self.error_case = error_case
@@ -42,6 +43,7 @@ class DynSolver(object):
         for var in vnames:
             if error_case not in var:
                 self.cvars.append(var)
+                self.inp_vars.append(self.symbols[var])
 
     def update_cex(self, cex):
         self.cex_text = cex
@@ -49,45 +51,46 @@ class DynSolver(object):
     def get_cex_text(self):
         return self.cex_text
 
-    def update_formula(self, f):
-        self.formula = f
+    def update_zcex(self, f):
+        self.zcex = f
 
-
-    def gen_model(self):
+    def error_zid(self, f):
+        pre_pairs = list(map(lambda sid: (z3.Int(sid), self.symbols[sid]), self.cvars))
+        mlog.debug(f'substitute mapping: \n {pre_pairs}')
+        return (z3.substitute(f, pre_pairs))
+        
+        
+    def gen_model(self, mconstr):
+        mlog.debug(f'gen_model for formula: \n {self.zcex} /\ {mconstr}')
         counters = defaultdict(dict)
-        mconstr = True
         c = 0
         s = Solver()
-        f = self.formula
-        s.add(f)
         models=[]
         while c < settings.snaps:
             c += 1
-            # mf = And (mconstr, f)
+            mf = And (self.zcex, mconstr)
             s.push()
-            s.add(mconstr)
+            s.add(mf)
             if s.check() == sat:
                 m = s.model()
                 models.append(m)
                 cconstr = True
-                or_list = []
-                for v in m.decls():
-                    if m[v] not in counters[v.name()]:
-                        counters[v.name()][m[v]] = 1
+                for v in self.inp_vars:
+                    if m[v] not in counters[str(v)]:
+                        counters[str(v)][m[v]] = 1
                     else:
-                        counters[v.name()][m[v]] += 1
-                    if counters[v.name()][m[v]] >= settings.repeat:
+                        counters[str(v)][m[v]] += 1
+                    if counters[str(v)][m[v]] >= settings.repeat:
                         cconstr = And(cconstr, v != m[v])
-                    or_list.append(z3.Int(v.name()) != m[v])
-                mconstr = And(mconstr, Or(or_list))
+                mconstr = And(mconstr, Or([z3.Int(v.name()) != m[v] for v in m.decls()]))
+                # mconstr = And(mconstr, cconstr)
                 s.pop()
             else:
-                # mlog.debug(f'unsat:\n {f}')
+                mlog.debug(f'unsat:\n {mf}')
                 s.pop()
                 break
         self.models = models
-        # return self.models
-
+ 
     
         
     def init_vtrace(self, error_case, vtrace_file):
@@ -105,7 +108,7 @@ class DynSolver(object):
         # DynSolver.vtrace_genf = vtrace_file
         
         
-    def update_vtrace_gen(self, vtrace_genf):
+    def write_vtrace_error(self, vtrace_genf):
         model_list = self.models
         vtrace_fw = open(vtrace_genf, 'a+')
         vtrace = common.vtrace_case(self.error_case)
@@ -117,7 +120,7 @@ class DynSolver(object):
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()
 
-    def update_vtrace_pre(self, vtrace_cexf):
+    def write_vtrace_pre(self, vtrace_cexf):
         model_list = self.models
         vtrace_fw = open(vtrace_cexf, 'a+')
         vtrace = common.vtrace_case(self.error_case)
