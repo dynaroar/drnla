@@ -5,6 +5,7 @@ from transform import CTransform
 from dynamic import DynamicAnalysis
 from static import StaticAnalysis, StaticResult
 from solver import *
+from utils.smt import *
 
 
 mlog = common.getLogger(__name__, settings.logger_level)
@@ -149,6 +150,17 @@ class OUAnalysis(object):
                 [(join_case, join_invars_str)] = invars_j_str
                 invars_j = list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
                 mlog.debug(f'invars_j from the joined traces.\n {invars_j}')
+                for fi in invars_i:
+                    for fj in invars_j:
+                        mlog.debug(f'check the same template in: \n {fi} and {fj}')
+                        compare = Z3.is_same_template(fi, fj)
+                        # compare = Z3.is_same_template(0<= z3.Int('y'), 18 >= z3.Int('x'))
+                        if compare:
+                            tmplate, c1, c2 = compare
+                            mlog.debug(f'found same template in {fi} and {fj}: \n {template, c1, c2}')
+
+                        else:
+                            continue
                 pass
            
             
