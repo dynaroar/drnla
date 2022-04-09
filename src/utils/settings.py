@@ -54,7 +54,7 @@ class Static:
     if 'ULTIMATE_HOME' in os.environ:
         StaticHome = Path(os.getenv('ULTIMATE_HOME'))
     else:
-        StaticHome = DynLTLDir / 'deps' / 'dyn_instr'
+        StaticHome = DynLTLDir / 'deps' / 'UAutomizer-linux'
 
     java_ultimate = f'java -Dosgi.configuration.area=config -Xmx10G -Xss4m -jar {StaticHome}/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
     ultimate_bash = StaticHome / 'run-ultimate.sh'
