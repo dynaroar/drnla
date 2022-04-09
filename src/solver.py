@@ -255,7 +255,7 @@ class DynSolver(object):
         elif isinstance(node, ast.Name):
             return z3.Int(str(node.id))
         elif isinstance(node, ast.Num):
-            return z3.IntVal(str(node.n))
+            return z3.IntVal(node.n)
         elif isinstance(node, ast.Add):
             return operator.add
         elif isinstance(node, ast.Mult):
