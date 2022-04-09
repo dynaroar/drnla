@@ -253,6 +253,7 @@ class DynSolver(object):
             return op(left, right)
 
         elif isinstance(node, ast.Name):
+            print(f'{node.id}: {type(node.id)}')
             return z3.Int(str(node.id))
         elif isinstance(node, ast.Num):
             return z3.IntVal(node.n)
@@ -342,3 +343,26 @@ class DynSolver(object):
 # r = t(g)
 # for g in r: 
 #     print (g)
+
+
+# from utils.smt import *
+
+# f1 = DynSolver.parse('14>=y')
+# f2 = DynSolver.parse('x <= 18')
+
+# x, y, z = Ints('x y z')
+
+# fi = y <= 14
+# fj = (x <= 18)
+
+# print(f'f1 my parser: {f1.sexpr()}')
+# print(f'f2 my parser: {f2.sexpr()}')
+# print(f'fi type: {fi.sexpr()}')
+# print(f'fj type: {fj.sexpr()}')
+# fi = 14 >= y
+# norm = Z3.normalize(14 >= y)
+# Z3.normalize(fi)
+
+# norm = Z3.normalize(f1)
+
+# print(f'normalize {f1}: {norm}')

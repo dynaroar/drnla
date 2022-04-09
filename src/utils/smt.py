@@ -125,6 +125,21 @@ class Z3(object):
         """
         Normalize a condition to the form `e <= const`
         """
+        def helper(lhs, rhs):
+            lhs_terms = cls.split_linear_expr(lhs)
+            rhs_terms = cls.split_linear_expr(rhs)
+            for v in list(rhs_terms):
+                if v != CONST_TERM_SYM:
+                    lhs_terms[v] -= rhs_terms[v]
+                    del rhs_terms[v]
+                    if lhs_terms[v] == 0:
+                        del lhs_terms[v]
+            rhs_terms[CONST_TERM_SYM] -= lhs_terms[CONST_TERM_SYM]
+            del lhs_terms[CONST_TERM_SYM]
+            if rhs_terms[CONST_TERM_SYM] == 0:
+                del rhs_terms[CONST_TERM_SYM]
+            return lhs_terms, rhs_terms
+
         if z3.is_expr(f):
             num_args = f.num_args()
             op = f.decl()
@@ -133,25 +148,13 @@ class Z3(object):
                 lhs = f.arg(0)
                 rhs = f.arg(1)
                 if kop == Z3_OP_LE:
-                    lhs_terms = cls.split_linear_expr(lhs)
-                    rhs_terms = cls.split_linear_expr(rhs)
-                    for v in list(rhs_terms):
-                        if v != CONST_TERM_SYM:
-                            lhs_terms[v] -= rhs_terms[v]
-                            del rhs_terms[v]
-                            if lhs_terms[v] == 0:
-                                del lhs_terms[v]
-                    rhs_terms[CONST_TERM_SYM] -= lhs_terms[CONST_TERM_SYM]
-                    del lhs_terms[CONST_TERM_SYM]
-                    if rhs_terms[CONST_TERM_SYM] == 0:
-                        del rhs_terms[CONST_TERM_SYM]
-                    return lhs_terms, rhs_terms
+                    return helper(lhs, rhs)
                 elif kop == Z3_OP_LT:
-                    return cls.normalize(lhs <= rhs - 1)
+                    return helper(lhs, rhs - 1)
                 elif kop == Z3_OP_GE:
-                    return cls.normalize(rhs <= lhs)
+                    return helper(rhs, lhs)
                 elif kop == Z3_OP_GT:
-                    return cls.normalize(rhs <= lhs - 1)
+                    return helper(rhs, lhs - 1)
                 else:
                     return None
             else:
@@ -184,3 +187,7 @@ class Z3(object):
 # print(Z3.expr_of_terms(template))
 # print(c1)
 # print(c2)
+# f = 0 <= y
+# print(f)
+# print(Z3.normalize(f))
+# print(f)
