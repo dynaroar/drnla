@@ -253,8 +253,8 @@ class DynSolver(object):
             return op(left, right)
 
         elif isinstance(node, ast.Name):
-            print(f'{node.id}: {type(node.id)}')
-            return z3.Int(str(node.id))
+            # print(f'{node.id}: {type(node.id)}')
+            return z3.Int(node.id)
         elif isinstance(node, ast.Num):
             return z3.IntVal(node.n)
         elif isinstance(node, ast.Add):
