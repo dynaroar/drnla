@@ -8,8 +8,7 @@ from solver import *
 
 
 mlog = common.getLogger(__name__, settings.logger_level)
-
-
+ 
 cex_test = r"""
 [L355]              int x ;
 [L356]              int y ;
@@ -26,11 +25,16 @@ cex_test = r"""
  """
 
 
+# rsolver = DynSolver(cex_test)
+# rsolver.parse_to_z3()
+# rsolver.gen_model(True)
+
 class Result(Enum):
     CORRECT = 1
     INCORRECT = 2
     UNKNOWN = 3
     UNSOUND = 4
+
      
 class OUAnalysis(object):
 
@@ -106,19 +110,16 @@ class OUAnalysis(object):
         # dsolver = DynSolver(cex_test)
         dsolver.parse_to_z3()
         mconstr = True
-       
-        error_case = self.get_reach(dsolver.cex_vars) 
-        # mlog.debug(f'more model for formula:\n {dsolver.formula}')
+        geni_result = dsolver.gen_model(True)
+        assert geni_result == 'sat', f'------unsat for initial cex snaps: \n {cex_str}'
+        error_case = self.get_reach(dsolver.cex_vars)
         dsolver.init_cvars(error_case)
-        
         dsolver.init_vtrace(error_case, self.config.vtrace_cexf)
-        dsolver.gen_model(mconstr)
+        dsolver.init_vtrace(error_case, self.config.vtrace_genf)
         dsolver.write_vtrace_error(self.config.vtrace_cexf)
-        self.config.vtrace_cexf = '/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex3/traces.tcs'
+        dsolver.write_vtrace_error(self.config.vtrace_genf)
+        # self.config.vtrace_cexf = '/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex3/traces.tcs'
         self.dynamic.run_trace(self.config.vtrace_cexf)
-
-        for i in range(20):
-            print(dsolver.models[i])
         
         invars_i_str = self.dynamic.get_invars()
         if invars_i_str:
@@ -134,19 +135,20 @@ class OUAnalysis(object):
             mconstr = dsolver.error_zid(Not(ci))
             
             dsolver.init_vtrace(error_case, self.config.vtrace_negf)
-            dsolver.gen_model(mconstr)
+            genj_result = dsolver.gen_model(mconstr)
             # mlog.debug(f'models: \n {dsolver.models}')
-            dsolver.write_vtrace_error(self.config.vtrace_negf)
-            self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_negf, self.config.vtrace_joinf)
-            self.dynamic.run_trace(self.config.vtrace_joinf)
-            invars_j_str = self.dynamic.get_invars()
+            if genj_result == 'sat':
+                dsolver.write_vtrace_error(self.config.vtrace_negf)
+                self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_negf, self.config.vtrace_joinf)
+                self.dynamic.run_trace(self.config.vtrace_joinf)
+                invars_j_str = self.dynamic.get_invars()
+            else:
+                mlog.info(f'----cex X !c_i not sat exit to next one----')
+                continue 
             if invars_j_str:
                 [(join_case, join_invars_str)] = invars_j_str
                 invars_j = list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
-                mlog.debug(f'invars from the joined traces.\n {invars_j}')
-                
-
-                
+                mlog.debug(f'invars_j from the joined traces.\n {invars_j}')
                 pass
            
             
@@ -173,40 +175,40 @@ class OUAnalysis(object):
     
         self.cil_trans.strans()
         sresult, cex_str = self.static.run_static()
+
         if sresult == StaticResult.INCORRECT:
-            mlog.debug(f'------counterexample from static analysis (iteration {iter}): \n {cex_test}\n')
+            mlog.debug(f'------counterexample from static analysis (iteration {iter}): \n {cex_str}\n')
                 
-            # rsolver = DynSolver(cex_str)
-            rsolver = DynSolver(cex_test)
+            rsolver = DynSolver(cex_str)
             rsolver.parse_to_z3()
+             
             mlog.debug(f'symbols from cex formula:\n{rsolver.cex_vars}')
-            error_case = self.get_reach(rsolver.cex_vars) 
+            error_case = self.get_reach(rsolver.cex_vars)
             mlog.debug(f'error case: \n {error_case}')
 
             self.dyn_gen(cex_str)
             self.dynamic.run_trace(self.config.vtrace_genf)
-            [(ref_case, ref_invars)] = self.dynamic.get_invars()
-          
+            [(ref_case, ref_invars_str)] = self.dynamic.get_invars()
+            mlog.debug(f'------invars from dyn_gen: \n {ref_invars_str}')
+                      
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen ELSE on iteration {iter}------\n')
-                # mlog.debug(f'------ invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
-                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
+                self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
                  
             elif self.if_small in error_case:                
                 mlog.debug(f'----widen IF on iteration {iter}------\n')
-                # mlog.debug(f'------invars from generalized cex trace (refine):\n {ref_case}: {ref_invars}')
-                self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
+                self.dynamic.disj_ou(ref_case, ref_invars_str, nla_ou)
                  
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen IF on iteration {iter}------\n')
-                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
+                self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
                 
             elif self.else_small in error_case:
                 mlog.debug(f'----widen ELSE on iteration {iter}------\n')
-                self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
+                self.dynamic.disj_ou(ref_case, ref_invars_str, nla_ou)
  
             else:
-                raise ValueError(f'Reach error case unable to handle: {error_case}')
+                raise ValueError(f'Reach error case is unable to handle: {error_case}')
      
             return Result.UNSOUND
         elif sresult == StaticResult.CORRECT:
@@ -218,6 +220,7 @@ class OUAnalysis(object):
         iter= 1        
         while iter <= settings.refine and self.result == Result.UNSOUND:
             self.result = self.refine(iter, self.result, self.nla_ou)
+            mlog.info(f'------{iter}th refinement result: \n {self.nla_ou}')
             iter += 1
         # return self.result, self.nla_ou
     

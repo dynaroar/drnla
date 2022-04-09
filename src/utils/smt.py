@@ -176,11 +176,11 @@ class Z3(object):
         else:
             return False
 
-x, y, z = Ints('x y z')
-# f = And(x > 0, Or(x < 0, x + y + x >= 0), y < 0)
-# print(Z3.to_string(f))
-# print(Z3.split_linear_expr(x + y + 2*x + y*2 - x*(2 + 3) + 3 + 2*y*(3 - 1*3)))
-template, c1, c2 = Z3.is_same_template(-x + y <= 17, y + x < 2*x + 19)
-print(Z3.expr_of_terms(template))
-print(c1)
-print(c2)
+# x, y, z = Ints('x y z')
+# # f = And(x > 0, Or(x < 0, x + y + x >= 0), y < 0)
+# # print(Z3.to_string(f))
+# # print(Z3.split_linear_expr(x + y + 2*x + y*2 - x*(2 + 3) + 3 + 2*y*(3 - 1*3)))
+# template, c1, c2 = Z3.is_same_template(-x + y <= 17, y + x < 2*x + 19)
+# print(Z3.expr_of_terms(template))
+# print(c1)
+# print(c2)

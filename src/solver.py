@@ -71,6 +71,7 @@ class DynSolver(object):
             mf = And (self.zcex, mconstr)
             s.push()
             s.add(mf)
+            result = ''
             if s.check() == sat:
                 m = s.model()
                 models.append(m)
@@ -85,11 +86,18 @@ class DynSolver(object):
                 mconstr = And(mconstr, Or([z3.Int(v.name()) != m[v] for v in m.decls()]))
                 # mconstr = And(mconstr, cconstr)
                 s.pop()
+                result = 'sat'
             else:
                 mlog.debug(f'unsat:\n {mf}')
                 s.pop()
+                result = 'unsat'
                 break
         self.models = models
+        return result
+        # for i in range(20):
+        #     mlog.debug(self.models[i])
+
+  
  
     
         
@@ -102,7 +110,7 @@ class DynSolver(object):
         decls_str = '; '.join(decls)
         vtrace_decs = f'{vtrace}; {decls_str}\n'
         vtrace_fw = open(vtrace_file, 'w+')
-        mlog.debug(f'------init single vtrace file: \n {vtrace_decs}')
+        # mlog.debug(f'------init single vtrace file: \n {vtrace_decs}')
         vtrace_fw.write(vtrace_decs)
         vtrace_fw.close()
         # DynSolver.vtrace_genf = vtrace_file
@@ -283,6 +291,12 @@ class DynSolver(object):
 
 # target, [x >= 7, 7 >= x] 
 # refine candidate: [x <= -7, x >= -7]
+
+
+
+
+ 
+
 
 
 # x=z3.Int('x')
