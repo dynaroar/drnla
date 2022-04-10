@@ -76,7 +76,10 @@ class DynamicAnalysis(object):
                     invars.append(inv[:-1].strip())
             invs_list.append((iterms[0].strip(),invars))
         fr.close()
-        return invs_list
+        if invs_list:
+            return invs_list
+        else:
+            return False
 
     def replace_invarsf(self, vtrace_name, vtrace_list):
         fr = open(self.invars_refine, 'r')
@@ -161,17 +164,15 @@ class DynamicAnalysis(object):
             self.replace_invars(vtrace_name, else_ou_str)
     
     
-    def merge_vtrace(self, error_case, from_file):
-        mlog.debug(f'------union vtrance from initial to generalized: {error_case}------')
+    def add_vtrace(self, from_file, to_file):
+        '''add trace from_file to to_file
+        '''
         vtrace_fr = open(from_file, 'r')
-        gen_fw = open(self.vtrace_genf, 'a')
+        gen_fw = open(to_file, 'a')
         vtrace_list = vtrace_fr.readlines()
-        vtrace = CM.vtrace_case(error_case)
-        mlog.debug(f'------ vtrance to union: {vtrace}------')
-        vtrace_len = len(vtrace_list)
-        for i in range(vtrace_len):
-            if vtrace in vtrace_list[i] and vtrace in vtrace_list[i+1] and (i < len(vtrace_list)-1):
-                gen_fw.write(vtrace_list[i+1])
+        # vtrace = CM.vtrace_case(error_case)
+        for line in vtrace_list[1:]:
+            gen_fw.write(line)
         vtrace_fr.close()
         gen_fw.close()
      
@@ -187,3 +188,4 @@ class DynamicAnalysis(object):
             fw_join.write(line)
         fr2.close()
         fw_join.close()
+ 

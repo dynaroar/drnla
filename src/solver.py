@@ -58,7 +58,7 @@ class DynSolver(object):
         pre_pairs = list(map(lambda sid: (z3.Int(sid), self.symbols[sid]), self.cvars))
         mlog.debug(f'substitute mapping: \n {pre_pairs}')
         return (z3.substitute(f, pre_pairs))
-        
+
         
     def gen_model(self, mconstr):
         mlog.debug(f'gen_model for formula: \n {self.zcex} /\ {mconstr}')
@@ -142,6 +142,14 @@ class DynSolver(object):
             # mlog.debug(f'---vtrace values: \n {vtrace_vals}')
             vtrace_fw.write(vtrace_vals)
         vtrace_fw.close()
+
+    @classmethod
+    def not_in(cls, f, f_list):
+        defalt = True
+        for inv in f_list:
+            if cls.is_equal(f, inv):
+                return False
+        return True
 
     @classmethod
     def select_or(cls, c_list, i_list):

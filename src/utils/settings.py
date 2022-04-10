@@ -10,6 +10,7 @@ timeout =  600
 refine = 4
 snaps = 1000
 repeat = 50
+upper = 20
 
 
 SrcDir = Path(__file__).parent

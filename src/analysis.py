@@ -154,11 +154,50 @@ class OUAnalysis(object):
                     for fj in invars_j:
                         mlog.debug(f'check the same template in: \n {fi} and {fj}')
                         compare = Z3.is_same_template(fi, fj)
-                        # compare = Z3.is_same_template(0<= z3.Int('y'), 18 >= z3.Int('x'))
-                        if compare:
-                            tmplate, c1, c2 = compare
+                        if compare and (not dsolver.is_equal(fi, fj)):
+                            template, c1, c2 = compare
                             mlog.debug(f'found same template in {fi} and {fj}: \n {template, c1, c2}')
 
+                            def get_invarsk(ck):
+                                    mconstr = dsolver.error_zid(Not (Z3.expr_of_terms(template) <= ck))
+                                    dsolver.init_vtrace(error_case, self.config.vtrace_uppf)
+                                    genk_result = dsolver.gen_model(mconstr)
+                                    assert genk_result == 'sat', f'unsat result in upper k:\n {nconstr}'
+                                    dsolver.write_vtrace_error(self.config.vtrace_uppf)
+                                    self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_uppf, self.config.vtrace_joinf)
+                                    self.dynamic.run_trace(self.config.vtrace_joinf)
+                                    invars_k_str = self.dynamic.get_invars()
+                                    [(join_case, join_invars_str)] = invars_k_str
+                                    return list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
+                                 
+                            if 0<=c1 and c1<c2:
+                                r = 1
+                                upper = settings.upper
+                                while r<= settings.repeat:
+                                    r += 1             
+                                    '''check if fi and fj removed from resulted invars.
+                                    '''
+                                    invars_k = get_invarsk(upper)
+                                    mlog.info(f'invars_k: {invars_k}')
+                                    if dsolver.not_in(fi, invars_k) and dsolver.not_in(fj, invars_k):
+                                        mlog.info(f'inva removed: {fi} and {fj}')
+                                        self.dynamic.add_vtrace(self.config.vtrace_negf, self.config.vtrace_genf)
+                                        self.dynamic.add_vtrace(self.config.vtrace_uppf, self.config.vtrace_genf)
+                                        break
+                                    else:
+                                        pass
+                                        upper += 2
+                                        continue
+                            if c1>c2 and c2>=0:
+                                pass
+                                     
+                            if c1<c2 and c2<=0:
+                                pass
+
+                            if 0>=c1 and c1>c2:
+                                pass
+                                
+   
                         else:
                             continue
                 pass
@@ -199,8 +238,11 @@ class OUAnalysis(object):
             mlog.debug(f'error case: \n {error_case}')
 
             self.dyn_gen(cex_str)
+      
             self.dynamic.run_trace(self.config.vtrace_genf)
-            [(ref_case, ref_invars_str)] = self.dynamic.get_invars()
+            invars_gen_str = self.dynamic.get_invars()
+            assert invars_gen_str, f'empty invars from dyn_gen snaps: {invars_gen_str}'
+            [(ref_case, ref_invars_str)] = invars_gen_str
             mlog.debug(f'------invars from dyn_gen: \n {ref_invars_str}')
                       
             if self.else_big in error_case:
