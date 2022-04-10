@@ -72,7 +72,6 @@ class StaticAnalysis(object):
     def run_static(self):
         static_cmd = settings.Static.run(self.source)
         mlog.info(f'------run Ultimate static analysis:------')
-        mlog.info(static_cmd)
         outp = common.run_cmd(static_cmd).splitlines()
         result_str = ""
         for line in outp:

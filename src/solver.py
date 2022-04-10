@@ -90,7 +90,10 @@ class DynSolver(object):
             else:
                 mlog.debug(f'unsat:\n {mf}')
                 s.pop()
-                result = 'unsat'
+                if c<=1:
+                    result = 'unsat'
+                else:
+                    result = 'sat'
                 break
         self.models = models
         return result

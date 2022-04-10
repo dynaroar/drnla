@@ -162,22 +162,21 @@ class OUAnalysis(object):
                                     mconstr = dsolver.error_zid(Not (Z3.expr_of_terms(template) <= ck))
                                     dsolver.init_vtrace(error_case, self.config.vtrace_uppf)
                                     genk_result = dsolver.gen_model(mconstr)
-                                    assert genk_result == 'sat', f'unsat result in upper k:\n {nconstr}'
+                                    assert genk_result == 'sat', f'unsat result in upper ck:\n {mconstr}'
                                     dsolver.write_vtrace_error(self.config.vtrace_uppf)
                                     self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_uppf, self.config.vtrace_joinf)
                                     self.dynamic.run_trace(self.config.vtrace_joinf)
                                     invars_k_str = self.dynamic.get_invars()
                                     [(join_case, join_invars_str)] = invars_k_str
                                     return list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
-                                 
-                            if 0<=c1 and c1<c2:
+
+                            def remove_loop(ck):
                                 r = 1
-                                upper = settings.upper
                                 while r<= settings.repeat:
                                     r += 1             
                                     '''check if fi and fj removed from resulted invars.
                                     '''
-                                    invars_k = get_invarsk(upper)
+                                    invars_k = get_invarsk(ck)
                                     mlog.info(f'invars_k: {invars_k}')
                                     if dsolver.not_in(fi, invars_k) and dsolver.not_in(fj, invars_k):
                                         mlog.info(f'inva removed: {fi} and {fj}')
@@ -185,23 +184,29 @@ class OUAnalysis(object):
                                         self.dynamic.add_vtrace(self.config.vtrace_uppf, self.config.vtrace_genf)
                                         break
                                     else:
-                                        pass
-                                        upper += 2
-                                        continue
-                            if c1>c2 and c2>=0:
-                                pass
-                                     
-                            if c1<c2 and c2<=0:
-                                pass
+                                        if ck > 0:
+                                            ck += 2
+                                        elif ck == 0:
+                                            break
+                                        else:
+                                            ck -= 2
 
-                            if 0>=c1 and c1>c2:
-                                pass
-                                
-   
+                            if 0<c1 and c1<c2:
+                                ck = settings.upper
+                                remove_loop(ck)
+                            if c1>c2 and c2>0:
+                                ck = 0
+                                remove_loop(ck)
+                            if c1<c2 and c2<0:
+                                ck = 0
+                                remove_loop(ck)
+                            if 0>c1 and c1>c2:
+                                ck = -settings.upper
+                                remove_loop(ck)
+             
                         else:
                             continue
-                pass
-           
+            
             
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
