@@ -167,6 +167,8 @@ class OUAnalysis(object):
                                     self.dynamic.join_vtrace(self.config.vtrace_cexf, self.config.vtrace_uppf, self.config.vtrace_joinf)
                                     self.dynamic.run_trace(self.config.vtrace_joinf)
                                     invars_k_str = self.dynamic.get_invars()
+    
+                                    assert invars_k_str, f'diverge model generated for C_k join, {mconstr}'
                                     [(join_case, join_invars_str)] = invars_k_str
                                     return list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
 
@@ -189,7 +191,7 @@ class OUAnalysis(object):
                                         elif ck == 0:
                                             break
                                         else:
-                                            ck -= 2
+                                            ck = settings.upper
 
                             if 0<c1 and c1<c2:
                                 ck = settings.upper
