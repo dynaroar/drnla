@@ -8,7 +8,7 @@ use Statistics::Basic;
 
 #use File::Temp qw/ tempfile tempdir /;
 
-our @EXPORT_OK = qw{ult ultreach dynamltl find_benchmarks parse seahorn aprove expected};
+our @EXPORT_OK = qw{ult ultreach dynamiteltl find_benchmarks parse seahorn aprove expected};
 
 sub find_benchmarks {
     my ($bdir,$bnames) = @_;
@@ -88,16 +88,35 @@ sub seahorn {
     return { time => tm2str($time), result => $result };
 }
 
-sub dynamltl {
+sub dynamiteltl {
     my ($logfn) = @_;
+    my @mp; my @summary;
+    my $simpltime = -1;
     open(F,"$logfn") or warn "file $logfn - $!";
     my ($time,$result) = (-1,'\rUNK');
     while (<F>) {
 #        $result = '\rTRUE' if /Termination result: True/;
+# MAP:3;exact;(0 > x*y);0==0 && !(0>=y && 0>=y-x);...
+# MAP:5;approximate;x*x*y > 0;...;...
+# PROPERTY:termination
+# RESULT:valid
+        if(/MAP:(\d+);([a-z]+);(.*);(.*)$/) {
+            push @summary, "\$\\ell_{$1}:$2:".toTex($3).":".toTex($4).":".toTex($5)."\$ ";
+            push @mp, { loc => $1, precision => $2, 
+               original => $3, ifbr => $4, elsebr => $5 };
+        }
+        $result = '\rTRUE'  if /RESULT:valid/;
+        $result = '\rFALSE' if /RESULT:invalid/;
+        $result = '\rUNK'   if /RESULT:unknown/;
+        $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)$/;
+        $time   = $1 if /TIME-TOTAL:(\d+.\d+)$/;
         $time   = $1 if /HARD TIMER: (\d+\.\d+)$/;
     }
     close F;
-    return { time => tm2str($time), result => $result };
+    use Data::Dumper;
+    #print Dumper(\@mp);
+    return { time => tm2str($time), result => $result, "map" => \@mp,
+             simpltime => $simpltime, summary => join(" ", @summary) };
 }
 sub dynamo {
     my ($logfn) = @_;
@@ -121,6 +140,7 @@ sub toTex {
     $t =~ s/-1\*/-/g;
     $t =~ s/\*/\\cdot /g;
     $t =~ s/%/\\%/g;
+    $t =~ s/&/\\&/g;
     return $t;
 }
 
@@ -351,7 +371,7 @@ sub averageTimeResult {
 sub parse {
     my ($tool,$logfn,$iters) = @_;
     return averageTimeResult(map { dynamo($logfn.".".$_) } (1..$iters)) if $tool eq 'dynamo';
-    return dynamltl($logfn) if $tool eq 'dynamltl';
+    return dynamiteltl($logfn) if $tool eq 'dynamiteltl';
     return ult($logfn) if $tool eq 'ultimate';
     return ultreach($logfn) if $tool eq 'ultimatereach';
     # for now, we don't iterate on ultimate
