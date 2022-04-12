@@ -72,9 +72,14 @@ foreach my $tool (@tools) {
 # Generate LaTeX
 #
 print "\n% RESULTS:\nBenchmark & ".
-   join(" & ", map("$_ Res & $_ Time",@tools))."\\\\\n\\hline\n";
+   join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
 foreach my $b (keys %$compare) {
+  printf("%-15s & ", $b);
   foreach my $tool (@tools) {
-    print "$b & $compare->{$b}->{$tool}->{result} & $compare->{$b}->{$tool}->{time}\\\\\n";
+    printf("& %-8s & %-8s & %-40s",
+    $compare->{$b}->{$tool}->{result},
+    $compare->{$b}->{$tool}->{time} ,
+    $compare->{$b}->{$tool}->{summary});
   }
+  print " \\\\\n";
 }
