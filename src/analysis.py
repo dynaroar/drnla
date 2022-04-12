@@ -44,13 +44,16 @@ class OUAnalysis(object):
         self.config = config
         self.init_tools()
          
-        self.result = Result.UNSOUND
+        self.ou_result = Result.UNSOUND
         self.nla_ou = {}
         self.if_small = 'if_too_small'
         self.if_big = 'if_too_big'
         self.else_small = 'else_too_small'
         self.else_big = 'else_too_big'
-
+        self.verify_result = 'unknown'
+        self.ou_type = '_approximate'
+        self.ou_str = '_empty'
+        
     def init_tools(self):
       self.cil_trans = CTransform(self.config) 
       self.dynamic = DynamicAnalysis(self.config)
@@ -232,7 +235,7 @@ class OUAnalysis(object):
         self.init_tools()
     
         self.cil_trans.strans()
-        sresult, cex_str = self.static.run_static()
+        sresult, cex_str = self.static.run_reach(self.config.src_validate)
 
         if sresult == StaticResult.INCORRECT:
             mlog.debug(f'------counterexample from static analysis (iteration {iter}): \n {cex_str}\n')
@@ -277,11 +280,51 @@ class OUAnalysis(object):
         else:
             return Result.UNKNOWN
       
-    def run(self):        
+    def nla_run(self):        
         iter= 1        
-        while iter <= settings.refine and self.result == Result.UNSOUND:
-            self.result = self.refine(iter, self.result, self.nla_ou)
+        while iter <= settings.refine and self.ou_result == Result.UNSOUND:
+            self.result = self.refine(iter, self.ou_result, self.nla_ou)
             mlog.info(f'------{iter}th refinement result: \n {self.nla_ou}')
             iter += 1
+            
+        if self.result == Result.CORRECT:
+            self.ou_type = 'exact'
+        else:
+            self.ou_type = 'approximate'
+        
         # return self.result, self.nla_ou
-    
+    def verify_run(self):
+        '''transform to linear program first
+        '''
+        self.write_ou()
+        self.cil_trans.ltrans()
+        result = self.verify_result
+        if settings.prop == 'reach':
+            sresult, cex_str = self.static.run_reach(self.config.linearf)
+        if settings.prop == 'termination':
+            sresult = self.static.run_term()
+        if settings.prop == 'ltl':
+            sresult = self.static.run_ltl()
+
+        if sresult == StaticResult.CORRECT:
+              self.verify_result = 'valid'
+        if sresult == StaticResult.INCORRECT:
+              self.verify_result = 'invalid'
+        if sresult == StaticResult.UNKNOWN:
+              self.verify_result = 'unkown'
+               
+    def write_ou(self):
+        '''write file and convert OU mapping to string
+        '''
+        fw = open(self.config.ou_mapf, 'w+')
+        
+        map_str = []
+        for loc_str, ou_val in self.nla_ou.items():
+            nla, if_ou, else_ou = ou_val
+            nla_str = Z3.to_string(nla)
+            if_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),if_ou)))
+            else_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),else_ou)))
+            fw.write(f'{loc_str};{if_ou_str}')
+            map_str.append(f'MAP:{loc_str};{self.ou_type};{nla_str};{if_ou_str};{else_ou_str}')
+        self.ou_str = '\n'.join(map_str)
+        fw.close()

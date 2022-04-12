@@ -8,7 +8,8 @@ import argparse
 import numpy as np
 import shlex
 import shutil
-import datetime, multiprocessing
+import datetime, time 
+import multiprocessing as mp
 
 import analysis
 
@@ -21,6 +22,8 @@ from utils import settings, common
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
+
+
 
   
 if __name__ == "__main__":
@@ -69,6 +72,13 @@ if __name__ == "__main__":
        default=20,
        help="set the upper bound for normalized template invriants")
 
+    ag("--prop", "-prop",
+       type=str,
+       default='reach',
+       choices= settings.props_list,
+       help= f'select which property to verify')
+    
+
     args = aparser.parse_args()
 
     if args.init_ou:
@@ -80,6 +90,7 @@ if __name__ == "__main__":
     settings.snaps = args.snaps
     settings.repeat = args.repeat
     settings.uppper = args.upper
+    settings.prop = args.prop
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 
@@ -91,12 +102,34 @@ if __name__ == "__main__":
     config = analysis.Setup(inp)
     mlog.info(f'analysis files stored in: {config.tmpdir}')
  
+    ou_analysis = analysis.OUAnalysis(config)
+
+    def simplify():
+        ou_analysis.nla_run()            
+
     def prove():
-        ou = analysis.OUAnalysis(config)
-        ou.run()            
-        mlog.info(f'OU analysis result: {ou.result}\n nla mapping:\n {ou.nla_ou}')
-    prove_process = multiprocessing.Process(target=prove)
-    prove_process.start()
-    mlog.debug('prove_process: {}'.format(prove_process.pid))
-    prove_process.join(timeout=settings.timeout)
+        ou_analysis.verify_run()
+
+    def func_time(func):
+        start = time.time()
+        func()
+        end = time.time()
+        return (end-start)
+    
+    ts = func_time(simplify)
+    ta = ts+func_time(prove)
+
+    # map_str = f'MAP: to be converted'
+    prop_str =f'PROPERT:{settings.prop}'
+    result = f'RESULT:{ou_analysis.verify_result}'
+    time_simp = f'TIME-SIMPLIFICATION:{ts}s' 
+    time_all = f'TIME-TOTAL:{ta}s'
+
+    mlog.info(f'----DynamiteLTL Analysis Result:----\n {ou_analysis.ou_str}\n {prop_str}\n {result}\n {time_simp}\n {time_all}\n')
+ 
+    
+    # prove_process = mp.Process(target=simplify)
+    # prove_process.start()
+    # mlog.debug('prove_process: {}'.format(prove_process.pid))
+    # prove_process.join(timeout=settings.timeout)
 

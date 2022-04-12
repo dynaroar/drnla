@@ -19,18 +19,20 @@ class Setup(object):
     # vtrace_genf = "_gen.csv"
     # vtrace_cexf = "_cex.csv"
     
-    def __init__(self, inp):
+    def __init__(self, inp):       
         self.is_c_inp = inp.endswith(".c")
         assert (self.is_c_inp), "\n Please input a C program: "+ inp
         
         self.tmpdir = Path(tempfile.mkdtemp(dir=settings.tmpdir, prefix="dltl_"))
         shutil.copy(inp, self.tmpdir)
-
         self.input_base = os.path.basename(inp)
-        self.input_name, _ = str(self.input_base).split('.')
+        self.origin = str(self.tmpdir/self.input_base)
         self.inp = str(self.tmpdir/self.input_base)
+        self.input_name, _ = str(self.input_base).split('.')
         self.vtracef = str(self.tmpdir/self.input_name) + ".csv"
-
+        self.ou_mapf = str(self.tmpdir/self.input_name) + "_ou_map.csv"
+        self.linearf = str(self.tmpdir/self.input_name) + "_lia.c"
+ 
         self.symstates = None
         self.init_files()
 

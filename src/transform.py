@@ -5,8 +5,10 @@ mlog = common.getLogger(__name__, settings.logger_level)
 
 class CTransform(object):
     def __init__(self, config):
+        self.origin = config.origin
         self.source = config.inp
         self.invars = config.invars_refine
+        self.ouf = config.ou_mapf
         self.instr = config.src_instr
         self.validate = config.src_validate
         
@@ -23,7 +25,7 @@ class CTransform(object):
   
     def strans(self):
         strans_cmd = settings.Cil.strans(self.source, self.invars)
-        mlog.info(f'------run CIL instrument for static analysis:------')
+        mlog.info(f'------run CIL instrument for static analysis(validateion for OU):------')
         common.run_cmd(strans_cmd)
   
     def vtrans(self, pre, case):
@@ -31,3 +33,9 @@ class CTransform(object):
         mlog.info(f'------run CIL instrument with predicate:------\n')
         common.run_cmd(vtrans_cmd)
   
+    def ltrans(self):
+        ltrans_cmd = settings.Cil.ltrans(self.origin, self.ouf)
+        mlog.info(f'------run CIL instrument with OU substitution for verification :------\n')
+        common.run_cmd(ltrans_cmd)
+
+        

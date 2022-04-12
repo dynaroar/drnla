@@ -14,6 +14,7 @@ class StaticResult(Enum):
 class StaticAnalysis(object):
     def __init__(self, config):
         self.source = config.src_validate
+        self.linearf = config.linearf
 
     def replace_str(self, mystr):
         return mystr.replace("&&", "and").replace("||", "or").replace("!", "not").replace("^", "**").replace('++','+=1').strip()
@@ -69,10 +70,10 @@ class StaticAnalysis(object):
         return '\n'.join(cex)
   
      
-    def run_static(self):
-        static_cmd = settings.Static.run(self.source)
-        mlog.info(f'------run Ultimate static analysis:------')
-        outp = common.run_cmd(static_cmd).splitlines()
+    def run_reach(self, source):
+        mlog.info(f'------run Ultimate static analysis(reach):------')
+        reach_cmd = settings.Static.run_reach(source)
+        outp = common.run_cmd(reach_cmd).splitlines()
         result_str = ""
         for line in outp:
             if "RESULT:" in line:
@@ -92,4 +93,18 @@ class StaticAnalysis(object):
             result = StaticResult.UNKNOWN
             return result, cex_text
 
+    
+    def run_term(self):
+        mlog.info(f'------run Ultimate static analysis(termination):------')
+        term_cmd = settings.Static.run_term(self.linearf)
+        outp = common.run_cmd(term_cmd).splitlines()
+        result_str = ""
+        return StaticResult.UNKNOWN
+
+    def run_ltl(self):
+        mlog.info(f'------run Ultimate static analysis(ltl):------')
+        ltl_cmd = settings.Static.run_ltl(self.linearf)
+        outp = common.run_cmd(ltl_cmd).splitlines()
+        result_str = ""
+        return StaticResult.UNKNOWN
     

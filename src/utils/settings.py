@@ -11,6 +11,8 @@ refine = 4
 snaps = 1000
 repeat = 50
 upper = 20
+prop = 'termination'
+props_list = ['reach','termination', 'ltl']
 
 
 SrcDir = Path(__file__).parent
@@ -24,9 +26,12 @@ class Cil:
     dcmd = partial('{exe} -dig -nopre {inp}'.format, exe=cil_exe)
     scmd = partial('{exe} -val {inp} -inv {invars}'.format, exe=cil_exe)
     vcmd = partial('{exe} -val {inp} -inv {invars} -pre {pre} -case {case}'.format, exe=cil_exe)
+    lcmd = partial('{exe} -lia {ous} {inp}'.format, exe=cil_exe)
+
     dtrans = lambda inp: Cil.dcmd(inp=inp)
     strans = lambda inp, invars: Cil.scmd(inp=inp, invars=invars)
     vtrans = lambda inp, invars, pre, case: Cil.vcmd(inp=inp, invars=invars, pre = pre, case=case)
+    ltrans = lambda inp, ouf: Cil.lcmd(inp=inp, ous=ouf)
 
  # with running file
 # ~/miniconda3/bin/python3 -O src/dig.py ~/tmp/poly2/poly2-case1-2.csv --noss --nocongruences --noeqts --nominmaxplus --maxdeg 1 --log_level 4 --writeresults ~/tmp/poly2/poly2-case1-2.v --writevtraces ~/tmp/poly2/poly2-case1-2.tmp.csv
@@ -59,12 +64,26 @@ class Static:
 
     java_ultimate = f'java -Dosgi.configuration.area=config -Xmx10G -Xss4m -jar {StaticHome}/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
     ultimate_bash = StaticHome / 'run-ultimate.sh'
+
     reach_toolchain = StaticHome / 'config/AutomizerReach.xml'
     reach_setting = StaticHome / 'config/svcomp-Reach-64bit-Automizer_Default.epf'
+
+    term_toolchain = StaticHome / 'config/AutomizerTermination.xml'
+    term_setting = StaticHome / 'config/svcomp-Termination-64bit-Automizer_Default.epf'
+    
+    ltl_toolchain = StaticHome / 'config/AutomizerLTL.xml'
+    ltl_setting = StaticHome / 'config/svcomp-LTL-64bit-Automizer_Default.epf'
+
     ultimate_cmd = "{run_ultimate} -tc {toolchain} -s {setting} -i {filename}"
+    
     # run_cmd = partial(ultimate_cmd.format, run_ultimate=ultimate_bash, toolchain=reach_toolchain, setting=reach_setting)
-    run_cmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=reach_toolchain, setting=reach_setting)
-    run = lambda source: Static.run_cmd(filename=source)
+    run_rcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=reach_toolchain, setting=reach_setting)
+    run_tcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=term_toolchain, setting=term_setting)
+    run_lcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=ltl_toolchain, setting=ltl_setting)
+    
+    run_reach = lambda source: Static.run_rcmd(filename=source)
+    run_term = lambda source: Static.run_tcmd(filename=source)
+    run_ltl = lambda source: Static.run_lcmd(filename=source)
  
 class Ctrace:
     SE_MIN_DEPTH = 20

@@ -119,12 +119,10 @@ def clean():
         if item.endswith(".i") or item.endswith(".o"):
             os.remove(os.path.join(cwd, item))
 
-
-            
-if __name__ == "__main__":
-    aparser = argparse.ArgumentParser("Run c program to collect traces.")
-    ag = aparser.add_argument
-    ag("--inp", "-i", type=str, help="input c program")
-    args = aparser.parse_args()
-    # main(args.inp, args.n, args.p, args.v)
-    processInvars(args.inp)
+# if __name__ == "__main__":
+#     aparser = argparse.ArgumentParser("Run c program to collect traces.")
+#     ag = aparser.add_argument
+#     ag("--inp", "-i", type=str, help="input c program")
+#     args = aparser.parse_args()
+#     # main(args.inp, args.n, args.p, args.v)
+#     processInvars(args.inp)
