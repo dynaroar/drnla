@@ -1,4 +1,4 @@
-import re
+import re, shutil
 from utils import settings
 from utils.smt import *
 
@@ -17,6 +17,8 @@ class DynamicAnalysis(object):
         self.vtracef = config.vtracef
         self.vtrace_genf = config.vtrace_genf
         self.vtrace_cexf = config.vtrace_cexf
+        self.vtrace_negf = config.vtrace_negf
+        self.vtrace_joinf = config.vtrace_joinf
 
         
          
@@ -60,6 +62,8 @@ class DynamicAnalysis(object):
             fw.writelines(loc_else+';'+' && '.join(else_ou_str)+'\n')
         fw.close()            
 
+ 
+        
     def get_invars(self):
         fr = open(self.invarsf, "r")
         invs_list = []
@@ -72,9 +76,12 @@ class DynamicAnalysis(object):
                     invars.append(inv[:-1].strip())
             invs_list.append((iterms[0].strip(),invars))
         fr.close()
-        return invs_list
+        if invs_list:
+            return invs_list
+        else:
+            return False
 
-    def replace_invars(self, vtrace_name, vtrace_list):
+    def replace_invarsf(self, vtrace_name, vtrace_list):
         fr = open(self.invars_refine, 'r')
         static_invars = fr.readlines()
         fr.close()
@@ -87,29 +94,40 @@ class DynamicAnalysis(object):
                 fw.writelines(line)
         fw.close()
         
-    def conj_ou(self, ref_case, ref_invars, nla_ou):
+    def conj_ou(self, ref_case, ref_invars_str, nla_ou):
         """Update ou mapping for conjunction refinement.
         This will also update refine.inv file for static run. 
         """
-        gen_invars = ' && '.join(ref_invars)
-        ref_conj_str = f'!({gen_invars})'
+        gen_invars_str = ' && '.join(ref_invars_str)
+        ref_conj_str = f'!({gen_invars_str})'
         ref_conj = DynSolver.parse(ref_conj_str)
         [ref_loc] = re.findall(r'\d+', ref_case) 
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
         if 'if' in ref_case:
+            vtrace_if = f'vtrace_if_{ref_loc}'
             if_ou.append(ref_conj)
-            vtrace_name = f'vtrace_if_{ref_loc}'
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
-            self.replace_invars(vtrace_name, if_ou_str)
+            self.replace_invarsf(vtrace_if, if_ou_str)
+            if settings.init_ou:
+                vtrace_else = f'vtrace_else_{ref_loc}'
+                gen_invars = DynSolver.parse(gen_invars_str)
+                else_ou.append(gen_invars)
+                else_ou = [Or(else_ou)]
+                nla_ou[ref_loc] = (nla, if_ou, else_ou)
+                mlog.debug(f'else_ou after merge from if:\n  {else_ou} ')
+                else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
+                mlog.debug(f'else_ou_str after merge from if:\n  {else_ou_str} ')
+                self.replace_invarsf(vtrace_else, else_ou_str)
+                 
         elif 'else' in ref_case:
             else_ou.append(ref_conj)
             vtrace_name = f'vtrace_else_{ref_loc}'
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
             else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
-            self.replace_invars(vtrace_name, else_ou_str)
+            self.replace_invarsf(vtrace_name, else_ou_str)
 
         
     def disj_ou(self, ref_case, ref_invars_str, nla_ou):
@@ -146,17 +164,28 @@ class DynamicAnalysis(object):
             self.replace_invars(vtrace_name, else_ou_str)
     
     
-    def join_vtrace(self, error_case):
-        mlog.debug(f'------union vtrance from initial to generalized: {error_case}------')
-        vtrace_fr = open(self.vtracef, 'r')
-        gen_fw = open(self.vtrace_genf, 'a')
+    def add_vtrace(self, from_file, to_file):
+        '''add trace from_file to to_file
+        '''
+        vtrace_fr = open(from_file, 'r')
+        gen_fw = open(to_file, 'a')
         vtrace_list = vtrace_fr.readlines()
-        vtrace = CM.vtrace_case(error_case)
-        mlog.debug(f'------ vtrance to union: {vtrace}------')
-        vtrace_len = len(vtrace_list)
-        for i in range(vtrace_len):
-            if vtrace in vtrace_list[i] and vtrace in vtrace_list[i+1] and (i < len(vtrace_list)-1):
-                gen_fw.write(vtrace_list[i+1])
+        # vtrace = CM.vtrace_case(error_case)
+        for line in vtrace_list[1:]:
+            gen_fw.write(line)
         vtrace_fr.close()
         gen_fw.close()
      
+
+    def join_vtrace(self, vtrace_f1, vtrace_f2, des_f):
+        '''merge vtrace1 and vtrace2 into vtrace_join
+        '''
+        shutil.copy(vtrace_f1, des_f)
+        fr2 = open(vtrace_f2, 'r')
+        vtraces2 = fr2.readlines()
+        fw_join = open(des_f, 'a')
+        for line in vtraces2[1:]:
+            fw_join.write(line)
+        fr2.close()
+        fw_join.close()
+ 

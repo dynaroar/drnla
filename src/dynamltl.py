@@ -64,6 +64,11 @@ if __name__ == "__main__":
        default=50,
        help="set the repeat bound for the same variable sanp")
 
+    ag("--upper", "-upper",
+       type=int,
+       default=20,
+       help="set the upper bound for normalized template invriants")
+
     args = aparser.parse_args()
 
     if args.init_ou:
@@ -74,6 +79,7 @@ if __name__ == "__main__":
     settings.refine = args.refine
     settings.snaps = args.snaps
     settings.repeat = args.repeat
+    settings.uppper = args.upper
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 

@@ -28,9 +28,9 @@ dune build src/instr.exe
 If you would like to install dependencies as your prefernce, setup environment veriables:
 
 ```
-export CONDA_HOME="/tools/miniconda3/bin/python3"
+export CONDA_HOME="/tools/miniconda3/bin/python3" //skip if your local python3 verison >= 3.9.5
 export DIG_HOME="/tools/dig/src/dig.py"
-export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
+export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux" //defualt is in deps/UAutomizer-linux
 
 ```
 
@@ -39,7 +39,8 @@ export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
 
 ```
   $ cd src/
-  $ dynamltl.py --inp <filename> 
+  $ python3 dynamltl.py --inp <filename> 
+//  e.g. python3 dynamltl.py --inp ../test-tmp/ex3/ex3.c --init --snaps 500 
 ```
 
 ### Benchmarks

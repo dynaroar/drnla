@@ -10,6 +10,7 @@ timeout =  600
 refine = 4
 snaps = 1000
 repeat = 50
+upper = 20
 
 
 SrcDir = Path(__file__).parent
@@ -41,7 +42,7 @@ class Dynamic:
     else:
         DigPy = DynLTLDir/'deps/dig/src/dig.py'
  
-    dig_flags = '--noss --nocongruences --noeqts --nominmaxplus --maxdeg 1 --log_level 4'
+    dig_flags = '--noss --nocongruences --nominmaxplus --maxdeg 1 --log_level 4'
     source_opts = '{python} -O {dig_py} {source} {flags} --writeresults {invars_file} --writevtraces {vtrace_file}'
     trace_opts = '{python} -O {dig_py} {source} {flags} --writeresults {invars_file}'
     source_cmd = partial(source_opts.format, python=DigPython, dig_py=DigPy, flags=dig_flags)
@@ -54,7 +55,7 @@ class Static:
     if 'ULTIMATE_HOME' in os.environ:
         StaticHome = Path(os.getenv('ULTIMATE_HOME'))
     else:
-        StaticHome = DynLTLDir / 'deps' / 'dyn_instr'
+        StaticHome = DynLTLDir / 'deps' / 'UAutomizer-linux'
 
     java_ultimate = f'java -Dosgi.configuration.area=config -Xmx10G -Xss4m -jar {StaticHome}/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
     ultimate_bash = StaticHome / 'run-ultimate.sh'

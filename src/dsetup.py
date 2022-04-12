@@ -45,6 +45,9 @@ class Setup(object):
         # self.vtracef = self.source_path[0] + ".csv"
         self.vtrace_genf = self.source_path[0] + "_gen.csv"
         self.vtrace_cexf = self.source_path[0] + "_cex.csv"
+        self.vtrace_negf = self.source_path[0] + "_neg.csv"
+        self.vtrace_uppf = self.source_path[0] + "_upp.csv"
+        self.vtrace_joinf = self.source_path[0] + "_join.csv"
 
     def update_basename(self, iter):
         input_file = self.tmpdir/Path(self.input_name + '_refine'+ str(iter) + '.c')
