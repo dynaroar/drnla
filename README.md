@@ -43,6 +43,17 @@ export ULTIMATE_HOME="/path/to/ultimate/releaseScripts/default/UAutomizer-linux"
 //  e.g. python3 dynamltl.py --inp ../test-tmp/ex3/ex3.c --init --snaps 500 
 ```
 
+```
+python3 dynamltl.py --inp ../test-tmp/ex3/ex3.c --init --refine 4 --prop 'reach'
+```
+
+Other options:
+
+* --init , we need to enable this to start with non-random input.
+* --snaps [k], default one is 1000, specify other numbers.
+* --refine [k], change refinement iteration number, default is 4.
+* --prop [k], choose from ['reach', 'termination', 'ltl']
+
 ### Benchmarks
 
 1. Execute the benchmarks:
