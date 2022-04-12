@@ -1,6 +1,7 @@
 # Dynamic Proofs of LTL
 
 ```
+pip3 install lark z3
 sudo cpan -i Time::Out
 sudo cpan -i YAML::Tiny
 ```
