@@ -16,16 +16,20 @@ class CTransform(object):
         dtrans_cmd = settings.Cil.dtrans(self.source)
         mlog.info(f'------run CIL instrument for dynamic analysis:------')
         outp = common.run_cmd(dtrans_cmd)
-        print(outp)
         nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')
-        nla_ou[nla[0].strip()]=(DynSolver.parse(nla[1].strip()), [], [])
+        try:
+            nla_ou[nla[0].strip()]=(DynSolver.parse(nla[1].strip()), [], [])
+        except IndexError:
+            mlog.error(f'----No nla expression found in main() for {self.origin}')
+            mlog.error(f'----cmd:{dtrans_cmd}')
+            sys.exit()
         
         mlog.info(f'------nla expression output:\n {nla_ou}')
   
     def strans(self):
         strans_cmd = settings.Cil.strans(self.source, self.invars)
-        mlog.info(f'------run CIL instrument for static analysis(validateion for OU):------')
+        mlog.info(f'------run CIL instrument for static analysis(validation for OU):------')
         common.run_cmd(strans_cmd)
   
     def vtrans(self, pre, case):

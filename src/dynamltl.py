@@ -78,6 +78,10 @@ if __name__ == "__main__":
        choices= settings.props_list,
        help= f'select which property to verify')
     
+    ag("--tmpdir", "-tmpdir",
+       type=str,
+       default= settings.tmpdir,
+       help= f'set temporary path for intermediate files')
 
     args = aparser.parse_args()
 
@@ -91,6 +95,7 @@ if __name__ == "__main__":
     settings.repeat = args.repeat
     settings.uppper = args.upper
     settings.prop = args.prop
+    settings.tmpdir = args.tmpdir
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 

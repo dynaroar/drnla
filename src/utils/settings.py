@@ -5,7 +5,7 @@ import os
 logger_level = 4
 gen_tcs = False
 init_ou = False
-tmpdir = Path().home()/'tmp'
+tmpdir = Path().home()
 timeout =  600
 refine = 4
 snaps = 1000

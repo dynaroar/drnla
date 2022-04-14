@@ -1,7 +1,7 @@
 from z3 import *
 from utils import settings, common
 from utils.cparser import*
-import ast, operator
+import ast, operator, os
 
 # import dynamltl
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
