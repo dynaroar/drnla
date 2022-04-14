@@ -55,7 +55,7 @@ my $CFG = {
     dynamiteltl => {
         DIR    => qq{$USERREPO/src}, 
         #CMD => sub { return qq(./dynamltl.py --inp  $_[0] 2>&1 > dynamltl.log); },
-        CMD => sub { return qq(./dynamiteLTL $_[0] term 2>&1 > dynamiteltl.log); },
+        CMD => sub { return qq(./dynamltl.py --inp $_[0] --refine 4 --init --prop reach 2>&1 > dynamiteltl.log); },
         FETCH  => sub { return qq(cp dynamiteltl.log $_[0]); },
         PARSE  => sub { return Parsers::dynamiteltl($_[0]); },
     },
