@@ -1,7 +1,7 @@
 from z3 import *
 from utils import settings, common
 from utils.cparser import*
-import ast, operator, os
+import ast, operator, os, re
 
 # import dynamltl
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
@@ -96,9 +96,9 @@ class DynSolver(object):
                     result = 'sat'
                 break
         self.models = models
-        return result
-        # for i in range(20):
+        # for i in range(2):
         #     mlog.debug(self.models[i])
+        return result
 
   
  
@@ -217,7 +217,8 @@ class DynSolver(object):
     @classmethod
     def parse(cls, node):
         if isinstance(node, str):
-            node = node.replace("^", "**").replace("&&", "and").replace("||", "or").replace("!(", "not(").replace('++','+=1').strip()
+            node = node.replace("^", "**").replace("&&", "and").replace("||", "or").replace('++','+=1').strip()
+            node = re.sub(r'!(?!=)', 'not', node)
 
 
             tnode = ast.parse(node)

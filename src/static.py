@@ -17,7 +17,8 @@ class StaticAnalysis(object):
         self.linearf = config.linearf
 
     def replace_str(self, mystr):
-        return mystr.replace("&&", "and").replace("||", "or").replace("!", "not").replace("^", "**").replace('++','+=1').strip()
+        mystr = re.sub(r'!(?!=)', 'not', mystr)
+        return mystr.replace("&&", "and").replace("||", "or").replace("^", "**").replace('++','+=1').strip()
             
     def get_cex(self, outp):
         cex = {}

@@ -129,7 +129,7 @@ class OUAnalysis(object):
         if invars_i_str:
             [(cex_case, cex_invars_str)] = invars_i_str
         else:
-            raise ValueError(f'empty invars from dynamic: {invars_str}')
+            raise ValueError(f'empty invars from dynamic(i): {invars_i_str}')
             
         invars_i = list(map(lambda inv_str: dsolver.parse(inv_str), cex_invars_str))
         mlog.debug(f'invars from cex-gen snaps (initial cex): \n {invars_i}')
