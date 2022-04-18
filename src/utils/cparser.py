@@ -51,6 +51,7 @@ class UltCexParser(CexParser, Transformer):
             | lvar INC -> trans_inc_assign
             | lvar DEC -> trans_dec_assign
             | lvar ASSIGN pexpr -> trans_assign
+            | lvar ASSIGN nondet_call -> trans_true
             | lvar ADDEQ pexpr -> trans_op_assign
             | lvar SUBEQ pexpr -> trans_op_assign
             | lvar MULEQ pexpr -> trans_op_assign
@@ -94,6 +95,8 @@ class UltCexParser(CexParser, Transformer):
             | var -> trans_var
             | SUB patom -> trans_uop
             | OPAREN pexpr CPAREN -> trans_paren
+
+        ?nondet_call: (VERIFIER_NONDET | NONDET) OPAREN CPAREN
 
         ?val_lst: OBRACKET [val (COMMA val)*] CBRACKET
 
@@ -144,6 +147,8 @@ class UltCexParser(CexParser, Transformer):
         CBRACKET: "]"
         LOC_ID: "L" NUM
         ERROR: "reach_error"
+        NONDET: "nondet"
+        VERIFIER_NONDET: "__VERIFIER_nondet_int"
 
         %import common.CNAME -> ID
         %import common.SIGNED_NUMBER -> NUM
@@ -267,48 +272,43 @@ class UltCexParser(CexParser, Transformer):
         ast = self.parse(s)
         return self.transform(ast)
 
-# text = r"""
-# [L355]              int n ;
-# [L356]              int x ;
-# [L357]              int y ;
-# [L358]              int z ;
-# [L359]              int k ;
-# [L360]              int if_too_small_8 ;
-# [L361]              int else_too_big_8 ;
-# [L362]              int else_too_small_8 ;
-# [L363]              int if_too_big_8 ;
-# [L367]              n = 0
-# [L368]              x = 0
-# [L369]              y = 1
-# [L370]              z = 6
-#         VAL         [k=7, n=0, x=0, y=1, z=6]
-# [L371]  COND TRUE   1
-#         VAL         [k=7, n=0, x=0, y=1, z=6]
-# [L372]  COND TRUE   ((3 * n) * n + 3 * n) + 1 <= k
-#         VAL         [k=7, n=0, x=0, y=1, z=6]
-# [L373]  COND FALSE  !(y > k - 1)
-#         VAL         [k=7, n=0, x=0, y=1, z=6]
-# [L377]  COND FALSE  !(! (- k + y <= 0))
-#         VAL         [k=7, n=0, x=0, y=1, z=6]
-# [L389]              n ++
-# [L390]              x += y
-# [L391]              y += z
-# [L392]              z += 6
-#         VAL         [k=7, n=1, x=1, y=7, z=12]
-# [L371]  COND TRUE   1
-#         VAL         [k=7, n=1, x=1, y=7, z=12]
-# [L372]  COND TRUE   ((3 * n) * n + 3 * n) + 1 <= k
-#         VAL         [k=7, n=1, x=1, y=7, z=12]
-# [L373]  COND TRUE   y > k - 1
-# [L374]              else_too_big_8 = 1
-#         VAL         [else_too_big_8=1, k=7, n=1, x=1, y=7, z=12]
-# [L375]              reach_error()
-#         VAL         [else_too_big_8=1, k=7, n=1, x=1, y=7, z=12]
-# """
+text = r"""
+[L356]              int n ;
+[L357]              int p ;
+[L358]              int q ;
+[L359]              int r ;
+[L360]              int h ;
+[L361]              int c ;
+[L362]              int k ;
+[L363]              int tmp ;
+[L364]              int if_too_small_33 ;
+[L365]              int else_too_big_33 ;
+[L366]              int else_too_small_33 ;
+[L367]              int if_too_big_33 ;
+[L370]              n = __VERIFIER_nondet_int()
+[L371]              p = 0
+[L372]              q = 1
+[L373]              r = n
+[L374]              h = 0
+[L375]              c = 0
+[L376]              tmp = __VERIFIER_nondet_int()
+[L377]              k = tmp
+        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+[L378]  COND FALSE  !(q <= n)
+        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+[L381]  COND TRUE   1
+        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+[L382]  COND FALSE  !((((((((((h * h) * n - ((4 * h) * n) * p) + (4 * (n * n)) * q) - (n * q) * q) - (h * h) * r) + ((4 * h) * p) * r) - ((8 * n) * q) * r) + (q * q) * r) + ((4 * q) * r) * r) + c <= k)
+        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+[L393]              if_too_big_33 = 1
+        VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+[L394]              reach_error()
+        VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+"""
 
-# ult_cex_parser = UltCexParser()
-# f = ult_cex_parser.to_z3(text)
-# print(f)
+ult_cex_parser = UltCexParser()
+f = ult_cex_parser.to_z3(text)
+print(f)
 # s = z3.Solver()
 # s.add(f)
 # print(s.check())
