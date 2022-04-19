@@ -55,15 +55,20 @@ class DynamicAnalysis(object):
             # if_ou, else_ou = list(set(if_ou).difference(else_ou)), list(set(else_ou).difference(if_ou))
             if_ou, else_ou = DynSolver.remove_identical(if_ou, else_ou)
             mlog.debug(f'removed equal formulae: \n if, {if_ou} \n else, {else_ou}')
-            nla_ou[loc] = (nla, if_ou, else_ou)
+            if not settings.init_ou:
+                ou_core = DynSolver.unsatcore_ou(if_ou, else_ou)
+                if ou_core:
+                    mlog.info(f'unsatcore found for initial mapping:\n{ou_core}')
+                    if_ou, else_ou = ou_core
+                    nla_ou[loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv), if_ou))
             else_ou_str = list(map(lambda inv: Z3.to_string(inv), else_ou))
             fw.writelines(loc_if+';'+' && '.join(if_ou_str)+'\n')
             fw.writelines(loc_else+';'+' && '.join(else_ou_str)+'\n')
+
+        mlog.info(f'initial OU mapping: \n {nla_ou}')
         fw.close()            
 
- 
-        
     def get_invars(self):
         fr = open(self.invarsf, "r")
         invs_list = []
@@ -150,7 +155,7 @@ class DynamicAnalysis(object):
 
             vtrace_name = f'vtrace_if_{ref_loc}'
             if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
-            self.replace_invars(vtrace_name, if_ou_str)
+            self.replace_invarsf(vtrace_name, if_ou_str)
 
         if 'else' in ref_case:
             select_or_z3 = DynSolver.select_or(else_ou, ref_invars)
@@ -161,7 +166,7 @@ class DynamicAnalysis(object):
 
             vtrace_name = f'vtrace_else_{ref_loc}'
             else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
-            self.replace_invars(vtrace_name, else_ou_str)
+            self.replace_invarsf(vtrace_name, else_ou_str)
     
     
     def add_vtrace(self, from_file, to_file):

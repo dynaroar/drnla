@@ -39,7 +39,10 @@ class DynSolver(object):
     def init_cvars(self, error_case):
         self.error_case = error_case
         vnames = self.cex_vars
-        mlog.debug(f'------variables from cex_z3 parser: \n {self.cex_vars}')
+        # if self.models:
+            # vnames = 
+        
+        mlog.debug(f'------variables from cex_z3 parser/model: \n {self.cex_vars}')
         for var in vnames:
             if error_case not in var:
                 self.cvars.append(var)
@@ -96,8 +99,8 @@ class DynSolver(object):
                     result = 'sat'
                 break
         self.models = models
-        # for i in range(2):
-        #     mlog.debug(self.models[i])
+        if result == 'sat':
+            mlog.debug(f'models for generalized: {self.models[0]}')
         return result
 
   
@@ -183,7 +186,42 @@ class DynSolver(object):
                     common1.append(inv1)
                     common2.append(inv2)
         return (list(set(f1_list)-set(common1)), list(set(f2_list)-set(common2)))
-     
+    
+    @classmethod
+    def unsatcore_ou(cls, if_ou, else_ou):
+        # foldl = lambda func, acc, xs: reduce(func, xs, acc)
+        s = Solver()
+        s.set(unsat_core=True)
+        s.set(':core.minimize', True)
+        i = 0
+        j = 0
+        if_track = {}
+        else_track = {}
+        for inv in if_ou:
+            i += 1
+            p = 'if'+ str(i)
+            if_track[p] = inv
+            s.assert_and_track(inv, p)
+        for inv in else_ou:
+            j += 1
+            p = 'else'+ str(j)
+            else_track[p] = inv
+            s.assert_and_track(inv, p)
+        if s.check() == 'sat':
+            # raise ValueError(f'no unsat core for sat formula:{s.sexpr()}')
+            return False
+        else:
+            unsat_p = s.unsat_core()
+            if_unsat = []
+            else_unsat = []
+            for p in unsat_p:
+                p_str = p.sexpr()
+                if 'if' in p_str:
+                    if_unsat.append(if_track[p_str])
+                if 'else' in p_str:
+                    else_unsat.append(else_track[p_str])
+        return (if_unsat, else_unsat)
+ 
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()

@@ -13,7 +13,7 @@ repeat = 50
 upper = 20
 prop = 'termination'
 props_list = ['reach','termination', 'ltl']
-
+verdict = '1==1'
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent

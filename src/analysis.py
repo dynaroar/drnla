@@ -278,6 +278,7 @@ class OUAnalysis(object):
         elif sresult == StaticResult.CORRECT:
             return Result.CORRECT
         else:
+            
             return Result.UNKNOWN
       
     def nla_run(self):        
