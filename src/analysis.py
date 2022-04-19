@@ -302,9 +302,9 @@ class OUAnalysis(object):
         if settings.prop == 'reach':
             sresult, cex_str = self.static.run_reach(self.config.linearf)
         if settings.prop == 'termination':
-            sresult = self.static.run_term()
+            sresult, cex_str = self.static.run_term()
         if settings.prop == 'ltl':
-            sresult = self.static.run_ltl()
+            sresult, cex_str = self.static.run_ltl()
 
         if sresult == StaticResult.CORRECT:
               self.verify_result = 'valid'
