@@ -233,7 +233,12 @@ class OUAnalysis(object):
    
         self.config.update_basename(iter)
         self.init_tools()
-    
+
+        for loc, (nla, if_ou, else_ou) in nla_ou.items():
+            verdict_z3 = DynSolver.parse(settings.verdict)
+            if DynSolver.is_equal(And(if_ou), verdict_z3):
+                return Result.CORRECT
+        
         self.cil_trans.strans()
         sresult, cex_str = self.static.run_reach(self.config.src_validate)
 
@@ -276,19 +281,26 @@ class OUAnalysis(object):
      
             return Result.UNSOUND
         elif sresult == StaticResult.CORRECT:
+            mlog.info(f'Static validation returns correct for OU mapping, exit refinement step..')
             return Result.CORRECT
+        # elif (sresult == StaticResult.UNKNOWN) and (settings.verdict == '1==1'):
+        #     return Result.CORRECT
         else:
-            
+            # for loc, (nla, if_ou, else_ou) in nla_ou.items():
+            #     verdict_z3 = DynSolver.parse(settings.verdict)
+            #     if DynSolver.is_equal(And(if_ou), verdict_z3):
+            #         return Result.CORRECT
+            #     else:
             return Result.UNKNOWN
       
     def nla_run(self):        
         iter= 1        
         while iter <= settings.refine and self.ou_result == Result.UNSOUND:
-            self.result = self.refine(iter, self.ou_result, self.nla_ou)
+            self.ou_result = self.refine(iter, self.ou_result, self.nla_ou)
             mlog.info(f'------{iter}th refinement result: \n {self.nla_ou}')
             iter += 1
             
-        if self.result == Result.CORRECT:
+        if self.ou_result == Result.CORRECT:
             self.ou_type = 'exact'
         else:
             self.ou_type = 'approximate'
