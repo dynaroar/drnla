@@ -133,6 +133,8 @@ class OUAnalysis(object):
             
         invars_i = list(map(lambda inv_str: dsolver.parse(inv_str), cex_invars_str))
         mlog.debug(f'invars from cex-gen snaps (initial cex): \n {invars_i}')
+        invars_i = dsolver.rm_weak(dsolver.simp_eqs(invars_i))
+        mlog.debug(f'weak invars removed from cex-gen snaps (initial cex): \n {invars_i}')
 
         for ci in invars_i:
             # mlog.debug(f'Inv from cex-gen snaps: \n {inv}') # 
@@ -153,6 +155,8 @@ class OUAnalysis(object):
                 [(join_case, join_invars_str)] = invars_j_str
                 invars_j = list(map(lambda inv_str: dsolver.parse(inv_str), join_invars_str))
                 mlog.debug(f'invars_j from the joined traces.\n {invars_j}')
+                invars_j = dsolver.rm_weak(dsolver.simp_eqs(invars_j))
+                mlog.debug(f'weak invars_j removed from the joined traces.\n {invars_j}')
                 for fi in invars_i:
                     for fj in invars_j:
                         mlog.debug(f'check the same template in: \n {fi} and {fj}')

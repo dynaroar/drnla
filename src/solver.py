@@ -1,4 +1,5 @@
 from z3 import *
+import itertools
 from utils import settings, common
 from utils.cparser import*
 import ast, operator, os, re
@@ -221,7 +222,31 @@ class DynSolver(object):
                 if 'else' in p_str:
                     else_unsat.append(else_track[p_str])
         return (if_unsat, else_unsat)
- 
+
+    @classmethod
+    def rm_weak(cls, f_list):
+        sub2 = list(itertools.combinations(f_list, 2))
+        rm_f = []
+        for (f1, f2) in sub2:
+            if DynSolver.is_imply(f1,f2):
+                rm_f.append(f2)
+            if DynSolver.is_imply(f2,f1):
+                rm_f.append(f1)
+        if rm_f:
+            return cls.rm_weak(list(set(f_list)-set(rm_f)))
+        else:
+            return f_list
+
+    @classmethod
+    def simp_eqs(cls, f_list):
+        g = Goal()
+        g.add(f_list)
+        t1 = Tactic('simplify')
+        t2 = Tactic('solve-eqs')
+        t = Then(t1, t2)
+        [res] = t(g)
+        return res
+
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()

@@ -33,7 +33,7 @@ class DynamicAnalysis(object):
         CM.run_cmd(source_cmd)
 
         
-    def init_invars(self, invs_list, nla_ou):
+    def init_invars(self, invs_list, nla_ou): 
         fw = open(self.invars_refine, 'w')
         for loc_str, invars in invs_list:
             if 'vtrace_if_' in loc_str:
@@ -70,7 +70,12 @@ class DynamicAnalysis(object):
         fw.close()            
 
     def get_invars(self):
-        fr = open(self.invarsf, "r")
+        try:
+            fr = open(self.invarsf, "r")
+        except IOError:
+            mlog.error(f'dynamic analysis(DIG) returns no invariants: {self.invarsf}')
+            sys.exit()
+            
         invs_list = []
         for line in fr:
             # mlog.debug(f'------read invariant files (dig run): \n {line}')
