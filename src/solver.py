@@ -9,10 +9,53 @@ dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
 
+from helpers.miscs import Miscs
+from data.symstates import SymStates
+
 # from helpers.z3utils import Z3
 # print(f'----------------system path here(solver): \n {sys.path}')
  
 mlog = common.getLogger(__name__, settings.logger_level)
+
+# class AstRefKey:
+#     def __init__(self, n):
+#         self.n = n
+#     def __hash__(self):
+#         return self.n.hash()
+#     def __eq__(self, other):
+#         return self.n.eq(other.n)
+#     def __repr__(self):
+#         return str(self.n)
+# def askey(n):
+#     assert isinstance(n, AstRef)
+#     return AstRefKey(n)
+
+def get_vars(f):
+    r = set()
+    def collect(f):
+      if is_const(f): 
+          # if f.decl().kind() == Z3_OP_UNINTERPRETED and not askey(f) in r:
+          if f.decl().kind() == Z3_OP_UNINTERPRETED and not f in r:
+              # r.add(askey(f))
+              r.add(f)
+      else:
+          for c in f.children():
+              collect(c)
+    collect(f)
+    return list(r)
+
+def get_convex(f):
+    vars = get_vars(f)
+    terms = Miscs.get_terms_fixed_coefs(vars, 2, 1)
+    convex_list = []
+    for t in terms:
+        v, stat = SymStates.mmaximize(f, t, iupper=20)
+        if v is not None:
+            assert isinstance(v, int), f'{v} is not int type'
+            c = t <= v
+            convex_list.append(c)
+    return convex_list
+
 
 class DynSolver(object):
     # vtrace_genf = ''
@@ -108,7 +151,7 @@ class DynSolver(object):
  
     
         
-    def init_vtrace(self, error_case, vtrace_file):
+    def init_vtrace(self, vtrace_file):
         ''' side effect to change both vtrace files of gen and cex
         '''
 
@@ -232,6 +275,20 @@ class DynSolver(object):
                 rm_f.append(f2)
             if DynSolver.is_imply(f2,f1):
                 rm_f.append(f1)
+        if rm_f:
+            return cls.rm_weak(list(set(f_list)-set(rm_f)))
+        else:
+            return f_list
+
+    @classmethod
+    def rm_strong(cls, f_list):
+        sub2 = list(itertools.combinations(f_list, 2))
+        rm_f = []
+        for (f1, f2) in sub2:
+            if DynSolver.is_imply(f1,f2):
+                rm_f.append(f1)
+            if DynSolver.is_imply(f2,f1):
+                rm_f.append(f2)
         if rm_f:
             return cls.rm_weak(list(set(f_list)-set(rm_f)))
         else:
@@ -365,79 +422,3 @@ class DynSolver(object):
             raise NotImplementedError(ast.dump(node))
         
 
-# target, [x >= 7, 7 >= x] 
-# refine candidate: [x <= -7, x >= -7]
-
-
-
-
- 
-
-
-
-# x=z3.Int('x')
-# # c_list = [x==7, x<0]
-# # i_list = [x==-7]
-
-# c_list = [x>=7, x<=7]
-# i_list = [x>=-7, x<=-7]
-
-# select_or_z3 = DynSolver.select_or(c_list, i_list)
-# print(f'select result: \n{select_or_z3}')
-
-
-
-
-# k0, n0, x0, y0, z0 = Ints('k0 n0 x0 y0 z0')            
-# test_f = And(n0 == 0, x0 == 0, y0 == 1, z0 == 6,
-#           Not(((3 * n0) * n0 + 3 * n0) + 1 <= k0),
-#           Not(And(- n0 <= 0, - k0 + y0 <= 0)),
-#           Not(And(- n0 <= -1, k0 - y0 <= -1)))
-
-# dsolver = DynSolver(test_f)
-# models = dsolver.gen_model()
-# for model in models:
-#     print(f'-----each model: \n{model}')
-    
-#     for x in model.decls():
-#         print(f'-----item in each model:{x.name()} = {model[x]}')
-
-# invar = "!(x>=0)"
-# z3f = DynSolver.parse(invar)
-
-# print(f'------z3 formula------\n {z3f}')
-  
-# compl =  Or(And(7 >= x, x >= 7), And(x >= -7, Or(x >= 7, x <= -7)))
-# sim1 = Or(x==7, Or(x>=7, x==-7))
-# sim2 = Or(x>=7, x==-7)
-
-# g  = Goal()
-# g.add(Or(x < 0, x > 0), x == y + 1, y < 0)
-
-# t = Tactic('split-clause')
-# r = t(g)
-# for g in r: 
-#     print (g)
-
-
-# from utils.smt import *
-
-# f1 = DynSolver.parse('14>=y')
-# f2 = DynSolver.parse('x <= 18')
-
-# x, y, z = Ints('x y z')
-
-# fi = y <= 14
-# fj = (x <= 18)
-
-# print(f'f1 my parser: {f1.sexpr()}')
-# print(f'f2 my parser: {f2.sexpr()}')
-# print(f'fi type: {fi.sexpr()}')
-# print(f'fj type: {fj.sexpr()}')
-# fi = 14 >= y
-# norm = Z3.normalize(14 >= y)
-# Z3.normalize(fi)
-
-# norm = Z3.normalize(f1)
-
-# print(f'normalize {f1}: {norm}')
