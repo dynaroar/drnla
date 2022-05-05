@@ -4,7 +4,6 @@ from utils import settings, common
 from utils.cparser import*
 import ast, operator, os, re
 
-# import dynamltl
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)

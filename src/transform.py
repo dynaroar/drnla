@@ -2,7 +2,7 @@ from utils import settings, common
 from solver import *
 
 mlog = common.getLogger(__name__, settings.logger_level)
-
+ 
 class CTransform(object):
     def __init__(self, config):
         self.origin = config.origin

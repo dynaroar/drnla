@@ -272,43 +272,43 @@ class UltCexParser(CexParser, Transformer):
         ast = self.parse(s)
         return self.transform(ast)
 
-text = r"""
-[L356]              int n ;
-[L357]              int p ;
-[L358]              int q ;
-[L359]              int r ;
-[L360]              int h ;
-[L361]              int c ;
-[L362]              int k ;
-[L363]              int tmp ;
-[L364]              int if_too_small_33 ;
-[L365]              int else_too_big_33 ;
-[L366]              int else_too_small_33 ;
-[L367]              int if_too_big_33 ;
-[L370]              n = __VERIFIER_nondet_int()
-[L371]              p = 0
-[L372]              q = 1
-[L373]              r = n
-[L374]              h = 0
-[L375]              c = 0
-[L376]              tmp = __VERIFIER_nondet_int()
-[L377]              k = tmp
-        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-[L378]  COND FALSE  !(q <= n)
-        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-[L381]  COND TRUE   1
-        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-[L382]  COND FALSE  !((((((((((h * h) * n - ((4 * h) * n) * p) + (4 * (n * n)) * q) - (n * q) * q) - (h * h) * r) + ((4 * h) * p) * r) - ((8 * n) * q) * r) + (q * q) * r) + ((4 * q) * r) * r) + c <= k)
-        VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-[L393]              if_too_big_33 = 1
-        VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-[L394]              reach_error()
-        VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
-"""
+# text = r"""
+# [L356]              int n ;
+# [L357]              int p ;
+# [L358]              int q ;
+# [L359]              int r ;
+# [L360]              int h ;
+# [L361]              int c ;
+# [L362]              int k ;
+# [L363]              int tmp ;
+# [L364]              int if_too_small_33 ;
+# [L365]              int else_too_big_33 ;
+# [L366]              int else_too_small_33 ;
+# [L367]              int if_too_big_33 ;
+# [L370]              n = __VERIFIER_nondet_int()
+# [L371]              p = 0
+# [L372]              q = 1
+# [L373]              r = n
+# [L374]              h = 0
+# [L375]              c = 0
+# [L376]              tmp = __VERIFIER_nondet_int()
+# [L377]              k = tmp
+#         VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# [L378]  COND FALSE  !(q <= n)
+#         VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# [L381]  COND TRUE   1
+#         VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# [L382]  COND FALSE  !((((((((((h * h) * n - ((4 * h) * n) * p) + (4 * (n * n)) * q) - (n * q) * q) - (h * h) * r) + ((4 * h) * p) * r) - ((8 * n) * q) * r) + (q * q) * r) + ((4 * q) * r) * r) + c <= k)
+#         VAL         [c=0, h=0, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# [L393]              if_too_big_33 = 1
+#         VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# [L394]              reach_error()
+#         VAL         [c=0, h=0, if_too_big_33=1, k=-1, n=0, p=0, q=1, r=0, tmp=-1]
+# """
 
-ult_cex_parser = UltCexParser()
-f = ult_cex_parser.to_z3(text)
-print(f)
+# ult_cex_parser = UltCexParser()
+# f = ult_cex_parser.to_z3(text)
+# print(f)
 # s = z3.Solver()
 # s.add(f)
 # print(s.check())
