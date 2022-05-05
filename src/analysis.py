@@ -200,10 +200,10 @@ class OUAnalysis(object):
         self.config.update_basename(iter)
         self.init_tools()
 
-        for loc, (nla, if_ou, else_ou) in nla_ou.items():
-            verdict_z3 = DynSolver.parse(settings.verdict)
-            if DynSolver.is_equal(And(if_ou), verdict_z3):
-                return Result.CORRECT
+        # for loc, (nla, if_ou, else_ou) in nla_ou.items():
+        #     verdict_z3 = DynSolver.parse(settings.verdict)
+        #     if DynSolver.is_equal(And(if_ou), verdict_z3) and DynSolver.is_equal(And(else_ou), Not(verdict_z3)):
+        #         return Result.CORRECT
         
         self.cil_trans.strans()
         sresult, cex_str = self.static.run_reach(self.config.src_validate)
@@ -270,6 +270,13 @@ class OUAnalysis(object):
             self.ou_result = self.refine(iter, self.ou_result, self.nla_ou)
             mlog.info(f'------{iter}th refinement result: \n {self.nla_ou}')
             iter += 1
+
+        if self.ou_result == Result.UNKNOWN and (settings.verdict != '1==1'):
+            mlog.info(f'verdict check for unknown static result (final): ')
+            for loc, (nla, if_ou, else_ou) in self.nla_ou.items():
+                verdict_z3 = DynSolver.parse(settings.verdict)
+                if DynSolver.is_equal(And(if_ou), verdict_z3) and DynSolver.is_equal(And(else_ou), Not(verdict_z3)):
+                    self.ou_result = Result.CORRECT
             
         if self.ou_result == Result.CORRECT:
             self.ou_type = 'exact'
