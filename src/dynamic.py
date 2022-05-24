@@ -3,6 +3,7 @@ from utils import settings
 from utils.smt import *
 
 import utils.common as CM
+import solver as DS
 from solver import *
 from z3 import *
 
@@ -19,6 +20,7 @@ class DynamicAnalysis(object):
         self.vtrace_cexf = config.vtrace_cexf
         self.vtrace_negf = config.vtrace_negf
         self.vtrace_joinf = config.vtrace_joinf
+        self.ref_case = ""
 
         
          
@@ -33,7 +35,7 @@ class DynamicAnalysis(object):
         CM.run_cmd(source_cmd)
 
         
-    def init_invars(self, invs_list, nla_ou):
+    def init_invars(self, invs_list, nla_ou): 
         fw = open(self.invars_refine, 'w')
         for loc_str, invars in invs_list:
             if 'vtrace_if_' in loc_str:
@@ -55,17 +57,33 @@ class DynamicAnalysis(object):
             # if_ou, else_ou = list(set(if_ou).difference(else_ou)), list(set(else_ou).difference(if_ou))
             if_ou, else_ou = DynSolver.remove_identical(if_ou, else_ou)
             mlog.debug(f'removed equal formulae: \n if, {if_ou} \n else, {else_ou}')
-            nla_ou[loc] = (nla, if_ou, else_ou)
+            # if_ou = DynSolver.simp_eqs(if_ou)
+            # else_ou = DynSolver.simp_eqs(else_ou)
+            # if_ou = DynSolver.rm_weak(if_ou)
+            # else_ou = DynSolver.rm_weak(else_ou)
+            # mlog.debug(f'weaker formulae: \n if, {if_ou} \n else, {else_ou}')
+            
+            if not settings.init_ou:
+                ou_core = DynSolver.unsatcore_ou(if_ou, else_ou)
+                if ou_core:
+                    mlog.info(f'unsatcore found for initial mapping:\n{ou_core}')
+                    if_ou, else_ou = ou_core
+                    nla_ou[loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv), if_ou))
             else_ou_str = list(map(lambda inv: Z3.to_string(inv), else_ou))
             fw.writelines(loc_if+';'+' && '.join(if_ou_str)+'\n')
             fw.writelines(loc_else+';'+' && '.join(else_ou_str)+'\n')
+
+        mlog.info(f'initial OU mapping: \n {nla_ou}')
         fw.close()            
 
- 
-        
     def get_invars(self):
-        fr = open(self.invarsf, "r")
+        try:
+            fr = open(self.invarsf, "r")
+        except IOError:
+            mlog.error(f'dynamic analysis(DIG) returns no invariants: {self.invarsf}')
+            sys.exit()
+            
         invs_list = []
         for line in fr:
             # mlog.debug(f'------read invariant files (dig run): \n {line}')
@@ -130,38 +148,40 @@ class DynamicAnalysis(object):
             self.replace_invarsf(vtrace_name, else_ou_str)
 
         
-    def disj_ou(self, ref_case, ref_invars_str, nla_ou):
+    def disj_ou(self, ref_case, ref_invars, nla_ou):
         """Update ou mapping for disjunction refinement.
          This will also update refine.inv file for static run. 
         """
 
-        ref_invars = list(map(lambda inv: DynSolver.parse(inv), ref_invars_str))
+        # ref_invars = list(map(lambda inv: DynSolver.parse(inv), ref_invars_str))
         [ref_loc] = re.findall(r'\d+', ref_case)
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
 
         if 'if' in ref_case:
-            select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
-            mlog.debug(f'final refined formula :\n {select_or_z3}')
-            # ref_disj = And(ref_invars)
-            # if_ou = [Or(And(if_ou), ref_disj)]
-            if_ou = select_or_z3
+            # select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
+            # mlog.debug(f'final refined formula :\n {select_or_z3}')
+            # if_ou = select_or_z3
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
+            
+            if_ou = DS.get_convex(Or(And(if_ou), And(ref_invars)))
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_if_{ref_loc}'
             if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
-            self.replace_invars(vtrace_name, if_ou_str)
+            self.replace_invarsf(vtrace_name, if_ou_str)
 
         if 'else' in ref_case:
-            select_or_z3 = DynSolver.select_or(else_ou, ref_invars)
-            mlog.debug(f'final refined formula :\n {select_or_z3}')
-            else_ou = select_or_z3
+            # select_or_z3 = DynSolver.select_or(else_ou, ref_invars)
+            # mlog.debug(f'final refined formula :\n {select_or_z3}')
+            # else_ou = select_or_z3
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
+
+            else_ou = DS.get_convex(Or(And(else_ou), And(ref_invars)))
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_else_{ref_loc}'
             else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
-            self.replace_invars(vtrace_name, else_ou_str)
+            self.replace_invarsf(vtrace_name, else_ou_str)
     
     
     def add_vtrace(self, from_file, to_file):

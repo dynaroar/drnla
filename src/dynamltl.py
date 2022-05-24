@@ -77,7 +77,16 @@ if __name__ == "__main__":
        default='reach',
        choices= settings.props_list,
        help= f'select which property to verify')
+
+    ag("--verdict", "-verdict",
+       type=str,
+       default= settings.verdict,
+       help= f'user provided desired IF condition')
     
+    ag("--tmpdir", "-tmpdir",
+       type=str,
+       default= settings.tmpdir,
+       help= f'set temporary path for intermediate files')
 
     args = aparser.parse_args()
 
@@ -91,6 +100,8 @@ if __name__ == "__main__":
     settings.repeat = args.repeat
     settings.uppper = args.upper
     settings.prop = args.prop
+    settings.tmpdir = args.tmpdir
+    settings.verdict = args.verdict
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 

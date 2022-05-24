@@ -1,17 +1,60 @@
 from z3 import *
+import itertools
 from utils import settings, common
 from utils.cparser import*
-import ast, operator
+import ast, operator, os, re
 
-# import dynamltl
 dynamltl_path = os.path.realpath(os.path.dirname(__file__))
 dig_path = os.path.realpath(os.path.join(dynamltl_path, '../deps/dig/src'))
 sys.path.insert(0, dig_path)
+
+from helpers.miscs import Miscs
+from data.symstates import SymStates
 
 # from helpers.z3utils import Z3
 # print(f'----------------system path here(solver): \n {sys.path}')
  
 mlog = common.getLogger(__name__, settings.logger_level)
+
+# class AstRefKey:
+#     def __init__(self, n):
+#         self.n = n
+#     def __hash__(self):
+#         return self.n.hash()
+#     def __eq__(self, other):
+#         return self.n.eq(other.n)
+#     def __repr__(self):
+#         return str(self.n)
+# def askey(n):
+#     assert isinstance(n, AstRef)
+#     return AstRefKey(n)
+
+def get_vars(f):
+    r = set()
+    def collect(f):
+      if is_const(f): 
+          # if f.decl().kind() == Z3_OP_UNINTERPRETED and not askey(f) in r:
+          if f.decl().kind() == Z3_OP_UNINTERPRETED and not f in r:
+              # r.add(askey(f))
+              r.add(f)
+      else:
+          for c in f.children():
+              collect(c)
+    collect(f)
+    return list(r)
+
+def get_convex(f):
+    vars = get_vars(f)
+    terms = Miscs.get_terms_fixed_coefs(vars, 2, 1)
+    convex_list = []
+    for t in terms:
+        v, stat = SymStates.mmaximize(f, t, iupper=20)
+        if v is not None:
+            assert isinstance(v, int), f'{v} is not int type'
+            c = t <= v
+            convex_list.append(c)
+    return convex_list
+
 
 class DynSolver(object):
     # vtrace_genf = ''
@@ -39,7 +82,10 @@ class DynSolver(object):
     def init_cvars(self, error_case):
         self.error_case = error_case
         vnames = self.cex_vars
-        mlog.debug(f'------variables from cex_z3 parser: \n {self.cex_vars}')
+        # if self.models:
+            # vnames = 
+        
+        mlog.debug(f'------variables from cex_z3 parser/model: \n {self.cex_vars}')
         for var in vnames:
             if error_case not in var:
                 self.cvars.append(var)
@@ -96,15 +142,15 @@ class DynSolver(object):
                     result = 'sat'
                 break
         self.models = models
+        if result == 'sat':
+            mlog.debug(f'models for generalized: {self.models[0]}')
         return result
-        # for i in range(20):
-        #     mlog.debug(self.models[i])
 
   
  
     
         
-    def init_vtrace(self, error_case, vtrace_file):
+    def init_vtrace(self, vtrace_file):
         ''' side effect to change both vtrace files of gen and cex
         '''
 
@@ -183,7 +229,80 @@ class DynSolver(object):
                     common1.append(inv1)
                     common2.append(inv2)
         return (list(set(f1_list)-set(common1)), list(set(f2_list)-set(common2)))
-     
+    
+    @classmethod
+    def unsatcore_ou(cls, if_ou, else_ou):
+        # foldl = lambda func, acc, xs: reduce(func, xs, acc)
+        s = Solver()
+        s.set(unsat_core=True)
+        s.set(':core.minimize', True)
+        i = 0
+        j = 0
+        if_track = {}
+        else_track = {}
+        for inv in if_ou:
+            i += 1
+            p = 'if'+ str(i)
+            if_track[p] = inv
+            s.assert_and_track(inv, p)
+        for inv in else_ou:
+            j += 1
+            p = 'else'+ str(j)
+            else_track[p] = inv
+            s.assert_and_track(inv, p)
+        if s.check() == 'sat':
+            # raise ValueError(f'no unsat core for sat formula:{s.sexpr()}')
+            return False
+        else:
+            unsat_p = s.unsat_core()
+            if_unsat = []
+            else_unsat = []
+            for p in unsat_p:
+                p_str = p.sexpr()
+                if 'if' in p_str:
+                    if_unsat.append(if_track[p_str])
+                if 'else' in p_str:
+                    else_unsat.append(else_track[p_str])
+        return (if_unsat, else_unsat)
+
+    @classmethod
+    def rm_weak(cls, f_list):
+        sub2 = list(itertools.combinations(f_list, 2))
+        rm_f = []
+        for (f1, f2) in sub2:
+            if DynSolver.is_imply(f1,f2):
+                rm_f.append(f2)
+            if DynSolver.is_imply(f2,f1):
+                rm_f.append(f1)
+        if rm_f:
+            return cls.rm_weak(list(set(f_list)-set(rm_f)))
+        else:
+            return f_list
+
+    @classmethod
+    def rm_strong(cls, f_list):
+        sub2 = list(itertools.combinations(f_list, 2))
+        rm_f = []
+        for (f1, f2) in sub2:
+            if DynSolver.is_imply(f1,f2):
+                rm_f.append(f1)
+            if DynSolver.is_imply(f2,f1):
+                rm_f.append(f2)
+        if rm_f:
+            return cls.rm_weak(list(set(f_list)-set(rm_f)))
+        else:
+            return f_list
+
+    @classmethod
+    def simp_eqs(cls, f_list):
+        g = Goal()
+        g.add(f_list)
+        t1 = Tactic('simplify')
+        t2 = Tactic('solve-eqs')
+        t = Then(t1, t2)
+        [res] = t(g)
+        return res
+
     @classmethod
     def is_equal(cls, f1, f2):
         s = Solver()
@@ -217,7 +336,8 @@ class DynSolver(object):
     @classmethod
     def parse(cls, node):
         if isinstance(node, str):
-            node = node.replace("^", "**").replace("&&", "and").replace("||", "or").replace("!(", "not(").replace('++','+=1').strip()
+            node = node.replace("^", "**").replace("&&", "and").replace("||", "or").replace('++','+=1').strip()
+            node = re.sub(r'!(?!=)', 'not', node)
 
 
             tnode = ast.parse(node)
@@ -301,79 +421,3 @@ class DynSolver(object):
             raise NotImplementedError(ast.dump(node))
         
 
-# target, [x >= 7, 7 >= x] 
-# refine candidate: [x <= -7, x >= -7]
-
-
-
-
- 
-
-
-
-# x=z3.Int('x')
-# # c_list = [x==7, x<0]
-# # i_list = [x==-7]
-
-# c_list = [x>=7, x<=7]
-# i_list = [x>=-7, x<=-7]
-
-# select_or_z3 = DynSolver.select_or(c_list, i_list)
-# print(f'select result: \n{select_or_z3}')
-
-
-
-
-# k0, n0, x0, y0, z0 = Ints('k0 n0 x0 y0 z0')            
-# test_f = And(n0 == 0, x0 == 0, y0 == 1, z0 == 6,
-#           Not(((3 * n0) * n0 + 3 * n0) + 1 <= k0),
-#           Not(And(- n0 <= 0, - k0 + y0 <= 0)),
-#           Not(And(- n0 <= -1, k0 - y0 <= -1)))
-
-# dsolver = DynSolver(test_f)
-# models = dsolver.gen_model()
-# for model in models:
-#     print(f'-----each model: \n{model}')
-    
-#     for x in model.decls():
-#         print(f'-----item in each model:{x.name()} = {model[x]}')
-
-# invar = "!(x>=0)"
-# z3f = DynSolver.parse(invar)
-
-# print(f'------z3 formula------\n {z3f}')
-  
-# compl =  Or(And(7 >= x, x >= 7), And(x >= -7, Or(x >= 7, x <= -7)))
-# sim1 = Or(x==7, Or(x>=7, x==-7))
-# sim2 = Or(x>=7, x==-7)
-
-# g  = Goal()
-# g.add(Or(x < 0, x > 0), x == y + 1, y < 0)
-
-# t = Tactic('split-clause')
-# r = t(g)
-# for g in r: 
-#     print (g)
-
-
-# from utils.smt import *
-
-# f1 = DynSolver.parse('14>=y')
-# f2 = DynSolver.parse('x <= 18')
-
-# x, y, z = Ints('x y z')
-
-# fi = y <= 14
-# fj = (x <= 18)
-
-# print(f'f1 my parser: {f1.sexpr()}')
-# print(f'f2 my parser: {f2.sexpr()}')
-# print(f'fi type: {fi.sexpr()}')
-# print(f'fj type: {fj.sexpr()}')
-# fi = 14 >= y
-# norm = Z3.normalize(14 >= y)
-# Z3.normalize(fi)
-
-# norm = Z3.normalize(f1)
-
-# print(f'normalize {f1}: {norm}')

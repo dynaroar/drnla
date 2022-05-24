@@ -6,14 +6,14 @@ logger_level = 4
 gen_tcs = False
 init_ou = False
 tmpdir = Path().home()/'tmp'
-timeout =  600
+timeout = 600
 refine = 4
 snaps = 1000
 repeat = 50
 upper = 20
 prop = 'termination'
 props_list = ['reach','termination', 'ltl']
-
+verdict = '1==1'
 
 SrcDir = Path(__file__).parent
 DynLTLDir = Path(__file__).parent.parent.parent
@@ -74,12 +74,12 @@ class Static:
     ltl_toolchain = StaticHome / 'config/AutomizerLTL.xml'
     ltl_setting = StaticHome / 'config/svcomp-LTL-64bit-Automizer_Default.epf'
 
-    ultimate_cmd = "{run_ultimate} -tc {toolchain} -s {setting} -i {filename}"
-    
+    ultimate_cmd = "{run_ultimate} -tc {toolchain} -s {setting} -i {filename} --core.toolchain.timeout.in.seconds {time_out}"
+     
     # run_cmd = partial(ultimate_cmd.format, run_ultimate=ultimate_bash, toolchain=reach_toolchain, setting=reach_setting)
-    run_rcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=reach_toolchain, setting=reach_setting)
-    run_tcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=term_toolchain, setting=term_setting)
-    run_lcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=ltl_toolchain, setting=ltl_setting)
+    run_rcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=reach_toolchain, setting=reach_setting, time_out=timeout)
+    run_tcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=term_toolchain, setting=term_setting, time_out=timeout)
+    run_lcmd = partial(ultimate_cmd.format, run_ultimate=java_ultimate, toolchain=ltl_toolchain, setting=ltl_setting, time_out=timeout)
     
     run_reach = lambda source: Static.run_rcmd(filename=source)
     run_term = lambda source: Static.run_tcmd(filename=source)

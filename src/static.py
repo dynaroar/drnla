@@ -17,7 +17,8 @@ class StaticAnalysis(object):
         self.linearf = config.linearf
 
     def replace_str(self, mystr):
-        return mystr.replace("&&", "and").replace("||", "or").replace("!", "not").replace("^", "**").replace('++','+=1').strip()
+        mystr = re.sub(r'!(?!=)', 'not', mystr)
+        return mystr.replace("&&", "and").replace("||", "or").replace("^", "**").replace('++','+=1').strip()
             
     def get_cex(self, outp):
         cex = {}
@@ -68,18 +69,14 @@ class StaticAnalysis(object):
             if model_loc or model_val:
                 cex.append(line)
         return '\n'.join(cex)
-  
-     
-    def run_reach(self, source):
-        mlog.info(f'------run Ultimate static analysis(reach):------')
-        reach_cmd = settings.Static.run_reach(source)
-        outp = common.run_cmd(reach_cmd).splitlines()
+
+    def parse_result(self, outp):
         result_str = ""
         for line in outp:
             if "RESULT:" in line:
                 result_str = line
         if "incorrect" in result_str:
-             # cex = self.getCex(outp)
+            # cex = self.getCex(outp)
             cex_text = self.get_cex_text(outp)
             result = StaticResult.INCORRECT
             return result, cex_text
@@ -93,18 +90,22 @@ class StaticAnalysis(object):
             result = StaticResult.UNKNOWN
             return result, cex_text
 
+     
+    def run_reach(self, source):
+        mlog.info(f'------run Ultimate static analysis(reach):------')
+        reach_cmd = settings.Static.run_reach(source)
+        outp = common.run_cmd(reach_cmd).splitlines()
+        return self.parse_result(outp)
     
     def run_term(self):
         mlog.info(f'------run Ultimate static analysis(termination):------')
         term_cmd = settings.Static.run_term(self.linearf)
         outp = common.run_cmd(term_cmd).splitlines()
-        result_str = ""
-        return StaticResult.UNKNOWN
-
+        return self.parse_result(outp)
+        
     def run_ltl(self):
         mlog.info(f'------run Ultimate static analysis(ltl):------')
         ltl_cmd = settings.Static.run_ltl(self.linearf)
         outp = common.run_cmd(ltl_cmd).splitlines()
-        result_str = ""
-        return StaticResult.UNKNOWN
+        return self.parse_result(outp)
     
