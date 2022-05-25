@@ -1,0 +1,27 @@
+START: 1;
+FROM: 1;
+
+      k := nondet();
+
+      x := 0;
+      y := 0;
+      c := 0;
+      p := 2;
+      assume(c + -2*y*y*y*y*y*y - 6 * y*y*y*y*y - 5 * y*y*y*y + y*y + 12*x < k);
+TO: 2;
+
+FROM: 2;
+      assume(c + -2*y*y*y*y*y*y - 6 * y*y*y*y*y - 5 * y*y*y*y + y*y + 12*x < k);
+      p := 1;
+TO: 3;
+
+FROM: 3;
+      c := c+1;
+      y := y+1;
+      x := y*y*y*y*y+x;
+TO: 2;
+ 
+FROM: 2;
+      assume(c + -2*y*y*y*y*y*y - 6 * y*y*y*y*y - 5 * y*y*y*y + y*y + 12*x >= k);
+      p := c+k;
+TO: 4;

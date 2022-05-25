@@ -1,0 +1,31 @@
+START: 1;
+
+FROM: 1;
+      n := nondet();
+      k := nondet();
+      a := 0;
+      s := 1;
+      t := 1;
+      c := 0;
+      p:=2;
+      // assume(p>1);
+     assume(a<= k);
+TO: 2;
+
+FROM: 2;
+      assume(a <= k);
+      p := 1;
+ TO: 3;
+
+FROM: 3;
+      a := a + 1;
+      t := t + 2;
+      s := s + t;
+      c := c + 1;
+TO: 2;
+
+
+FROM: 2;
+      assume(a > k);
+      p := a-k;
+TO: 4;
