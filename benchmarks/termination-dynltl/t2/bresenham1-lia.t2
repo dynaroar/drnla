@@ -22,7 +22,7 @@ FROM: 3;
       v:= v+ 2*t;
 TO: 4;
 
-FOROM: 3;
+FROM: 3;
        assume(v>=0);
        v := v+2*(t-s);
        y := y+1;

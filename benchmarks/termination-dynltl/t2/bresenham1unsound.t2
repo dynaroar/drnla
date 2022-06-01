@@ -36,7 +36,7 @@ TO: 2;
 
 FROM: 2;
       assume(2*t*x - 2*s*y - s + 2*t - v + c > k);
-      p := 0;
+      p := x-k;
 TO: 5;
 
 
