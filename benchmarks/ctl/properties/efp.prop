@@ -1,0 +1,3 @@
+T2: ([EF](p==0)) && ([EF](p==1))
+FuncTion: AND{AF{p==1}}{AF{p==0}}
+COAR: 
