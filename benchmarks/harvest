@@ -58,10 +58,9 @@ foreach my $tool (@tools) {
   foreach my $b (sort @benches) {
       mkdir("../results/$b") if (not (-e "../results/$b"));
       my $logfn = "$benchdir/$outdir/$tool-$b.log.1"; 
-      next unless -f $logfn;
-      print "todo - fix iters in harvest\n";
+      die "could not find: $logfn" unless -f $logfn;
       #if (not (-e $logfn.".1")) { push @skips, $logfn; next; }
-      my $tmpb = $b; $tmpb =~ s/-both-n?t.c//;
+      my $tmpb = $b; #$tmpb =~ s/-both-n?t.c//;
       # Step 1: General parsing that all tools/variants support
       $compare->{$tmpb}->{$tool} = Parsers::parse($tool,$logfn,$ITERS);
      # print Dumper($compare);
@@ -73,7 +72,7 @@ foreach my $tool (@tools) {
 #
 print "\n% RESULTS:\nBenchmark & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
-foreach my $b (keys %$compare) {
+foreach my $b (sort keys %$compare) {
   printf("%-15s & ", $b);
   foreach my $tool (@tools) {
     printf("& %-8s & %-8s & %-40s",

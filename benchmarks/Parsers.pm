@@ -23,6 +23,8 @@ sub find_benchmarks {
         next unless $fn =~ m/\.c$/; 
         next if $fn =~ /~$/;
         $b2expect{$fn} = 'true' if $fn =~ /^safe-/;
+        $b2expect{$fn} = 'true' if $fn =~ /-valid/;
+        $b2expect{$fn} = 'false' if $fn =~ /-invalid/;
 #        $b2expect{$fn} = 'true'  if $fn =~ /-t\.c/;
 #        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
         if ($#{$bnames} > -1) {
@@ -85,7 +87,7 @@ sub seahorn {
         $result = $_ if m/BRUNCH_STAT Result/;
         $time   = $1 if m/BRUNCH_STAT Termination (.*)$/;
     }
-    return { time => tm2str($time), result => $result };
+    return { time => tm2str($time), result => $result, summary => 'n/a' };
 }
 
 sub dynamiteltl {
@@ -117,6 +119,19 @@ sub dynamiteltl {
     #print Dumper(\@mp);
     return { time => tm2str($time), result => $result, "map" => \@mp,
              simpltime => $simpltime, summary => join(" ", @summary) };
+}
+sub t2 {
+    my ($logfn) = @_;
+    open(F,"$logfn") or warn "file $logfn - $!";
+    my ($time,$result) = (-1,'\rUNK');
+    while (<F>) {
+        $result = '\rTRUE' if /Temporal proof succeeded/;
+        $result = '\rFALSE' if /Temporal proof failed/;
+        $result = '\rCRASH' if /Native Crash Reporting/;
+        $time   = $1 if /HARD TIMER: (\d+\.\d+)$/;
+    }
+    close F;
+    return { time => tm2str($time), result => $result, summary => 'n/a' };
 }
 sub dynamo {
     my ($logfn) = @_;
@@ -374,6 +389,7 @@ sub parse {
     return dynamiteltl($logfn) if $tool eq 'dynamiteltl';
     return ult($logfn) if $tool eq 'ultimate';
     return ultreach($logfn) if $tool eq 'ultimatereach';
+    return t2($logfn) if $tool eq 't2';
     # for now, we don't iterate on ultimate
     #return aprove($logfn)  if $tool eq 'aprove';
     #return seahorn($logfn) if $tool eq 'seahorn';
