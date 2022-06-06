@@ -62,7 +62,16 @@ foreach my $tool (@tools) {
       #if (not (-e $logfn.".1")) { push @skips, $logfn; next; }
       my $tmpb = $b; #$tmpb =~ s/-both-n?t.c//;
       # Step 1: General parsing that all tools/variants support
-      $compare->{$tmpb}->{$tool} = Parsers::parse($tool,$logfn,$ITERS);
+      #$compare->{$tmpb}->{$tool} = 
+      my $d = Parsers::parse($tool,$logfn,$ITERS);
+      my $bb = $tmpb; $bb =~ s/_lia//;
+      if($tmpb =~ /\_lia/) {
+        $compare->{$bb}->{$tool}->{liatime} = $d->{time};
+        $compare->{$bb}->{$tool}->{liaresult} = $d->{result};
+      } else {
+        $compare->{$bb}->{$tool}->{nlatime} = $d->{time};
+        $compare->{$bb}->{$tool}->{nlaresult} = $d->{result};
+      }
      # print Dumper($compare);
   }
 }
@@ -70,15 +79,19 @@ foreach my $tool (@tools) {
 #
 # Generate LaTeX
 #
-print "\n% RESULTS:\nBenchmark & ".
+print "\n% RESULTS:\nBenchmark & Exp. & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
 foreach my $b (sort keys %$compare) {
-  printf("%-15s & ", $b);
+  my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
+  printf("%-15s & %-8s & ", $b, $exp);
   foreach my $tool (@tools) {
-    printf("& %-8s & %-8s & %-40s",
-    $compare->{$b}->{$tool}->{result},
-    $compare->{$b}->{$tool}->{time} ,
-    $compare->{$b}->{$tool}->{summary});
+    my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '' : '!!!');
+    my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '' : '!!!');
+    printf("& %-8s$nlaeek & %-8s & %-8s$liaeek & %-8s ",
+    $compare->{$b}->{$tool}->{nlaresult},
+    $compare->{$b}->{$tool}->{nlatime} ,
+    $compare->{$b}->{$tool}->{liaresult},
+    $compare->{$b}->{$tool}->{liatime});
   }
   print " \\\\\n";
 }
