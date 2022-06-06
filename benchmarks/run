@@ -51,6 +51,10 @@ sub getCTLprop {
     die "could not find prp for $benchmarkFn - $tool\n";
 }
 
+sub appendTime {
+    my ($fn,$t) = @_;
+    print qx{echo "\nEJKTIME:$t\n" >> $fn};
+}
 my $t0;
 my $CFG = {
     # dynamo => {
@@ -76,6 +80,15 @@ my $CFG = {
             return qq(mono src/bin/Debug/T2.exe -input_t2 $_[0] -CTL "$prp" 2>&1 > /tmp/t2.log); },
         FETCH => sub { return qq(cp /tmp/t2.log $_[0]); },
         PARSE => sub { return Parsers::t2($_[0]); },
+    },
+    function => {
+        DIR => qq{/tools/function},
+        CMD => sub { 
+            my $prp = getCTLprop($_[0],'function');
+            $_[0] =~ s/\.c/_fn.c/;
+            return qq(./function $_[0] -ctl "$prp" -precondition "c == 0 && c <= k" -domain polyhedra 2>&1 > /tmp/function.log); },
+        FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
+        PARSE => sub { return Parsers::function($_[0]); },
     },
     dynamiteltl => {
         DIR    => qq{$USERREPO/src}, 
@@ -126,7 +139,7 @@ sub runc { my ($cmd) = @_; print "+ $cmd\n(with timeout of $TIMEOUT s)\n";
 
 ###############################################################
 #### Arguments parsing
-die "usage: ./run (options) <subdir> (list|run) [dynamiteltl,dynamo,ultimate,seahorn,aprove] (geo1-both-t,cohencu2-both-t,...)\n".
+die "usage: ./run (options) <subdir> (list|run) [dynamiteltl,dynamo,ultimate,seahorn,aprove,t2,function] (geo1-both-t,cohencu2-both-t,...)\n".
     "  (last argument is optional) \n".
     "  options:\n".
     "    --prop=(t|nt|ltl|ctl) # default is \"ctl\" for CTL\n".
@@ -189,9 +202,13 @@ if ($arg1 eq 'run') {
             for my $iter (1..$ITERS) {
                 chdir $CFG->{$tool}->{DIR} or die "can't CHDIR to $CFG->{$tool}->{DIR}: $!";
                 #my $SPECFILE = ($b =~ m/-nt\./ ? $NT_SPECFILE : $T_SPECFILE);
+                my $t0 = [gettimeofday];
                 runc( $CFG->{$tool}->{CMD}->("$benchdir/$b") );
                 my $logfn = "$benchdir/$outdir/$tool-$b.log.$iter";
                 runc( $CFG->{$tool}->{FETCH}->($logfn) );
+                my $elapsed = tv_interval($t0);
+                print "appending: $elapsed to $logfn\n";
+                appendTime($logfn,$elapsed);
                 #$b2res{$b} = $CFG->{$tool}->{PARSE}->($logfn);
                 #print "$logfn - Time:$b2res{$b}->{time} - Result:$b2res{$b}->{result}\n";
             }

@@ -8,7 +8,7 @@ use Statistics::Basic;
 
 #use File::Temp qw/ tempfile tempdir /;
 
-our @EXPORT_OK = qw{ult ultreach dynamiteltl find_benchmarks parse seahorn aprove expected};
+our @EXPORT_OK = qw{ult ultreach dynamiteltl find_benchmarks parse seahorn aprove expected t2 function};
 
 sub find_benchmarks {
     my ($bdir,$bnames) = @_;
@@ -21,6 +21,7 @@ sub find_benchmarks {
     while (readdir $dh) {
         my $fn = $_;
         next unless $fn =~ m/\.c$/; 
+        next if $fn =~ m/_fn\.c/;
         next if $fn =~ /~$/;
         $b2expect{$fn} = 'true' if $fn =~ /^safe-/;
         $b2expect{$fn} = 'true' if $fn =~ /-valid/;
@@ -128,7 +129,21 @@ sub t2 {
         $result = '\rTRUE' if /Temporal proof succeeded/;
         $result = '\rFALSE' if /Temporal proof failed/;
         $result = '\rCRASH' if /Native Crash Reporting/;
-        $time   = $1 if /HARD TIMER: (\d+\.\d+)$/;
+        $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
+    }
+    close F;
+    return { time => tm2str($time), result => $result, summary => 'n/a' };
+}
+sub function {
+    my ($logfn) = @_;
+    open(F,"$logfn") or warn "file $logfn - $!";
+    my ($time,$result) = (-1,'\rUNK');
+    while (<F>) {
+        $result = '\rTRUE'  if /Analysis Result: TRUE/;
+        $result = '\rFALSE' if /Analysis Result: FALSE/;
+        $result = '\rUNK'   if /Analysis Result: UNKNOWN/;
+        #$result = '\rCRASH' if /Native Crash Reporting/;
+        $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
     }
     close F;
     return { time => tm2str($time), result => $result, summary => 'n/a' };
@@ -387,9 +402,10 @@ sub parse {
     my ($tool,$logfn,$iters) = @_;
     return averageTimeResult(map { dynamo($logfn.".".$_) } (1..$iters)) if $tool eq 'dynamo';
     return dynamiteltl($logfn) if $tool eq 'dynamiteltl';
-    return ult($logfn) if $tool eq 'ultimate';
-    return ultreach($logfn) if $tool eq 'ultimatereach';
-    return t2($logfn) if $tool eq 't2';
+    return ult($logfn)         if $tool eq 'ultimate';
+    return ultreach($logfn)    if $tool eq 'ultimatereach';
+    return t2($logfn)          if $tool eq 't2';
+    return function($logfn)    if $tool eq 'function';
     # for now, we don't iterate on ultimate
     #return aprove($logfn)  if $tool eq 'aprove';
     #return seahorn($logfn) if $tool eq 'seahorn';
