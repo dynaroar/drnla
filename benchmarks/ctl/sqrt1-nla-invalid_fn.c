@@ -2,6 +2,7 @@
 /* Compute the floor of the square root of a natural number */
 
 //CTL ([EF](p==0)) && ([EF](p==1))
+// ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
 
 extern int __VERIFIER_nondet_int(void);
 

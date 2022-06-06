@@ -17,7 +17,7 @@ void __VERIFIER_assert(int cond) {
 extern int __VERIFIER_nondet_int(void);
 
 //CTL ([EF](p==0)) && ([EF](p==1))
-
+// ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
 
 int main() {
     int a, n, x, y, z;

@@ -350,6 +350,9 @@
    void *__builtin___memset_chk(void * , int  , unsigned long  , unsigned long  ) ;  */
 /* compiler builtin: 
    void *__builtin_frame_address(unsigned int  ) ;  */
+
+// ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
+
 extern int __VERIFIER_nondet_int(void) ;
 int main(void) 
 { 

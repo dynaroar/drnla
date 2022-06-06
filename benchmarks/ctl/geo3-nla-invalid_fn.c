@@ -5,6 +5,7 @@ computes x = sum(z^k)[k=0..k-1], y = z^(k-1)
 extern int __VERIFIER_nondet_int(void);
 //CTL ([EF](p==0)) && ([EF](p==1))
 
+// ARGS: -precondition "c == 1 && c < k" -domain polyhedra
 
 int main() {
     int z, a, k;

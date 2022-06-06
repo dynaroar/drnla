@@ -3,6 +3,9 @@ Geometric Series
 computes x=(z-1)* sum(z^k)[k=0..k-1] , y = z^k
 returns 1+x-y == 0
 */
+
+// ARGS: -precondition "c == 1 && c < k" -domain polyhedra
+
 extern int __VERIFIER_nondet_int(void);
 
 int main() {

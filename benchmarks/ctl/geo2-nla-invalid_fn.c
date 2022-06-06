@@ -2,6 +2,9 @@
    Geometric Series
    computes x = sum(z^k)[k=0..k-1], y = z^(k-1)
 */
+
+// ARGS: -precondition "c == 0 && c < k" -domain polyhedra
+
 extern int __VERIFIER_nondet_int(void);
 
 
