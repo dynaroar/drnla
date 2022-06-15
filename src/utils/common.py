@@ -32,7 +32,7 @@ def run_cmd(cmd):
         result = subprocess.run(shlex.split(cmd), check=True, capture_output=True, text=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f'command run failed:\n{e.stderr}')
+        print(f'command run failed:---{cmd}---\n{e.stderr}')
 
 def vtrace_case(error_case):
     model_case = re.search(r'(\w+)_too_.*_(\d+)', error_case)

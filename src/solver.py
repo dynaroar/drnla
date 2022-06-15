@@ -229,6 +229,13 @@ class DynSolver(object):
                     common1.append(inv1)
                     common2.append(inv2)
         return (list(set(f1_list)-set(common1)), list(set(f2_list)-set(common2)))
+
+    @classmethod
+    def is_member (cls, fs, f):
+        for inv in fs:
+            if cls.is_equal(inv, f):
+                return True
+        return False
     
     @classmethod
     def unsatcore_ou(cls, if_ou, else_ou):

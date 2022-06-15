@@ -173,11 +173,12 @@ class OUAnalysis(object):
             # self.refine_cex(invars_i, dsolver)
             return invars_i
         else:
-            invars_i = dsolver.rm_weak(dsolver.simp_eqs(invars_i))
+            # invars_i = dsolver.rm_weak(dsolver.simp_eqs(invars_i))
             mlog.debug(f'weak invars removed from cex-gen snaps (initial cex): \n {invars_i}')
-            self.refine_cex(invars_i, dsolver)
-            return True
-             
+            # self.refine_cex(invars_i, dsolver)
+            # return True
+            return invars_i
+      
             
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
@@ -218,22 +219,25 @@ class OUAnalysis(object):
             error_case = self.get_reach(rsolver.cex_vars)
             mlog.debug(f'error case: \n {error_case}')
 
-            gen_res = self.dyn_gen(cex_str)
+            # gen_res = self.dyn_gen(cex_str)
+            ref_invars = self.dyn_gen(cex_str)
+            ref_case = self.dynamic.ref_case
 
-            if gen_res == True:
-                self.dynamic.run_trace(self.config.vtrace_genf)
-                invars_gen_str = self.dynamic.get_invars()
-                assert invars_gen_str, f'empty invars from dyn_gen snaps: {invars_gen_str}'
-                [(ref_case, ref_invars_str)] = invars_gen_str
-                ref_invars = list(map(lambda inv: DynSolver.parse(inv), ref_invars_str))  
-                mlog.debug(f'------invars(z3) from dyn_gen: \n {ref_invars}')
-            else:
-                ref_case = self.dynamic.ref_case
-                ref_invars = gen_res
+            # if gen_res == True:
+            #     self.dynamic.run_trace(self.config.vtrace_genf)
+            #     invars_gen_str = self.dynamic.get_invars()
+            #     assert invars_gen_str, f'empty invars from dyn_gen snaps: {invars_gen_str}'
+            #     [(ref_case, ref_invars_str)] = invars_gen_str
+            #     ref_invars = list(map(lambda inv: DynSolver.parse(inv), ref_invars_str))  
+            #     mlog.debug(f'------invars(z3) from dyn_gen: \n {ref_invars}')
+            # else:
+            #     ref_case = self.dynamic.ref_case
+            #     ref_invars = gen_res
                       
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen ELSE on iteration {iter}------\n')
-                self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                # self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                  
             elif self.if_small in error_case:                
                 mlog.debug(f'----widen IF on iteration {iter}------\n')
@@ -241,7 +245,8 @@ class OUAnalysis(object):
                  
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen IF on iteration {iter}------\n')
-                self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                # self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                 
             elif self.else_small in error_case:
                 mlog.debug(f'----widen ELSE on iteration {iter}------\n')

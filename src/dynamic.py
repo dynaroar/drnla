@@ -64,10 +64,12 @@ class DynamicAnalysis(object):
             # mlog.debug(f'weaker formulae: \n if, {if_ou} \n else, {else_ou}')
             
             if not settings.init_ou:
-                ou_core = DynSolver.unsatcore_ou(if_ou, else_ou)
-                if ou_core:
-                    mlog.info(f'unsatcore found for initial mapping:\n{ou_core}')
-                    if_ou, else_ou = ou_core
+                ou_core_if, ou_core_else = DynSolver.unsatcore_ou(if_ou, else_ou)
+                if ou_core_if and ou_core_else:
+                    mlog.info(f'unsatcore found for initial mapping:\n if:{ou_core_if}\nelse:{ou_core_else}')
+                    if_ou, else_ou = (ou_core_if, ou_core_else)
+                    nla_ou[loc] = (nla, ou_core_if, ou_core_else)
+                else:
                     nla_ou[loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv), if_ou))
             else_ou_str = list(map(lambda inv: Z3.to_string(inv), else_ou))
@@ -112,18 +114,24 @@ class DynamicAnalysis(object):
                 fw.writelines(line)
         fw.close()
         
-    def conj_ou(self, ref_case, ref_invars_str, nla_ou):
+    # def conj_ou(self, ref_case, ref_invars_str, nla_ou):
+    def conj_ou(self, ref_case, ref_invars, nla_ou):
         """Update ou mapping for conjunction refinement.
         This will also update refine.inv file for static run. 
         """
-        gen_invars_str = ' && '.join(ref_invars_str)
-        ref_conj_str = f'!({gen_invars_str})'
-        ref_conj = DynSolver.parse(ref_conj_str)
+        # gen_invars_str = ' && '.join(ref_invars_str)
+        # ref_conj_str = f'!({gen_invars_str})'
+        # ref_conj = DynSolver.parse(ref_conj_str)
+
+        ref_conj = And(ref_invars)
         [ref_loc] = re.findall(r'\d+', ref_case) 
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
         if 'if' in ref_case:
             vtrace_if = f'vtrace_if_{ref_loc}'
-            if_ou.append(ref_conj)
+            if not (DynSolver.is_member(if_ou, Not(ref_conj))):
+                if_ou.append(Not(ref_conj))
+            if not (DynSolver.is_member(else_ou, Or(ref_conj))):
+                else_ou.append(Or(ref_conj))
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
             if_ou_str = list(map(lambda inv: Z3.to_string(inv),if_ou))
@@ -140,7 +148,10 @@ class DynamicAnalysis(object):
                 self.replace_invarsf(vtrace_else, else_ou_str)
                  
         elif 'else' in ref_case:
-            else_ou.append(ref_conj)
+            if not (DynSolver.is_member(else_ou, Not(ref_conj))):
+                else_ou.append(Not(ref_conj))
+            if not (DynSolver.is_member(if_ou, Or(ref_conj))):
+                if_ou.append(Or(ref_conj))
             vtrace_name = f'vtrace_else_{ref_loc}'
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
@@ -163,7 +174,11 @@ class DynamicAnalysis(object):
             # if_ou = select_or_z3
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
             
-            if_ou = DS.get_convex(Or(And(if_ou), And(ref_invars)))
+            if_ou_convex = DS.get_convex(Or(And(if_ou), And(ref_invars)))
+            if if_ou_convex:
+                if_ou = if_ou_convex
+            else:
+                if_ou.append(Or(ref_invars))
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_if_{ref_loc}'
@@ -176,11 +191,16 @@ class DynamicAnalysis(object):
             # else_ou = select_or_z3
             # if_ou, else_ou = DynSolver().remove_identical(if_ou, else_ou)
 
-            else_ou = DS.get_convex(Or(And(else_ou), And(ref_invars)))
+            else_ou_convex = DS.get_convex(Or(And(else_ou), And(ref_invars)))
+            if else_ou_convex:
+                else_ou = else_ou_convex
+            else:
+                else_ou.append(Or(ref_invars))
+
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_else_{ref_loc}'
-            else_ou_str = list(map(lambda inv: Z3.to_string(inv),else_ou))
+            else_ou_str = list(map(lambda inv: Z3.to_string(inv), else_ou))
             self.replace_invarsf(vtrace_name, else_ou_str)
     
     
