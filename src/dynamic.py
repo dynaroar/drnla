@@ -167,7 +167,8 @@ class DynamicAnalysis(object):
         # ref_invars = list(map(lambda inv: DynSolver.parse(inv), ref_invars_str))
         [ref_loc] = re.findall(r'\d+', ref_case)
         (nla, if_ou, else_ou) = nla_ou[ref_loc]
-
+        ref_conj = And(ref_invars)
+       
         if 'if' in ref_case:
             # select_or_z3 = DynSolver.select_or(if_ou, ref_invars)
             # mlog.debug(f'final refined formula :\n {select_or_z3}')
@@ -178,7 +179,7 @@ class DynamicAnalysis(object):
             if if_ou_convex:
                 if_ou = if_ou_convex
             else:
-                if_ou.append(Or(ref_invars))
+                if_ou.append(Or(ref_conj))
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
             vtrace_name = f'vtrace_if_{ref_loc}'
@@ -195,7 +196,7 @@ class DynamicAnalysis(object):
             if else_ou_convex:
                 else_ou = else_ou_convex
             else:
-                else_ou.append(Or(ref_invars))
+                else_ou.append(Or(ref_conj))
 
             nla_ou[ref_loc] = (nla, if_ou, else_ou)
 
