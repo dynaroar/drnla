@@ -33,6 +33,7 @@ class OUAnalysis(object):
         self.verify_result = 'unknown'
         self.ou_type = '_approximate'
         self.ou_str = '_empty'
+        self.refine_steps = []
         
     def init_tools(self):
       self.cil_trans = CTransform(self.config) 
@@ -237,19 +238,23 @@ class OUAnalysis(object):
             if self.else_big in error_case:
                 mlog.debug(f'----strengthen ELSE on iteration {iter}------\n')
                 # self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                self.refine_steps.append(f'strengthen-else-iteration-{iter}')
                 self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                  
             elif self.if_small in error_case:                
                 mlog.debug(f'----widen IF on iteration {iter}------\n')
+                self.refine_steps.append(f'widen-if-iteration-{iter}')
                 self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
                  
             elif self.if_big in error_case:
                 mlog.debug(f'----strengthen IF on iteration {iter}------\n')
                 # self.dynamic.conj_ou(ref_case, ref_invars_str, nla_ou)   
+                self.refine_steps.append(f'strengthen-if-iteration-{iter}')
                 self.dynamic.conj_ou(ref_case, ref_invars, nla_ou)   
                 
             elif self.else_small in error_case:
                 mlog.debug(f'----widen ELSE on iteration {iter}------\n')
+                self.refine_steps.append(f'widen-else-iteration-{iter}')
                 self.dynamic.disj_ou(ref_case, ref_invars, nla_ou)
  
             else:
