@@ -55,7 +55,21 @@ def get_convex(f):
             convex_list.append(c)
     return convex_list
 
+def and_list(fs):
+    if not fs:
+        return Not(False)
+    elif len(fs) == 1:
+        return fs[0]
+    else: return And(fs)
 
+def or_list(fs):
+    if not fs:
+        return Not(False)
+    elif len(fs) == 1:
+        return fs
+    else: return And(fs)
+
+    
 class DynSolver(object):
     # vtrace_genf = ''
     # vtrace_cexf = ''
