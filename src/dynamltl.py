@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     # map_str = f'MAP: to be converted'
     steps_str = 'REFINEMENT:'+ ' -> '.join(ou_analysis.refine_steps)
-    prop_str =f'PROPERT:{settings.prop}'
+    prop_str =f'PROPERTY:{settings.prop}'
     result = f'RESULT:{ou_analysis.verify_result}'
     time_simp = f'TIME-SIMPLIFICATION:{ts}s' 
     time_all = f'TIME-TOTAL:{ta}s'
