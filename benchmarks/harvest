@@ -85,9 +85,9 @@ foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
   printf("%-15s & %-8s & ", $b, $exp);
   foreach my $tool (@tools) {
-    my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '' : '!!!');
-    my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '' : '!!!');
-    printf("& %-8s$nlaeek & %-8s & %-8s$liaeek & %-8s ",
+    my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
+    my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
+    printf("& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
     $compare->{$b}->{$tool}->{nlaresult},
     $compare->{$b}->{$tool}->{nlatime} ,
     $compare->{$b}->{$tool}->{liaresult},
