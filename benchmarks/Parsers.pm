@@ -137,8 +137,9 @@ sub t2 {
 sub function {
     my ($logfn) = @_;
     open(F,"$logfn") or warn "file $logfn - $!";
-    my ($time,$result) = (-1,'\rUNK');
+    my ($time,$result) = (-1,'\rUNK'); #my $property;
     while (<F>) {
+        #$property = $1      if m/Property: (.*)$/;
         $result = '\rTRUE'  if /Analysis Result: TRUE/;
         $result = '\rFALSE' if /Analysis Result: FALSE/;
         $result = '\rUNK'   if /Analysis Result: UNKNOWN/;
@@ -164,6 +165,14 @@ sub dynamo {
     return { time => tm2str($time), result => $result };
 }
 
+sub ctlT2ToTex {
+    my $t = shift @_;
+    $t =~ s/&&/\\wedge/g;
+    $t =~ s/==/=/g;
+    $t =~ s/_/\\_/g;
+    $t =~ s/\[([A-Z][A-Z])\]/\\textsf{$1}/g;
+    return $t;
+}
 sub toTex {
     my $t = shift @_;
     $t =~ s/\*\*(\d)/^{$1} /g;

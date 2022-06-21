@@ -35,12 +35,20 @@ sub specfile {
 use lib '.';
 use Parsers qw{ult ultreach dynamo dynamiteltl t2};
 
+sub getFuncTionArgs {
+    my ($fn) = @_;
+    open ARGS, $fn or die $!;
+    while(<ARGS>) {
+        if($_ =~ m{// ARGS: (.*)$}) { return $1; }
+    }
+    die "could not find args for $fn";
+}
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
     $benchmarkFn =~ s/-nla-valid\.c/.prp/;
     $benchmarkFn =~ s{\/[^\/]*\.c}{/bresenham1.prp};
     $benchmarkFn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prp};
-    warn "$benchmarkFn\n";
+    #warn "$benchmarkFn\n";
     #die "$benchmarkFn hmm";
     open T, $benchmarkFn or die $!;
     while(<T>) {
@@ -86,7 +94,8 @@ my $CFG = {
         CMD => sub { 
             my $prp = getCTLprop($_[0],'function');
             $_[0] =~ s/\.c/_fn.c/;
-            return qq(./function $_[0] -ctl "$prp" -precondition "c == 0 && c <= k" -domain polyhedra 2>&1 > /tmp/function.log); },
+            my $args = getFuncTionArgs($_[0]);
+            return qq(./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
         FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
         PARSE => sub { return Parsers::function($_[0]); },
     },
@@ -180,6 +189,13 @@ use Parsers qw/find_benchmarks/;
 my ($benchdir,$benchesref,$b2expected) = Parsers::find_benchmarks($bdir,\@bnames);
 my @benches = sort @{$benchesref}; # [50..158];
 print "    Total files : ".($#benches+1)."\n";
+
+# Render Table of properties:
+foreach my $b (@benches) {
+    next if $b =~ /_lia/;
+    my $prop = Parsers::ctlT2ToTex(getCTLprop("$benchdir/$b",'t2'));
+    printf("%-25s & \$%s\$ \\\\\n", $b, $prop);
+}
 exit if ($arg1 eq 'list');
 
 chdir $benchdir;
