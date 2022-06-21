@@ -7,12 +7,12 @@ FROM: 0;
       y := 0;
       c := 0;
       assume(c + (y * y) - 2 * x + y < k);
-      p := 1;
+      p := 0;
 TO: 1;
 
 FROM: 1;
   assume(c + (y * y) - 2 * x + y < k);
-  p := 0;
+  p := 1;
 TO: 2;
 
 FROM: 2;

@@ -7,10 +7,10 @@ int main() {
     y = 0;
 
     int p;
-    p = 1;
+    p = 0;
 
     while (c + (y * y) - 2 * x + y < k) {
-        p = 0;
+        p = 1;
         c = c + 1;
         y = y + 1;
         x = y + x;
