@@ -3,7 +3,7 @@
 int main() {
     int p;
     p = 0;
-    if (*)
+    if (?)
         p = 0;
     else
         p = 1;
