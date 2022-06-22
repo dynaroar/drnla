@@ -1,0 +1,47 @@
+START: 1;
+
+FROM: 1;
+      n := nondet();
+      k := nondet();
+      a := 0;
+      s := 1;
+      t := 1;
+      c := 0;
+      p := 0;
+      assume(t*t - 4*s + 2*t + 1 + c <= k);
+TO: 2;
+
+FROM: 2;
+      assume(t*t - 4*s + 2*t + 1 + c <= k);
+TO: 3;
+
+FROM: 3;
+      a := a + 1;
+      t := t + 2;
+      s := s + t;
+      c := c + 1;
+
+TO: 2;
+
+FROM: 2;
+      assume(t*t - 4*s + 2*t + 1 + c > k);
+
+TO: 4;
+
+FROM: 4;
+      rho := nondet();
+TO: 5;
+
+FROM: 5;
+      assume(rho > 0);
+      p := 1;
+TO: 4;
+
+FROM: 5;
+      assume(rho <= 0);
+TO: 4;
+
+ 
+
+// FROM: 7;
+// TO: 7;                          
