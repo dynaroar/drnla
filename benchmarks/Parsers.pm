@@ -91,10 +91,10 @@ sub seahorn {
     return { time => tm2str($time), result => $result, summary => 'n/a' };
 }
 
-sub dynamiteltl {
+sub t2dyn {
     my ($logfn) = @_;
     my @mp; my @summary;
-    my $simpltime = -1;
+    my $simpltime = -1; my $stages;
     open(F,"$logfn") or warn "file $logfn - $!";
     my ($time,$result) = (-1,'\rUNK');
     while (<F>) {
@@ -102,7 +102,13 @@ sub dynamiteltl {
 # MAP:3;exact;(0 > x*y);0==0 && !(0>=y && 0>=y-x);...
 # MAP:5;approximate;x*x*y > 0;...;...
 # PROPERTY:termination
-# RESULT:valid
+# REFINEMENT:widen-else-iteration-1 
+# MAP:36;exact;((((((((2 * Y) * x) - ((2 * X) * y)) - X) + (2 * Y)) - v) + c) <= k);(0 >= (-(k) + x));(((0 + (k * 1)) + (x * -1)) <= -1)
+# PROPERTY:termination
+# RESULT:valid 
+# TIME-SIMPLIFICATION:166.35550808906555s 
+# TIME-TOTAL:172.68422198295593s 
+
         if(/MAP:(\d+);([a-z]+);(.*);(.*)$/) {
             push @summary, "\$\\ell_{$1}:$2:".toTex($3).":".toTex($4).":".toTex($5)."\$ ";
             push @mp, { loc => $1, precision => $2, 
@@ -111,15 +117,18 @@ sub dynamiteltl {
         $result = '\rTRUE'  if /RESULT:valid/;
         $result = '\rFALSE' if /RESULT:invalid/;
         $result = '\rUNK'   if /RESULT:unknown/;
-        $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)$/;
-        $time   = $1 if /TIME-TOTAL:(\d+.\d+)$/;
-        $time   = $1 if /HARD TIMER: (\d+\.\d+)$/;
+        $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)s/;
+        $time   = $1 if /TIME-TOTAL:(\d+.\d+)s/;
+        $stages = $1 if /REFINEMENT:(.*)$/;
+        #$time   = $1 if /EJKTIME:(\d+\.\d+)$/;
     }
     close F;
     use Data::Dumper;
     #print Dumper(\@mp);
-    return { time => tm2str($time), result => $result, "map" => \@mp,
-             simpltime => $simpltime, summary => join(" ", @summary) };
+    my $o = { time => tm2str($time), result => $result, "map" => \@mp,
+             simpltime => $simpltime, summary => join(" ", @summary), stages => $stages };
+    print Dumper($o);
+    return $o;
 }
 sub t2 {
     my ($logfn) = @_;
@@ -410,7 +419,7 @@ sub averageTimeResult {
 sub parse {
     my ($tool,$logfn,$iters) = @_;
     return averageTimeResult(map { dynamo($logfn.".".$_) } (1..$iters)) if $tool eq 'dynamo';
-    return dynamiteltl($logfn) if $tool eq 'dynamiteltl';
+    return t2dyn($logfn)       if $tool eq 't2dyn';
     return ult($logfn)         if $tool eq 'ultimate';
     return ultreach($logfn)    if $tool eq 'ultimatereach';
     return t2($logfn)          if $tool eq 't2';

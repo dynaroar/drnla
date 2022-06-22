@@ -89,6 +89,15 @@ my $CFG = {
         FETCH => sub { return qq(cp /tmp/t2.log $_[0]); },
         PARSE => sub { return Parsers::t2($_[0]); },
     },
+    t2dyn => {
+        # ./dynamltl.py -i ../benchmarks/ctl/ps2-nla-valid.c --prop 'termination' --refine 8
+        DIR => qq{$USERREPO/src},
+        CMD => sub {
+            return qq(rm /tmp/dyn.log; ./dynamltl.py -i $_[0] --prop 'termination' --refine 8 2>&1 | tee /tmp/dyn.log);
+        },
+        FETCH => sub { return qq(cp /tmp/dyn.log $_[0]); },
+        PARSE => sub { return Parsers::dynamiteltl($_[0]); },
+    },
     function => {
         DIR => qq{/tools/function},
         CMD => sub { 
@@ -214,7 +223,8 @@ if ($arg1 eq 'run') {
     foreach my $tool (@tools) {
         my %b2res;
         foreach my $b (@benches) {
-            print "* --- Now executing DynamiTe on benchmark: $b ---\n";
+            next if $b =~ /lia/ && $tool =~ /dyn/;
+            print "* --- Now executing [$tool] on benchmark: [$b] ---\n";
             for my $iter (1..$ITERS) {
                 chdir $CFG->{$tool}->{DIR} or die "can't CHDIR to $CFG->{$tool}->{DIR}: $!";
                 #my $SPECFILE = ($b =~ m/-nt\./ ? $NT_SPECFILE : $T_SPECFILE);
