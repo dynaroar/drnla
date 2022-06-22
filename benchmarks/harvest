@@ -51,6 +51,8 @@ my @dynDetail;
 my @dynHtml;
 my @skips;
 ################### Harvesting the results
+
+
 my @newfile;
 my $compare;
 
@@ -58,8 +60,9 @@ foreach my $tool (@tools) {
   foreach my $b (sort @benches) {
       mkdir("../results/$b") if (not (-e "../results/$b"));
       my $logfn = "$benchdir/$outdir/$tool-$b.log.1"; 
-      die "could not find: $logfn" unless -f $logfn;
-      #if (not (-e $logfn.".1")) { push @skips, $logfn; next; }
+      warn $logfn;
+      #die "could not find: $logfn" unless -f $logfn;
+      if (not (-e $logfn)) { push @skips, $logfn; next; }
       my $tmpb = $b; #$tmpb =~ s/-both-n?t.c//;
       # Step 1: General parsing that all tools/variants support
       #$compare->{$tmpb}->{$tool} = 
@@ -72,12 +75,33 @@ foreach my $tool (@tools) {
         $compare->{$bb}->{$tool}->{nlatime} = $d->{time};
         $compare->{$bb}->{$tool}->{nlaresult} = $d->{result};
       }
+      $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 't2dyn';
      # print Dumper($compare);
   }
 }
 
+
 #
-# Generate LaTeX
+# Generate LaTeX for DDR
+#
+if($#tools == 0 && $tools[0] eq 't2dyn') {
+  print "BENCH           RESULT  TIME   STAGES\n";
+  foreach my $b (sort keys %$compare) {
+    my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
+    printf("%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
+      $compare->{$b}->{t2dyn}->{detail}->{result},
+      $compare->{$b}->{t2dyn}->{detail}->{time},
+      $compare->{$b}->{t2dyn}->{detail}->{stages},
+      $compare->{$b}->{t2dyn}->{detail}->{summary},
+    );
+  }
+#  print Dumper($compare);
+  exit;
+}
+
+
+#
+# Generate LaTeX for how DDR Improves CTL
 #
 print "\n% RESULTS:\nBenchmark & Exp. & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
