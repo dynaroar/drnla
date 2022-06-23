@@ -34,13 +34,15 @@ TO: 5;
 
 FROM: 5;
       assume(rho > 0);
+TO: 6;
+
+FROM: 6;
       p := 1;
 TO: 4;
 
 FROM: 5;
       assume(rho <= 0);
 TO: 4;
-
  
 
 // FROM: 7;

@@ -25,22 +25,24 @@ TO: 2;
 
 FROM: 2;
       assume(t*t - 4*s + 2*t + 1 + c > k);
-      p := 1;
 TO: 4;
 
 FROM: 4;
+      p := 1;
       rho := nondet();
 TO: 5;
 
 FROM: 5;
       assume(rho > 0);
+TO: 6;
+
+FROM: 6;
       p := 0;
 TO: 4;
 
 FROM: 5;
       assume(rho <= 0);
 TO: 4;
-
  
 
 // FROM: 7;

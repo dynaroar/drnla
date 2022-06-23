@@ -29,19 +29,28 @@ TO: 4;
 
 FROM: 4;
       assume(x>=0);
-      rho := nondet();
 TO: 5;
 
 FROM: 5;
+      rho := nondet();
+TO: 6;
+
+FROM: 6;
       assume(rho > 0);
+TO: 7;
+
+FROM: 7;
       x := x - 1;
 TO: 4;
 
-FROM: 5;
+FROM: 6;
       assume(rho <= 0);
 TO: 4;
 
 FROM: 4;
       assume(x<0);
+TO: 8;
+
+FROM: 8;
       p := 1;
-TO: 6;
+TO: 9;
