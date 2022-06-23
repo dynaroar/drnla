@@ -1,20 +1,19 @@
-extern int __VERIFIER_nondet_int(void);
-
 //CTL [AF]([AG](p>0))  
-
+// ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
 
 int main() {
     int a, n, x, y, z;
-    a = __VERIFIER_nondet_int();
+    a = ?;
     n = 0;
     x = 0;
     y = 1;
     z = 6;
-    int c = 0, k = __VERIFIER_nondet_int();
+    int c, k;
+    // int c = 0, k = __VERIFIER_nondet_int();
 
     int p, xp;
     p = 0;
-    xp = __VERIFIER_nondet_int();
+    xp = ?;
 
     if (xp > 0) {
         while(1) {

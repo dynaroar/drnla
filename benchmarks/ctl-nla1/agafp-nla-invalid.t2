@@ -20,9 +20,9 @@ TO: 3;
 
 FROM: 3;
       p := p+1;
-TO:3;
+TO: 3;
 
-From: 2;
+FROM: 2;
       assume(xp <= 0);
 TO: 4;
 
@@ -36,14 +36,12 @@ FROM: 5;
        y := y + z;
        z := z + 6;
        c := c + 1;
-
 TO: 4;
  
 FROM: 4;
       assume((z*z) - 12*y - 6*z + 12 + c > k);
-      p := 0;
 TO: 6;
 
 FROM: 6;
-      assume(0 <= 0);
-TO: 6;
+      p := 0;
+TO: 7;

@@ -15,11 +15,14 @@ FROM: 1;
 TO: 2;
 
 FROM: 2;
-      assume(xp>0);
-      p := p+1;
-TO:3;
+      assume(xp>0);    
+TO: 3;
 
-From: 2;
+FROM: 3;
+      p := p + 1;
+TO: 7;
+
+FROM: 2;
       assume(xp <= 0);
 TO: 4;
 
@@ -38,9 +41,8 @@ TO: 4;
  
 FROM: 4;
       assume(c > k);
-      p := 1;
 TO: 6;
 
 FROM: 6;
-      assume(0 <= 0);
-TO: 6;
+      p := 1;
+TO: 7;

@@ -10,12 +10,11 @@ FROM: 1;
       c := 0;
       
       p := 0;
-      assume(n <= k);
+      assume(c <= k);
 TO: 2;
 
 FROM: 2;
-      assume(n <= k);
-      p := 1;
+      assume(c <= k);
 TO: 3;
 
 FROM: 3;
@@ -24,14 +23,13 @@ FROM: 3;
        y := y + z;
        z := z + 6;
        c := c + 1;
-
+       p := 1;
 TO: 2;
  
 FROM: 2;
-      assume(n > k);
-      p := -1;
+      assume(c > k);
 TO: 4;
 
-From: 4;
-      assume(1!=0)
-To: 4;
+FROM: 4;
+      p := -1;
+TO: 5;
