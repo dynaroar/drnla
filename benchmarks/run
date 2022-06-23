@@ -45,18 +45,26 @@ sub getFuncTionArgs {
 }
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
-    $benchmarkFn =~ s/-nla-valid\.c/.prp/;
-    $benchmarkFn =~ s{\/[^\/]*\.c}{/bresenham1.prp};
-    $benchmarkFn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prp};
-    #warn "$benchmarkFn\n";
-    #die "$benchmarkFn hmm";
-    open T, $benchmarkFn or die $!;
+    my $propfn = $benchmarkFn;
+    if ($propfn =~ m{/ctl-nla1/}) {
+      $propfn =~ s/-(in)?valid\.c/.prop/;
+    } elsif ($propfn =~ m{/ctl/}) {
+        $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prp};
+        $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prp};
+    } else {
+        die "don't know how to find prop file for $propfn";
+    }
+    die "can't find propfile $propfn" unless -e $propfn;
+
+    open T, $propfn or die "couldn't find property file $propfn - $!";
     while(<T>) {
         chomp;
         my ($t,$p) = split /: ?/, $_;
+        die "Prop file $propfn does not have an entry for $t.\n   $_\n"
+           unless defined $p;
         return $p if $t eq $tool;
     }
-    die "could not find prp for $benchmarkFn - $tool\n";
+    die "could not find prp for $propfn - $tool\n";
 }
 
 sub appendTime {
