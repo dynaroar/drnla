@@ -8,11 +8,12 @@ FROM: 1;
       t := 1;
       c := 0;
       p := 0;
-      assume(a <= k);
+      x := 5;
+      assume(c <= k);
 TO: 2;
 
 FROM: 2;
-      assume(a <=  k);
+      assume(c <= k);
 TO: 3;
 
 FROM: 3;
@@ -20,12 +21,10 @@ FROM: 3;
       t := t + 2;
       s := s + t;
       c := c + 1;
-      x := 5;
-      p := 0;
 TO: 2;
 
 FROM: 2;
-      assume(a > k);
+      assume(c > k);
 TO: 4;
 
 FROM: 4;
@@ -36,7 +35,7 @@ TO: 5;
 FROM: 5;
       assume(rho > 0);
       x := x - 1;
-TO: 6;
+TO: 4;
 
 FROM: 5;
       assume(rho <= 0);
@@ -45,9 +44,4 @@ TO: 4;
 FROM: 4;
       assume(x<0);
       p := 1;
-TO: 7;
-
-
-
-// FROM: 7;
-// TO: 7;
+TO: 6;

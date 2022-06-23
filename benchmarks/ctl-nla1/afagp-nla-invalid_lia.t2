@@ -34,7 +34,7 @@ TO: 5;
 
 FROM: 4;
       assume(nd<=0);
-      p := 2;
+      p := 0;
 TO: 6;
 
 FROM: 5;

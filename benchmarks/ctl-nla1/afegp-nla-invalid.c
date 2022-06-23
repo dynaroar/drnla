@@ -3,7 +3,7 @@
 extern int __VERIFIER_nondet_int(void);
 
 int main() {
-    int n, a, s, t, k, c,;
+    int n, a, s, t, k, c;
     n = __VERIFIER_nondet_int();
     k = __VERIFIER_nondet_int();
 
@@ -12,14 +12,14 @@ int main() {
     t = 1;
     c = 0;
 
-    int p, __rho_1_, x;
+    int p, rho, x;
     p = 0;
      
     while (t*t - 4*s + 2*t + 1 + c <= k) {
         a = a + 1;
         t = t + 2;
         s = s + t;
-	c = c + 1;
+	    c = c + 1;
      }
 
     while(1) {

@@ -8,11 +8,12 @@ FROM: 1;
       t := 1;
       c := 0;
       p := 0;
-      assume(a <= k);
+      x := 5;
+      assume(c <= k);
 TO: 2;
 
 FROM: 2;
-      assume(a <= k);
+      assume(c <= k);
 TO: 3;
 
 FROM: 3;
@@ -20,11 +21,10 @@ FROM: 3;
       t := t + 2;
       s := s + t;
       c := c + 1;
-
 TO: 2;
 
 FROM: 2;
-      assume(a > k);
+      assume(c > k);
       p := 1;
 TO: 4;
 
