@@ -125,6 +125,11 @@ sub t2dyn {
     close F;
     use Data::Dumper;
     #print Dumper(\@mp);
+    $stages =~ s/-iteration-//g;
+    $stages =~ s/widen-if/WT/g;
+    $stages =~ s/widen-else/WE/g;
+    $stages =~ s/strengthen-if/ST/g;
+    $stages =~ s/strengthen-else/SE/g;
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
              simpltime => $simpltime, summary => join(" ", @summary), stages => $stages };
     print Dumper($o);
@@ -186,9 +191,10 @@ sub toTex {
     my $t = shift @_;
     $t =~ s/\*\*(\d)/^{$1} /g;
     $t =~ s/-1\*/-/g;
-    $t =~ s/\*/\\cdot /g;
+    $t =~ s/\*/ /g;
     $t =~ s/%/\\%/g;
     $t =~ s/&/\\&/g;
+    #$t =~ s/[\(\)]//g;
     return $t;
 }
 

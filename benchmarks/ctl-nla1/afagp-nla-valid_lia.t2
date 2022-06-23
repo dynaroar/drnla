@@ -33,7 +33,13 @@ FROM: 4;
       p := 1;
 TO: 5;
 
-From: 5
+FROM: 4;
       assume(nd<=0);
       p := 2;
-TO: 3
+TO: 6;
+
+FROM: 5;
+TO: 3;
+
+FROM: 6;
+TO: 3;
