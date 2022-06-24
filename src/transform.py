@@ -13,8 +13,14 @@ class CTransform(object):
         self.validate = config.src_validate
         
     def dtrans(self, nla_ou):
-        dtrans_cmd = settings.Cil.dtrans(self.source)
-        mlog.info(f'------run CIL instrument for dynamic analysis:------')
+        if settings.is_lbnd:
+            dtrans_cmd = settings.Cil.dtransl(self.source, settings.lbnd)
+            mlog.info(f'------run CIL instrument with loop bound {settings.lbnd} for dynamic analysis:------')
+            mlog.info(f'cmd: \n {dtrans_cmd}')
+        else:
+            mlog.info(f'------run CIL instrument for dynamic analysis:------')
+            dtrans_cmd = settings.Cil.dtrans(self.source)
+
         outp = common.run_cmd(dtrans_cmd)
         nla_info = outp.splitlines()[1]
         nla = (nla_info.split(':')[1]).split(',')

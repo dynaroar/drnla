@@ -5,14 +5,16 @@ import os
 logger_level = 4
 gen_tcs = False
 init_ou = False
+is_lbnd = False
 tmpdir = Path().home()/'tmp'
 timeout = 600
 refine = 4
 snaps = 1000
 repeat = 50
 upper = 20
+lbnd = 500
 prop = 'termination'
-props_list = ['reach','termination', 'ltl']
+props_list = ['reach','termination', 'ltl', 'ctl']
 verdict = '1==1'
 
 SrcDir = Path(__file__).parent
@@ -24,11 +26,13 @@ class Cil:
 
     cil_exe = trans_dir / f'{trans_dir}/_build/default/src/instr.exe'
     dcmd = partial('{exe} -dig -nopre {inp}'.format, exe=cil_exe)
+    dcmdl = partial('{exe} -dig -nopre {inp} -lbnd {lbnd}'.format, exe=cil_exe)
     scmd = partial('{exe} -val {inp} -inv {invars}'.format, exe=cil_exe)
     vcmd = partial('{exe} -val {inp} -inv {invars} -pre {pre} -case {case}'.format, exe=cil_exe)
     lcmd = partial('{exe} -lia {ous} {inp}'.format, exe=cil_exe)
 
     dtrans = lambda inp: Cil.dcmd(inp=inp)
+    dtransl = lambda inp, bnd: Cil.dcmdl(inp=inp, lbnd=bnd)
     strans = lambda inp, invars: Cil.scmd(inp=inp, invars=invars)
     vtrans = lambda inp, invars, pre, case: Cil.vcmd(inp=inp, invars=invars, pre = pre, case=case)
     ltrans = lambda inp, ouf: Cil.lcmd(inp=inp, ous=ouf)
