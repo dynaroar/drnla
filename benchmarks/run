@@ -23,7 +23,7 @@ my $pid = getppid();
 my $PROPERTY = 'ctl';
 my $HARVEST = 0;
 my $TMPFILE = "/tmp/dynamo.$pid.txt";
-my $KILL = "killall java; killall z3;";
+my $KILLJAVAZ3 = "killall java; killall z3;";
 my $HARD_TIMEOUT = 0; # hard force timeout
 ###############################################################
 sub specfile {
@@ -46,11 +46,11 @@ sub getFuncTionArgs {
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
     my $propfn = $benchmarkFn;
-    if ($propfn =~ m{/ctl-nla1/}) {
+    if ($propfn =~ m{/ctl-nla1/} || $propfn =~ m{ctl-pldi13}) {
       $propfn =~ s/-(in)?valid\.c/.prop/;
     } elsif ($propfn =~ m{/ctl/}) {
-        $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prp};
-        $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prp};
+        $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prop};
+        $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prop};
     } else {
         die "don't know how to find prop file for $propfn";
     }
@@ -73,21 +73,6 @@ sub appendTime {
 }
 my $t0;
 my $CFG = {
-    # dynamo => {
-    #     DIR => qq{$DYNAMITE_HOME/src},
-    #     CMD => sub { my $arg = ($SPECFILE_TERM =~ m/\/term/ ? '-t' : '-nt');
-	# 	     $arg = '' if $INTEGRATED == 1;
-    #                  $t0 = [gettimeofday];
-    #                  return qq($KILL python3 dynamo.py --timeout=$TIMEOUT $_[0] $arg 2>\&1 | tee $TMPFILE);
-    #     },
-    #     FETCH => sub { my $elapsed = tv_interval($t0);
-	# 	       my $tm = "HARD TIMER: $elapsed\n";
-	# 	       open TM, ">>$TMPFILE" or warn $!;
-	# 	       print TM "\n$tm\n";
-	# 	       close TM;
-	# 	       return qq(cp $TMPFILE $_[0]); },
-    #     PARSE => sub { return Parsers::dynamo($_[0]); },
-    # },
     t2 => {
         DIR => qq{/tools/T2},
         CMD => sub { 
@@ -97,14 +82,14 @@ my $CFG = {
         FETCH => sub { return qq(cp /tmp/t2.log $_[0]); },
         PARSE => sub { return Parsers::t2($_[0]); },
     },
-    t2dyn => {
+    ddr => {
         # ./dynamltl.py -i ../benchmarks/ctl/ps2-nla-valid.c --prop 'termination' --refine 8
         DIR => qq{$USERREPO/src},
         CMD => sub {
-            return qq(rm /tmp/dyn.log; ./dynamltl.py -i $_[0] --prop 'termination' --refine 8 2>&1 | tee /tmp/dyn.log);
+            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./dynamltl.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 2>&1 | tee /tmp/ddr.log);
         },
-        FETCH => sub { return qq(cp /tmp/dyn.log $_[0]); },
-        PARSE => sub { return Parsers::dynamiteltl($_[0]); },
+        FETCH => sub { return qq(cp /tmp/ddr.log $_[0]); },
+        PARSE => sub { return Parsers::ddr($_[0]); },
     },
     function => {
         DIR => qq{/tools/function},
@@ -115,13 +100,6 @@ my $CFG = {
             return qq(./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
         FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
         PARSE => sub { return Parsers::function($_[0]); },
-    },
-    dynamiteltl => {
-        DIR    => qq{$USERREPO/src}, 
-        #CMD => sub { return qq(./dynamltl.py --inp  $_[0] 2>&1 > dynamltl.log); },
-        CMD => sub { return qq(./dynamltl.py --inp $_[0] --refine 4 --init --prop reach 2>&1 > dynamiteltl.log); },
-        FETCH  => sub { return qq(cp dynamiteltl.log $_[0]); },
-        PARSE  => sub { return Parsers::dynamiteltl($_[0]); },
     },
     ultimate => {
         DIR    => qq{$USERREPO/bin},

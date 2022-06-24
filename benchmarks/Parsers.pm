@@ -91,7 +91,7 @@ sub seahorn {
     return { time => tm2str($time), result => $result, summary => 'n/a' };
 }
 
-sub t2dyn {
+sub ddr {
     my ($logfn) = @_;
     my @mp; my @summary;
     my $simpltime = -1; my $stages;
@@ -425,7 +425,7 @@ sub averageTimeResult {
 sub parse {
     my ($tool,$logfn,$iters) = @_;
     return averageTimeResult(map { dynamo($logfn.".".$_) } (1..$iters)) if $tool eq 'dynamo';
-    return t2dyn($logfn)       if $tool eq 't2dyn';
+    return ddr($logfn)         if $tool eq 'ddr';
     return ult($logfn)         if $tool eq 'ultimate';
     return ultreach($logfn)    if $tool eq 'ultimatereach';
     return t2($logfn)          if $tool eq 't2';

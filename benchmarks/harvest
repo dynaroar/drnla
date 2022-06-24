@@ -75,7 +75,7 @@ foreach my $tool (@tools) {
         $compare->{$bb}->{$tool}->{nlatime} = $d->{time};
         $compare->{$bb}->{$tool}->{nlaresult} = $d->{result};
       }
-      $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 't2dyn';
+      $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 'ddr';
      # print Dumper($compare);
   }
 }
@@ -84,15 +84,15 @@ foreach my $tool (@tools) {
 #
 # Generate LaTeX for DDR
 #
-if($#tools == 0 && $tools[0] eq 't2dyn') {
+if($#tools == 0 && $tools[0] eq 'ddr') {
   print "BENCH           RESULT  TIME   STAGES\n";
   foreach my $b (sort keys %$compare) {
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
     printf("%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
-      $compare->{$b}->{t2dyn}->{detail}->{result},
-      $compare->{$b}->{t2dyn}->{detail}->{time},
-      $compare->{$b}->{t2dyn}->{detail}->{stages},
-      $compare->{$b}->{t2dyn}->{detail}->{summary},
+      $compare->{$b}->{ddr}->{detail}->{result},
+      $compare->{$b}->{ddr}->{detail}->{time},
+      $compare->{$b}->{ddr}->{detail}->{stages},
+      $compare->{$b}->{ddr}->{detail}->{summary},
     );
   }
 #  print Dumper($compare);
