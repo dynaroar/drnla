@@ -37,7 +37,7 @@ use Parsers qw{ult ultreach dynamo dynamiteltl t2};
 
 sub getFuncTionArgs {
     my ($fn) = @_;
-    open ARGS, $fn or die $!;
+    open ARGS, $fn or die "$fn - $!";
     while(<ARGS>) {
         if($_ =~ m{// ARGS: (.*)$}) { return $1; }
     }
@@ -46,8 +46,9 @@ sub getFuncTionArgs {
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
     my $propfn = $benchmarkFn;
-    if ($propfn =~ m{/ctl-nla1/} || $propfn =~ m{ctl-pldi13}) {
+    if ($propfn =~ m{/ctl-nla1/} || $propfn =~ m{ctl-pldi13} || $propfn =~ m{ctl-pldi13small-nla-rest}) {
       $propfn =~ s/-(in)?valid\.c/.prop/;
+      $propfn =~ s/-(in)?valid_.*\.c/.prop/;
     } elsif ($propfn =~ m{/ctl/}) {
         $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prop};
         $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prop};
@@ -86,7 +87,8 @@ my $CFG = {
         # ./dynamltl.py -i ../benchmarks/ctl/ps2-nla-valid.c --prop 'termination' --refine 8
         DIR => qq{$USERREPO/src},
         CMD => sub {
-            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./dynamltl.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 2>&1 | tee /tmp/ddr.log);
+            my $bnd = ($_[0] =~ /pldi13small/ ? '--lbnd 600' : '');
+            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./dynamltl.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 $bnd 2>&1 | tee /tmp/ddr.log);
         },
         FETCH => sub { return qq(cp /tmp/ddr.log $_[0]); },
         PARSE => sub { return Parsers::ddr($_[0]); },
@@ -94,8 +96,10 @@ my $CFG = {
     function => {
         DIR => qq{/tools/function},
         CMD => sub { 
-            my $prp = getCTLprop($_[0],'function');
+            # does the file exist?
             $_[0] =~ s/\.c/_fn.c/;
+            return qq(echo "not found" > /tmp/function.log) unless -e $_[0];
+            my $prp = getCTLprop($_[0],'function');
             my $args = getFuncTionArgs($_[0]);
             return qq(./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
         FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
@@ -186,14 +190,15 @@ my @benches = sort @{$benchesref}; # [50..158];
 print "    Total files : ".($#benches+1)."\n";
 
 # Render Table of properties:
-open OUT, "benchmarks-$benchdir.tex" or die $!;
+my $dname = $benchdir; $dname =~ s{^.*/}{}g;
+open OUT, ">results/benchmarks-$dname.tex" or die "$dname - $!";
 foreach my $b (@benches) {
     next if $b =~ /_lia/;
     my $prop = Parsers::ctlT2ToTex(getCTLprop("$benchdir/$b",'t2'));
-    fprintf(OUT,"%-25s & \$%s\$ \\\\\n", $b, $prop);
+    printf OUT "%-25s & \$%s\$ \\\\\n", $b, $prop;
 }
 close OUT;
-print "write: benchmarks-$benchdir.tex";
+print "wrote list of benchmarks to: results/benchmarks-$dname.tex\n";
 exit if ($arg1 eq 'list');
 
 chdir $benchdir;
@@ -209,11 +214,13 @@ if ($arg1 eq 'run') {
     close TMP;
     print "*\n*\n";
     my $ct = 0;
+    my $tot = 1 * @tools * @benches;
     foreach my $tool (@tools) {
         my %b2res;
         foreach my $b (@benches) {
             next if $b =~ /lia/ && $tool =~ /dyn/;
-            print "* --- Now executing [$tool] on benchmark: [$b] ---\n";
+            ++$ct;
+            print "\n* --- Now executing [$tool] on benchmark: [$b] [$ct of $tot]---\n";
             for my $iter (1..$ITERS) {
                 chdir $CFG->{$tool}->{DIR} or die "can't CHDIR to $CFG->{$tool}->{DIR}: $!";
                 #my $SPECFILE = ($b =~ m/-nt\./ ? $NT_SPECFILE : $T_SPECFILE);

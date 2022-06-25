@@ -60,7 +60,7 @@ foreach my $tool (@tools) {
   foreach my $b (sort @benches) {
       mkdir("../results/$b") if (not (-e "../results/$b"));
       my $logfn = "$benchdir/$outdir/$tool-$b.log.1"; 
-      warn $logfn;
+      #warn $logfn;
       #die "could not find: $logfn" unless -f $logfn;
       if (not (-e $logfn)) { push @skips, $logfn; next; }
       my $tmpb = $b; #$tmpb =~ s/-both-n?t.c//;
@@ -86,16 +86,16 @@ foreach my $tool (@tools) {
 #
 if($#tools == 0 && $tools[0] eq 'ddr') {
   #print OUT "BENCH           RESULT  TIME   STAGES\n";
-  my $outfn = "$benchdir/$outdir/ddr-$benchdir.tex";
-  open OUT, $outfn or die $!;
+  my $dname = $benchdir; $dname =~ s{^.*/}{}g;
+  my $outfn = "$benchdir/$outdir/ddr-$dname.tex";
+  open OUT, ">$outfn" or die "$outfn - $!";
   foreach my $b (sort keys %$compare) {
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-    fprintf(OUT,"%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
+    printf OUT "%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
       $compare->{$b}->{ddr}->{detail}->{result},
       $compare->{$b}->{ddr}->{detail}->{time},
       $compare->{$b}->{ddr}->{detail}->{stages},
-      $compare->{$b}->{ddr}->{detail}->{summary},
-    );
+      $compare->{$b}->{ddr}->{detail}->{summary};
   }
 #  print Dumper($compare);
   close OUT;
@@ -107,23 +107,26 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
 #
 # Generate LaTeX for how DDR Improves CTL
 #
-my $outfn = "$benchdir/$outdir/improvements-$benchdir.tex";
-open OUT, $outfn or die $!;
-print OUT "\n% RESULTS:\nBenchmark & Exp. & ".
-   join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
+my $bn = $benchdir; $bn =~ s/^.*\///g;
+my $ts = join '-', @tools;
+my $outfn = "$benchdir/$outdir/improvements-$bn-$ts.tex";
+open OUT, ">$outfn" or die $!;
+print OUT "%RESULTS:\n% Benchmark & Exp. & ".
+   join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n";
 foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-  fprintf(OUT,"%-15s & %-8s & ", $b, $exp);
+  printf OUT "%-15s & %-8s & ", $b, $exp;
   foreach my $tool (@tools) {
     my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
-    fprintf(OUT,"& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
+    printf OUT "& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
     $compare->{$b}->{$tool}->{nlaresult},
     $compare->{$b}->{$tool}->{nlatime} ,
     $compare->{$b}->{$tool}->{liaresult},
-    $compare->{$b}->{$tool}->{liatime});
+    $compare->{$b}->{$tool}->{liatime};
   }
-  fprint(OUT," \\\\\n");
+  print OUT " \\\\\n";
 }
 close OUT;
 print "wrote: $outfn\n";
+print qx{cp $outfn results/};
