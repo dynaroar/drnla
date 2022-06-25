@@ -4,13 +4,13 @@ use strict;
 use warnings;
 use Data::Dumper;
 use lib '.';
-my @tools = qw/ultimatereach dynamltl/; #dynamo ultimate aprove seahorn/;
+my @tools = qw/ddr t2 function/;
 use Parsers qw{parse find_benchmarks};
 
 ################### Arguments
-my $COMPARISON = 0; my $ITERS = 1; my $PROVETNT = 0;
+my $COMPARISON = 0; my $ITERS = 1; my $PROVETNT = 0; my $SAVETEX = 0;
 my $usage = "usage: ./harvest [options] (csvs|nocsvs) <benchdir>/<tmpdir>\n".
-    "  where options are: --iters=5 --compare=1 --integrated=1 --tools=dynamltl,ultimate\n";
+    "  where options are: --iters=5 --compare=1 --integrated=1 --tools=t2,function,ddr\n";
 die $usage unless $#ARGV >= 1;
 while ($ARGV[0] =~ /^--(.*)=(.+)$/) {
     my ($k,$v) = ($1,$2);
@@ -28,7 +28,7 @@ my ($bdir,$outdir) = split '/', $a3 or die $!;
 print "*\n";
 print "* Benchmarking -- Harvest Results\n";
 print "*\n";
-print "* Paper: Dynamite LTL\n";
+print "* Paper: DDR for CTL\n";
 print "* Authors: (omitted for blind)\n";
 print "*\n";
 print "* Configuration:\n";
@@ -85,10 +85,12 @@ foreach my $tool (@tools) {
 # Generate LaTeX for DDR
 #
 if($#tools == 0 && $tools[0] eq 'ddr') {
-  print "BENCH           RESULT  TIME   STAGES\n";
+  #print OUT "BENCH           RESULT  TIME   STAGES\n";
+  my $outfn = "$benchdir/$outdir/ddr-$benchdir.tex";
+  open OUT, $outfn or die $!;
   foreach my $b (sort keys %$compare) {
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-    printf("%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
+    fprintf(OUT,"%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
       $compare->{$b}->{ddr}->{detail}->{result},
       $compare->{$b}->{ddr}->{detail}->{time},
       $compare->{$b}->{ddr}->{detail}->{stages},
@@ -96,6 +98,8 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
     );
   }
 #  print Dumper($compare);
+  close OUT;
+  print "wrote:  $outfn\n";
   exit;
 }
 
@@ -103,19 +107,23 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
 #
 # Generate LaTeX for how DDR Improves CTL
 #
-print "\n% RESULTS:\nBenchmark & Exp. & ".
+my $outfn = "$benchdir/$outdir/improvements-$benchdir.tex";
+open OUT, $outfn or die $!;
+print OUT "\n% RESULTS:\nBenchmark & Exp. & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n\\hline\n";
 foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-  printf("%-15s & %-8s & ", $b, $exp);
+  fprintf(OUT,"%-15s & %-8s & ", $b, $exp);
   foreach my $tool (@tools) {
     my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
-    printf("& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
+    fprintf(OUT,"& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
     $compare->{$b}->{$tool}->{nlaresult},
     $compare->{$b}->{$tool}->{nlatime} ,
     $compare->{$b}->{$tool}->{liaresult},
     $compare->{$b}->{$tool}->{liatime});
   }
-  print " \\\\\n";
+  fprint(OUT," \\\\\n");
 }
+close OUT;
+print "wrote: $outfn\n";

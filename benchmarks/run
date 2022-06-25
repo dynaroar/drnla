@@ -186,11 +186,14 @@ my @benches = sort @{$benchesref}; # [50..158];
 print "    Total files : ".($#benches+1)."\n";
 
 # Render Table of properties:
+open OUT, "benchmarks-$benchdir.tex" or die $!;
 foreach my $b (@benches) {
     next if $b =~ /_lia/;
     my $prop = Parsers::ctlT2ToTex(getCTLprop("$benchdir/$b",'t2'));
-    printf("%-25s & \$%s\$ \\\\\n", $b, $prop);
+    fprintf(OUT,"%-25s & \$%s\$ \\\\\n", $b, $prop);
 }
+close OUT;
+print "write: benchmarks-$benchdir.tex";
 exit if ($arg1 eq 'list');
 
 chdir $benchdir;
@@ -229,6 +232,9 @@ if ($arg1 eq 'run') {
     my $ts = join ',', @tools;
     my $hcmd = qq(./harvest --iters=1 --tools=$ts nocsvs $bdir/$outdir);
     print "*\n* you may now harvest the results:\n $hcmd\n*\n";
+    open HARV, ">>$USERREPO/benchmarks/harvest-howto.sh" or die $!;
+    print HARV "$hcmd\n";
+    close HARV;
     print "Timedout:  \n".join("\n   ",@timedout)."\n" if $#timedout >= 0;
     if ($HARVEST == 1 ){
         chdir "$USERREPO/benchmarks";

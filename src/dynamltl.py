@@ -72,6 +72,12 @@ if __name__ == "__main__":
        default=20,
        help="set the upper bound for normalized template invriants")
 
+    ag("--lbnd", "-lbnd",
+       type = int,
+       nargs = '?',
+       const = 500,
+       help="set loop bound for non-terminating loop")
+
     ag("--prop", "-prop",
        type=str,
        default='reach',
@@ -92,7 +98,12 @@ if __name__ == "__main__":
 
     if args.init_ou:
         settings.init_ou = args.init_ou
-
+        
+    if args.lbnd is not None:
+        settings.is_lbnd = True
+        settings.lbnd = args.lbnd
+ 
+        
     settings.timeout = args.timeout    
     settings.logger_level = args.log
     settings.refine = args.refine
@@ -140,6 +151,7 @@ if __name__ == "__main__":
     details_str = f'{steps_str} \n {ou_analysis.ou_str}\n {prop_str}\n {result}'
     time_str = f'{time_simp} \n {time_all} \n'
     mlog.info(f'----DynamiteLTL Analysis Result:----\n {details_str} \n {time_str}')
+    # print(f'----DynamiteLTL Analysis Result:----\n {details_str} \n {time_str}')
  
     
     # prove_process = mp.Process(target=simplify)
