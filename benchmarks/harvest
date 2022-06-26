@@ -117,6 +117,12 @@ foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
   printf OUT "%-15s & %-8s & ", $b, $exp;
   foreach my $tool (@tools) {
+    if (not defined $compare->{$b}->{$tool}->{liaresult}) {
+      warn "missing LIA results for $tool on $b, benchmark set $bn, benchmark: $b\n";
+      $compare->{$b}->{$tool}->{liaresult} = 'NA';
+      $compare->{$b}->{$tool}->{liatime} = 'NA';
+    }
+    #print $tool." ".$b." ".Dumper($compare->{$b}->{$tool}) if not defined $compare->{$b}->{$tool}->{liaresult};
     my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
     printf OUT "& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
@@ -129,4 +135,5 @@ foreach my $b (sort keys %$compare) {
 }
 close OUT;
 print "wrote: $outfn\n";
+print "  and copied it to results/\n";
 print qx{cp $outfn results/};

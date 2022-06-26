@@ -132,7 +132,7 @@ sub ddr {
     $stages =~ s/strengthen-else/SE/g;
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
              simpltime => $simpltime, summary => join(" ", @summary), stages => $stages };
-    print Dumper($o);
+    #print Dumper($o);
     return $o;
 }
 sub t2 {
