@@ -38,13 +38,13 @@ TO: 6;
  
 FROM: 6;
       p := 1;
-TO: 8;
+TO: 7;
  
 FROM:3;
       assume(rho1 >= 0);
-TO: 8;
+TO: 7;
  
-FROM: 8;
+FROM: 7;
       assume(0 <= 0);
-TO: 8;
+TO: 7;
  
