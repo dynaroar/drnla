@@ -1,44 +1,49 @@
-bresenham1-nla-invalid.c & \rTRUE   & 174.5    & WE1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-bresenham1-nla-valid.c & \rTRUE   & 177.5    & WE1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (-(k) + x)):(((0 + (k   1)) + (x   -1)) <= -1):$  \\
+bresenham1-nla-invalid.c & \rTRUE   & 194.7    & WE1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
+bresenham1-nla-valid.c & \rTRUE   & 191.9    & WE1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
 cohencu1-t.c    & \rUNK    & \rUNK    &  &  \\
 cohencu2-both-t.c & \rUNK    & \rUNK    &  &  \\
 cohencu3-both-t.c & \rUNK    & \rUNK    &  &  \\
 cohencu4-both-t.c & \rUNK    & \rUNK    &  &  \\
-cohencu5-both-t.c & \rTRUE   & 131.1    & WE1  & $\ell_{28}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-cohencu5-nla-invalid.c & \rTRUE   & 158.5    & WE1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-cohencu5-nla-valid.c & \rTRUE   & 159.1    & WE1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
+cohencu5-both-t.c & \rTRUE   & 140.7    & WE1  & $\ell_{28}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
+cohencu5-nla-invalid.c & \rTRUE   & 172.3    & WE1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (-(k) + n)):(((0 + (k   1)) + (n   -1)) <= -1):$  \\
+cohencu5-nla-valid.c & \rTRUE   & 165.8    & WE1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (-(k) + n)):(((0 + (k   1)) + (n   -1)) <= -1):$  \\
 cohencu6-both-t.c & \rUNK    & \rUNK    &  &  \\
-cohencu7-both-t.c & \rTRUE   & 25.8     &   & $\ell_{28}:approximate:((x + y) <= (((a + 1)   (a + 1))   (a + 1)));(0 >= (-(a) + n)):(0 == ((-(a) + n) - 1)):$  \\
+cohencu7-both-t.c & \rTRUE   & 32.4     &   & $\ell_{28}:approximate:((x + y) <= (((a + 1)   (a + 1))   (a + 1)));(0 >= (-(a) + n)):(0 == ((-(a) + n) - 1)):$  \\
 dijkstra-fix1.c & \rUNK    & \rUNK    &  &  \\
 dijkstra1-both-t.c & \rUNK    & \rUNK    &  &  \\
 dijkstra2-both-t.c & \rUNK    & \rUNK    &  &  \\
 dijkstra3-both-t.c & \rUNK    & \rUNK    &  &  \\
-dijkstra4-both-t.c & \rTRUE   & 25.2     &   & $\ell_{44}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   p)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   p)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):(0 == ((c - k) - 1)):$  \\
+dijkstra4-both-t.c & \rTRUE   & 26.3     &   & $\ell_{44}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   p)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   p)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):(0 == ((c - k) - 1)):$  \\
 dijkstra5-both-t.c & \rUNK    & \rUNK    &  &  \\
 divbin1-both-t.c & \rUNK    & \rUNK    &  &  \\
 egcd-both-t.c   & \rUNK    & \rUNK    &  &  \\
 egcd2-both-t.c  & \rUNK    & \rUNK    &  &  \\
 egcd3-both-t.c  & \rUNK    & \rUNK    &  &  \\
 fermat1-both-t.c & \rUNK    & \rUNK    &  &  \\
-geo1-nla-invalid.c & \rTRUE   & 184.2    &   & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-geo1-nla-valid.c & \rTRUE   & 188.8    &   & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo1-nla-invalid.c & \rTRUE   & 180.9    &   & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo1-nla-valid.c & \rTRUE   & 201.7    &   & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 geo2-nla-invalid.c & \rUNK    & \rUNK    &  &  \\
 geo2-nla-valid.c & \rUNK    & \rUNK    &  &  \\
-geo3-nla-invalid.c & \rTRUE   & 193.0    &   & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-geo3-nla-valid.c & \rTRUE   & 176.7    &   & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo3-nla-invalid.c & \rTRUE   & 197.3    &   & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo3-nla-valid.c & \rTRUE   & 183.0    &   & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 hard-both-t.c   & \rUNK    & \rUNK    &  &  \\
 hard2-both-t.c  & \rUNK    & \rUNK    &  &  \\
+if.c            & \rUNK    & \rUNK    &  &  \\
+ifharder.c      & \rUNK    & \rUNK    &  &  \\
 prod4br-both-t.c & \rUNK    & \rUNK    &  &  \\
 prodbin-both-t.c & \rUNK    & \rUNK    &  &  \\
-ps2-nla-invalid.c & \rTRUE   & 57.3     & WT1  & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
-ps2-nla-valid.c & \rTRUE   & 28.0     &   & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-ps3-nla-invalid.c & \rTRUE   & 72.7     & WT1  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
-ps3-nla-valid.c & \rTRUE   & 74.5     & WT1  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(((0 + (k   1)) + (y   -1)) <= 0):((-(k) + y) <= -(1)):$  \\
-ps4-nla-invalid.c & \rTRUE   & 43.5     &   & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
-ps4-nla-valid.c & \rTRUE   & 74.7     & WT1  & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(((0 + (k   1)) + (y   -1)) <= 0):((-(k) + y) <= -(1)):$  \\
-ps5-nla-invalid.c & \rTRUE   & 43.8     &   & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
-ps5-nla-valid.c & \rTRUE   & 40.8     &   & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-ps6-nla-invalid.c & \rTRUE   & 37.2     &   & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
-ps6-nla-valid.c & \rTRUE   & 39.1     &   & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
-sqrt1-nla-invalid.c & \rTRUE   & 119.7    & WE1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-sqrt1-nla-valid.c & \rTRUE   & 120.7    & WE1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (a - k)):(((0 + (k   1)) + (a   -1)) <= -1):$  \\
+ps2-nla-invalid.c & \rTRUE   & 33.2     &   & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps2-nla-valid.c & \rTRUE   & 24.6     &   & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps3-nla-invalid.c & \rTRUE   & 65.1     & WT1  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps3-nla-valid.c & \rTRUE   & 73.9     & WT1  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps4-nla-invalid.c & \rTRUE   & 46.6     &   & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
+ps4-nla-valid.c & \rTRUE   & 32.6     &   & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps5-nla-invalid.c & \rTRUE   & 41.1     &   & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
+ps5-nla-valid.c & \rTRUE   & 67.0     & WT1  & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(((0 + (k   1)) + (y   -1)) <= 0):((-(k) + y) <= -(1)):$  \\
+ps6-nla-invalid.c & \rTRUE   & 40.5     &   & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps6-nla-valid.c & \rTRUE   & 44.5     &   & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+sqrt1-nla-invalid.c & \rTRUE   & 122.3    & WE1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (a - k)):(((0 + (k   1)) + (a   -1)) <= -1):$  \\
+sqrt1-nla-valid.c & \rTRUE   & 117.8    & WE1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (a - k)):(((0 + (k   1)) + (a   -1)) <= -1):$  \\
+t2lin.c         & \rUNK    & \rUNK    &  &  \\
+t2nla.c         & \rUNK    & \rUNK    &  &  \\
+t2unsound.c     & \rUNK    & \rUNK    &  &  \\

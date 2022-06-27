@@ -17,6 +17,7 @@ sub find_benchmarks {
     my @benches; my %b2expect;
     print "    Directory   : $benchdir\n";
     print "    Benchmarks  : ";
+    my %bhash;
     opendir(my $dh, $benchdir) || die "Can't open $benchdir: $!";
     while (readdir $dh) {
         my $fn = $_;
@@ -44,10 +45,11 @@ sub find_benchmarks {
         }
         #print "  $benchdir/$fn  (expect: $b2expect{$fn})\n";
         print " $fn (expect: $b2expect{$fn})";
-        push @benches, "$fn";
+        $bhash{$fn} = 1;
     }
     closedir $dh;
     print "\n";
+    @benches = keys %bhash;
     return ($benchdir,\@benches,\%b2expect);
 }
 
