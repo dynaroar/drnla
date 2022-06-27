@@ -25,7 +25,7 @@ FROM: 4;
       assume(c <= k);       
 TO: 5;
 
-From: 5;
+FROM: 5;
        check := 1;
        n := n + 1;
        x := x + y;
