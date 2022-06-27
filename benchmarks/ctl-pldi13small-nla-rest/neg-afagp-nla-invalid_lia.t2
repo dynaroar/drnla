@@ -39,7 +39,7 @@ FROM: 5;
 
 TO: 6;
 
-From: 6;
+FROM: 6;
       p := 1;
 TO: 4;
 
