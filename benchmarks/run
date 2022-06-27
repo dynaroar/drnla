@@ -46,10 +46,10 @@ sub getFuncTionArgs {
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
     my $propfn = $benchmarkFn;
-    if ($propfn =~ m{/ctl-nla1/} || $propfn =~ m{ctl-pldi13} || $propfn =~ m{ctl-pldi13small-nla-rest}) {
+    if ($propfn =~ m{ctl-pldi13}) {
       $propfn =~ s/-(in)?valid\.c/.prop/;
       $propfn =~ s/-(in)?valid_.*\.c/.prop/;
-    } elsif ($propfn =~ m{/ctl/}) {
+    } elsif ($propfn =~ m{/ctl-svcomp/}) {
         $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prop};
         $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prop};
     } else {
@@ -218,7 +218,7 @@ if ($arg1 eq 'run') {
     foreach my $tool (@tools) {
         my %b2res;
         foreach my $b (@benches) {
-            next if $b =~ /lia/ && $tool =~ /dyn/;
+            next if $b =~ /lia/ && $tool eq 'ddr';
             ++$ct;
             print "\n* --- Now executing [$tool] on benchmark: [$b] [$ct of $tot]---\n";
             for my $iter (1..$ITERS) {

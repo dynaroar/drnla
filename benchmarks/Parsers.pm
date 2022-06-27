@@ -20,9 +20,20 @@ sub find_benchmarks {
     opendir(my $dh, $benchdir) || die "Can't open $benchdir: $!";
     while (readdir $dh) {
         my $fn = $_;
-        next unless $fn =~ m/\.c$/; 
-        next if $fn =~ m/_fn\.c/;
-        next if $fn =~ /~$/;
+        # ignore filenames ending in .t2 and _fn.c
+        # next unless $fn =~ m/\.c$/; 
+        # next if $fn =~ m/_fn\.c/;
+        # next if $fn =~ /~$/;
+        # trim off ending so we get the actual becnhmark name
+        $fn =~ s/_fn\.c/.c/;
+        $fn =~ s/\.t2/\.c/;
+        $fn =~ s/_fn//;
+        next unless $fn =~ m/\.c$/;
+        if($fn =~ /ax\d?-nla/) {
+            warn "skipping $fn - no prop file yet?";
+            next;
+        }
+        # if there is an lia_fn.c but not _lia.c
         $b2expect{$fn} = 'true' if $fn =~ /^safe-/;
         $b2expect{$fn} = 'true' if $fn =~ /-valid/;
         $b2expect{$fn} = 'false' if $fn =~ /-invalid/;
@@ -30,22 +41,6 @@ sub find_benchmarks {
 #        $b2expect{$fn} = 'false' if $fn =~ /-nt\.c/;
         if ($#{$bnames} > -1) {
             next unless $fn ~~ @{$bnames};
-        }
-        #if ($bdir =~ /nla-term/) {
-        #    next unless $fn =~ m/-both-t/;
-        #} elsif ($bdir =~ /termination-crafted-lit/) {
-        if($bdir =~ /reachability/) {
-            $b2expect{$fn} = 'safe';
-        }
-        if ($bdir =~ /termination-crafted-lit/) {
-            # check to see if there is a YML file:
-            my $ymlfn = "$benchdir/$fn"; $ymlfn =~ s/\.c$/\.yml/;
-            #print "yamlfn: $ymlfn\n";
-            if (-e $ymlfn) {
-                my $expect = expected($ymlfn);
-                $b2expect{$fn} = $expect;
-                next if $expect eq 'IGNORE';
-            }
         }
         #print "  $benchdir/$fn  (expect: $b2expect{$fn})\n";
         print " $fn (expect: $b2expect{$fn})";
@@ -94,7 +89,7 @@ sub seahorn {
 sub ddr {
     my ($logfn) = @_;
     my @mp; my @summary;
-    my $simpltime = -1; my $stages;
+    my $simpltime = -1; my $stages ='';
     open(F,"$logfn") or warn "file $logfn - $!";
     my ($time,$result) = (-1,'\rUNK');
     while (<F>) {
@@ -132,7 +127,7 @@ sub ddr {
     $stages =~ s/strengthen-else/SE/g;
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
              simpltime => $simpltime, summary => join(" ", @summary), stages => $stages };
-    #print Dumper($o);
+    print Dumper($o);
     return $o;
 }
 sub t2 {
@@ -143,6 +138,7 @@ sub t2 {
         $result = '\rTRUE' if /Temporal proof succeeded/;
         $result = '\rFALSE' if /Temporal proof failed/;
         $result = '\rCRASH' if /Native Crash Reporting/;
+        $result = 'PARSE' if /Parse error/;
         $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
     }
     close F;

@@ -67,16 +67,19 @@ foreach my $tool (@tools) {
       # Step 1: General parsing that all tools/variants support
       #$compare->{$tmpb}->{$tool} = 
       my $d = Parsers::parse($tool,$logfn,$ITERS);
-      my $bb = $tmpb; $bb =~ s/_lia//;
+      my $bb = $tmpb; 
+      $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 'ddr';
       if($tmpb =~ /\_lia/) {
-        $compare->{$bb}->{$tool}->{liatime} = $d->{time};
-        $compare->{$bb}->{$tool}->{liaresult} = $d->{result};
+        next if $tool eq 'ddr';
+        my $t = $bb; $t =~ s/_lia//;
+        $compare->{$t}->{$tool}->{liatime} = $d->{time};
+        $compare->{$t}->{$tool}->{liaresult} = $d->{result};
       } else {
         $compare->{$bb}->{$tool}->{nlatime} = $d->{time};
         $compare->{$bb}->{$tool}->{nlaresult} = $d->{result};
       }
-      $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 'ddr';
-     # print Dumper($compare);
+      #print Dumper($compare);
+      #die if $b =~ /ps2-nla-valid/;
   }
 }
 
@@ -90,6 +93,8 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
   my $outfn = "$benchdir/$outdir/ddr-$dname.tex";
   open OUT, ">$outfn" or die "$outfn - $!";
   foreach my $b (sort keys %$compare) {
+    next if $b =~ /_lia/;
+    print "did ps2:\n".Dumper($compare->{$b}) if $b =~ /ps2-nla-valid/;
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
     printf OUT "%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
       $compare->{$b}->{ddr}->{detail}->{result},
@@ -119,11 +124,13 @@ foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
   printf OUT "%-15s & %-8s & ", $b, $exp;
   foreach my $tool (@tools) {
-    if (not defined $compare->{$b}->{$tool}->{liaresult}) {
-      warn "missing LIA results for $tool on $b, benchmark set $bn, benchmark: $b\n";
-      $compare->{$b}->{$tool}->{liaresult} = 'NA';
-      $compare->{$b}->{$tool}->{liatime} = 'NA';
-    }
+    # if (not defined $compare->{$b}->{$tool}->{liaresult}) {
+    #   warn "missing LIA results for $tool on $b, benchmark set $bn, benchmark: $b\n";
+    #   die Dumper($compare->{$b}->{$tool});
+    #   $compare->{$b}->{$tool}->{liaresult} = 'NA';
+    #   $compare->{$b}->{$tool}->{liatime} = 'NA';
+    # }
+    print "$b - $tool:".Dumper($compare->{$b}->{$tool});
     #print $tool." ".$b." ".Dumper($compare->{$b}->{$tool}) if not defined $compare->{$b}->{$tool}->{liaresult};
     my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
