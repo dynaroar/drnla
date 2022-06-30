@@ -16,6 +16,8 @@ int main() {
 
     int n;
     int n_init;
+    if (n_init < 0)
+        n_init = -n_init;
 
     int m;
     int m_init;
