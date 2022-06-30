@@ -51,7 +51,7 @@ int main() {
         s = temp - s * k;
     }
     
-    p = 0;
+    p = c-b+1;
     //__VERIFIER_assert(q*x + s*y == 0);
     //__VERIFIER_assert(p*x + r*y == a);
     return a;
