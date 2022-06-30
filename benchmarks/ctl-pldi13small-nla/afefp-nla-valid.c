@@ -3,7 +3,7 @@
 extern int __VERIFIER_nondet_int(void);
 
 int main() {
-    int n, a, s, t, k, c,;
+    int n, a, s, t, k, c;
     n = __VERIFIER_nondet_int();
     k = __VERIFIER_nondet_int();
 

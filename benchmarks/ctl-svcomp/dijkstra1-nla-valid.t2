@@ -1,0 +1,61 @@
+START: 1;
+
+FROM: 1;
+      n := nondet();
+      xp := 0;
+      q := 1;
+      r := n;
+      h := 0;
+      p := 2;
+
+TO: 2;
+
+FROM: 2;
+      assume(q <= n);
+TO: 3;
+
+
+FROM: 3;
+      q := 4*q;
+TO: 2;
+
+
+FROM:2;
+      assume(q > n);
+TO:4;
+
+FROM:4;
+       p := 1;
+TO:5;
+
+FROM: 5;
+       assume(r >= 2 * xp + q);
+TO: 6;
+ 
+FROM: 6;
+      q := q/4;
+      h := xp + q;
+      xp := xp /2;
+TO: 7;
+
+FROM: 7;
+      assume(r>=h);
+TO: 8;
+
+FROM:8;
+      xp := xp + q;
+      r := r - h;
+TO:5;
+
+FROM: 7;
+      assume(r<h);
+TO:5;
+
+FROM: 5;
+      assume(r < 2 * xp + q);
+TO:9;
+
+FROM:9;
+      p := 0;
+TO:10;
+
