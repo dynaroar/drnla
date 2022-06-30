@@ -1,0 +1,46 @@
+START: 1;
+FROM: 1;
+
+      x := nondet();
+      y := nondet();
+      p := 2;
+      assume(x>=1 && y>=1);
+
+      a := x;
+      b := y;
+      xp := 1;
+      q := 0;
+      r := 0;
+      s := 1;
+
+TO: 2;
+
+FROM: 2;
+      assume(y * r + x * xp != x * q + y * s);
+TO: 3;
+
+FROM: 3;
+      assume(a > b);
+      a := a - b;
+      xp := xp - q;
+      r := r - s;
+TO: 4;
+
+FROM: 3;
+      assume(a <= b);
+      b := b - a;
+      q := q - xp;
+      s := s - r;
+TO: 4;
+
+FROM: 4;
+      p := 1;
+TO: 2;
+ 
+FROM: 2;
+      assume(y * r + x * xp == x * q + y * s);
+TO: 5;
+
+FROM: 5;
+      p := a-b+1;
+TO: 6;
