@@ -1,5 +1,5 @@
-bresenham1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-bresenham1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+bresenham1-nla-invalid.c & \rExact  & 207.1    & Rand;UC;ExN1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (-(k) + x)):(((0 + (k   1)) + (x   -1)) <= -1):$  \\
+bresenham1-nla-valid.c & \rExact  & 189.6    & Rand;UC;ExN1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
 cohencu1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu2-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
@@ -8,12 +8,12 @@ cohencu3-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu3-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu4-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu4-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-cohencu5-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-cohencu5-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+cohencu5-nla-invalid.c & \rExact  & 160.2    & Rand;UC;ExN1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (-(k) + n)):(((0 + (k   1)) + (n   -1)) <= -1):$  \\
+cohencu5-nla-valid.c & \rExact  & 160.7    & Rand;UC;ExN1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
 cohencu6-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 cohencu6-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-cohencu7-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-cohencu7-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+cohencu7-nla-invalid.c & \rAppx   & 36.4     & Rand;UC;  & $\ell_{30}:approximate:((x + y) <= (((a + 1)   (a + 1))   (a + 1)));(0 >= (-(a) + n)):(0 == ((-(a) + n) - 1)):$  \\
+cohencu7-nla-valid.c & \rAppx   & 37.6     & Rand;UC;  & $\ell_{28}:approximate:((x + y) <= (((a + 1)   (a + 1))   (a + 1)));(0 >= (-(a) + n)):(0 == ((-(a) + n) - 1)):$  \\
 dijkstra-fix1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra-fix1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
@@ -22,8 +22,8 @@ dijkstra2-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra2-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra3-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra3-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-dijkstra4-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-dijkstra4-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+dijkstra4-nla-invalid.c & \rAppx   & 26.8     & Rand;UC;  & $\ell_{45}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):((-(c) + k) <= -(1)):$  \\
+dijkstra4-nla-valid.c & \rAppx   & 28.9     & Rand;UC;  & $\ell_{45}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):((-(c) + k) <= -(1)):$  \\
 dijkstra5-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 dijkstra5-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 divbin1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
@@ -31,21 +31,21 @@ divbin1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 egcd-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 egcd-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 egcd2-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-geo1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-geo1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+geo1-nla-invalid.c & \rExact  & 197.3    & Rand;UC;  & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo1-nla-valid.c & \rExact  & 186.4    & Rand;UC;  & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 geo2-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
 geo2-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-geo3-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-geo3-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps2-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps2-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps3-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps3-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps4-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps4-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps5-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps5-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps6-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-ps6-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-sqrt1-nla-invalid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
-sqrt1-nla-valid.c & \rUNK    & \rUNK    & Rand;UC; &  \\
+geo3-nla-invalid.c & \rExact  & 220.3    & Rand;UC;  & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+geo3-nla-valid.c & \rExact  & 215.3    & Rand;UC;  & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps2-nla-invalid.c & \rExact  & 32.1     & Rand;UC;  & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps2-nla-valid.c & \rExact  & 32.8     & Rand;UC;  & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
+ps3-nla-invalid.c & \rExact  & 42.2     & Rand;UC;  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps3-nla-valid.c & \rExact  & 85.7     & Rand;UC;ExP1  & $\ell_{20}:exact:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps4-nla-invalid.c & \rExact  & 47.1     & Rand;UC;  & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps4-nla-valid.c & \rExact  & 73.1     & Rand;UC;ExP1  & $\ell_{20}:exact:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps5-nla-invalid.c & \rExact  & 81.0     & Rand;UC;ExP1  & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps5-nla-valid.c & \rExact  & 31.2     & Rand;UC;  & $\ell_{19}:exact:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
+ps6-nla-invalid.c & \rExact  & 71.2     & Rand;UC;ExP1  & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(((0 + (k   1)) + (c   -1)) <= 0):((c - k) <= -(1)):$  \\
+ps6-nla-valid.c & \rExact  & 83.9     & Rand;UC;ExP1  & $\ell_{19}:exact:!(((((((c + ((((((-(2)   y)   y)   y)   y)   y)   y)) - (((((6   y)   y)   y)   y)   y)) - ((((5   y)   y)   y)   y)) + (y   y)) + (12   x)) < k));(((0 + (k   1)) + (y   -1)) <= 0):((-(k) + y) <= -(1)):$  \\
+sqrt1-nla-invalid.c & \rExact  & 136.8    & Rand;UC;ExN1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (a - k)):(((0 + (k   1)) + (a   -1)) <= -1):$  \\
+sqrt1-nla-valid.c & \rExact  & 133.3    & Rand;UC;ExN1  & $\ell_{21}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
