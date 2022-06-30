@@ -43,12 +43,12 @@ FROM: 6;
       assume(rho1 > 0);
 TO: 7;
 
-From: 7;
+FROM: 7;
       xp := xp-1;
 TO: 4;
 
 FROM: 6;
-      assume(rho1<=0)
+      assume(rho1<=0);
 TO: 4;
 
 FROM: 4;

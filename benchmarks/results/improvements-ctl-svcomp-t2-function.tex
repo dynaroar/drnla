@@ -1,13 +1,12 @@
 %RESULTS:
 % Benchmark & Exp. & t2 Res & t2 Time & t2 Summary & function Res & function Time & function Summary\\
-bresenham1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & \red{\rCRASH } & 1.7      & \red{\rUNK   } & 5.8      & \red{\rUNK   } & 11.6      \\
-bresenham1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.8      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 2.9       \\
-cohencu1-t.c    & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
+bresenham1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & \red{\rCRASH } & 1.7      & \red{\rUNK   } & 6.0      & \red{\rUNK   } & 10.5      \\
+bresenham1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 2.8       \\
 cohencu2-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 cohencu3-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 cohencu4-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 cohencu5-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
-cohencu5-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.0      & \red{\rUNK   } & 0.7       \\
+cohencu5-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.0      & \red{\rUNK   } & 0.5       \\
 cohencu5-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.0      & {\rTRUE  } & 1.0       \\
 cohencu6-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 cohencu7-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
@@ -22,30 +21,30 @@ egcd-both-t.c   & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &     
 egcd2-both-t.c  & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 egcd3-both-t.c  & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 fermat1-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
-geo1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.9      & \red{\rUNK   } & 2.3       \\
-geo1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.2      & {\rTRUE  } & 0.6       \\
-geo2-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.9      & \red{\rUNK   } & 0.5       \\
+geo1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.8      & \red{\rUNK   } & 1.9       \\
+geo1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.7       \\
+geo2-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 0.5       \\
 geo2-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.6       \\
-geo3-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.8      & {\rFALSE } & 0.8      & \red{\rUNK   } & 0.9      & \red{\rUNK   } & 4.6       \\
-geo3-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.8      & \red{\rUNK   } & 0.2      & {\rTRUE  } & 0.7       \\
+geo3-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.9      & \red{\rUNK   } & 4.7       \\
+geo3-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.2      & {\rTRUE  } & 0.8       \\
 hard-both-t.c   & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 hard2-both-t.c  & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 if.c            & \rTRUE   & & {\rTRUE  } & 0.6      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 ifharder.c      & \rTRUE   & & {\rTRUE  } & 0.6      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 prod4br-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 prodbin-both-t.c & \rTRUE   & & \red{\rUNK   } & 0.2      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
-ps2-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 1.7       \\
-ps2-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.3      & {\rTRUE  } & 0.6       \\
-ps3-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.8      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 1.5       \\
-ps3-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
-ps4-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.7      & \red{\rUNK   } & 1.5       \\
+ps2-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.5       \\
+ps2-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
+ps3-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.5       \\
+ps3-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.6      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
+ps4-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.6       \\
 ps4-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
-ps5-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.6       \\
-ps5-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.6       \\
+ps5-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.5       \\
+ps5-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
 ps6-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rUNK   } & 0.6      & \red{\rUNK   } & 1.5       \\
-ps6-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
-sqrt1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rTRUE  } & 0.9      & \red{\rUNK   } & 2.5       \\
-sqrt1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.7      & {\rTRUE  } & 0.6      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.8       \\
+ps6-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.6      & \red{\rUNK   } & 0.1      & {\rTRUE  } & 0.5       \\
+sqrt1-nla-invalid.c & \rFALSE  & & \red{\rTRUE  } & 0.7      & {\rFALSE } & 0.7      & \red{\rTRUE  } & 0.9      & \red{\rUNK   } & 2.4       \\
+sqrt1-nla-valid.c & \rTRUE   & & {\rTRUE  } & 0.6      & {\rTRUE  } & 0.7      & \red{\rUNK   } & 0.2      & {\rTRUE  } & 0.8       \\
 t2lin.c         & \rTRUE   & & {\rTRUE  } & 0.6      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 t2nla.c         & \rTRUE   & & {\rTRUE  } & 0.6      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\
 t2unsound.c     & \rTRUE   & & {\rTRUE  } & 0.6      & \red{        } &          & \red{\rUNK   } & 0.0      & \red{        } &           \\

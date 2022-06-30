@@ -42,7 +42,7 @@ FROM: 6;
       assume(rho1 > 0);
 TO: 7;
 
-From: 7;
+FROM: 7;
       p := 0;
 TO: 5;
 

@@ -25,7 +25,7 @@ FROM: 4;
       assume(rho1 > 0);
 TO: 5;
 
-From: 5;
+FROM: 5;
       xp := xp-1;
 TO: 2;
 
