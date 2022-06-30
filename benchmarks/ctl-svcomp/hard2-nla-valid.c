@@ -13,24 +13,24 @@ int main() {
 
     r = A;
     d = B;
-    p = 1;
+    xp = 1;
     q = 0;
-
+    int p = 2;
     while (1) {
         // __VERIFIER_assert(q == 0);
         // __VERIFIER_assert(r == A);
         // __VERIFIER_assert(d == B * p);
-        if (!(B * p - d + r >= d)) break;
+        if (!(B * xp - d + r >= d)) break;
 
         d = 2 * d;
         p = 2 * p;
     }
-
+    p = 1;
     while (1) {
         // __VERIFIER_assert(A == q*B + r);
         // __VERIFIER_assert(d == B*p);
 
-        if (!(q*B + r - A + p != 1)) break;
+        if (!(B * xp - d + r >= d)) break;
 
         d = d / 2;
         p = p / 2;
@@ -39,7 +39,7 @@ int main() {
             q = q + p;
         }
     }
-
+    p = 0;
     // __VERIFIER_assert(A == d*q + r);
     // __VERIFIER_assert(B == d);    
     return 0;

@@ -3,7 +3,7 @@ extern int __VERIFIER_nondet_int(void);
 
 int main() {
     int x, y;
-    int a, b, p, q, r, s;
+    int a, b, xp, q, r, s;
     x = __VERIFIER_nondet_int();
     y = __VERIFIER_nondet_int();
     //assume_abort_if_not(x >= 1);
@@ -11,11 +11,12 @@ int main() {
 
     a = x;
     b = y;
-    p = 1;
+    xp = 1;
     q = 0;
     r = 0;
     s = 1;
-
+    int p = 2;
+    
     while (1) {
         if (!(b != 0))
             break;
@@ -45,16 +46,20 @@ int main() {
             k = k + d;
         }
 
+        p = 1;
+
         a = b;
         b = c;
         int temp;
-        temp = p;
-        p = q;
+        temp = xp;
+        xp = q;
         q = temp - q * k;
         temp = r;
         r = s;
         s = temp - s * k;
     }
+
+    p = 0;
     //__VERIFIER_assert(p*x - q*x + r*y - s*y  == a);
     return 0;
 }

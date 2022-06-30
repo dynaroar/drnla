@@ -3,14 +3,17 @@ FROM: 1;
 
       x := nondet();
       y := nondet();
-
+      assume(x >= 1);
+      assume(y >= 1);
       a := x;
       b := y;
       xp := 1;
       q := 0;
       r := 0;
       s := 1;
-      p:= 2;
+      c := 0;
+      k := 0;
+
 TO: 2;
 
 FROM: 2;
@@ -23,25 +26,14 @@ FROM: 3;
 TO: 4;
 
 FROM: 4;
-      assume(c>=b);
-      a := 1;
-      v := b;
-TO: 5;
-
-FROM: 5;
-      assume(c >= 2 * b * d);
-      d := 2 * d;
-      v := 2 * v;
-TO: 5;
-
-FROM: 5;
-      assume(c < 2 * b * d);
-      c = c - v;
-      k = k + d;
-TO:4
+      assume(c >= x * q + y * s);
+      c := c - b;
+      k := k + 1;
+TO: 4;
 
 FROM: 4;
-      assume(c<b);
+      assume(c < x * q + y * s);
+
       p := 1;
       a := b;
       b := c;
@@ -55,8 +47,8 @@ TO: 2;
  
 FROM: 2;
       assume(b == 0);
-TO: 6;
+TO: 5;
 
-FROM: 6;
-      p := 0;
-TO: 7;
+FROM: 5;
+      p := c-b+1;
+TO: 6;

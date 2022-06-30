@@ -3,9 +3,10 @@ extern int __VERIFIER_nondet_int(void);
 
 int main() {
     int x, y;
-    int a, b, p, q, r, s, c, k;
+    int a, b, xp, q, r, s, c, k;
     x = __VERIFIER_nondet_int();
     y = __VERIFIER_nondet_int();
+    int p = 2;
     //assume_abort_if_not(x >= 1);
     if (x<1) {
 	return x;
@@ -17,7 +18,7 @@ int main() {
 
     a = x;
     b = y;
-    p = 1;
+    xp = 1;
     q = 0;
     r = 0;
     s = 1;
@@ -37,20 +38,20 @@ int main() {
             c = c - b;
             k = k + 1;
         }
-
+        p = 1;
         a = b;
         b = c;
 
         int temp;
-        temp = p;
-        p = q;
+        temp = xp;
+        xp = q;
         q = temp - q * k;
         temp = r;
         r = s;
         s = temp - s * k;
     }
     
-
+    p = 0;
     //__VERIFIER_assert(q*x + s*y == 0);
     //__VERIFIER_assert(p*x + r*y == a);
     return a;

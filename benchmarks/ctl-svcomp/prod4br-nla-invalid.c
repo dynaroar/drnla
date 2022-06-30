@@ -4,7 +4,7 @@ extern int __VERIFIER_nondet_int(void);
 
 int main() {
     int x, y;
-    int a, b, p, q;
+    int a, b, xp, q;
 
     x = __VERIFIER_nondet_int();
     y = __VERIFIER_nondet_int();
@@ -16,32 +16,36 @@ int main() {
 
     a = x;
     b = y;
-    p = 1;
+    xp = 1;
     q = 0;
 
+    int p = 2;
     while (1) {
         // __VERIFIER_assert(q + a * b * p == x * y);
 
-        if (!(a != 0 && b + q + a * b * p - x * y != 0))
+        if (!(a != 0 && b + q + a * b * xp - x * y != 0))
             break;
 
         if (a % 2 == 0 && b % 2 == 0) {
             a = a / 2;
             b = b / 2;
-            p = 4 * p;
+            xp = 4 * xp;
         } else if (a % 2 == 1 && b % 2 == 0) {
             a = a - 1;
-            q = q + b * p;
+            q = q + b * xp;
         } else if (a % 2 == 0 && b % 2 == 1) {
             b = b - 1;
-            q = q + a * p;
+            q = q + a * xp;
         } else {
             a = a - 1;
             b = b - 1;
-            q = q + (a + b + 1) * p; /*fix a bug here---  was (a+b-1)*/
+            q = q + (a + b + 1) * xp; /*fix a bug here---  was (a+b-1)*/
         }
+
+        p = 1;
     }
 
+    p = a+b;
     // __VERIFIER_assert(q == x * y);
     // __VERIFIER_assert(a * b == 0);
     return 0;

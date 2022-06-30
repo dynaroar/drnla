@@ -27,7 +27,7 @@ int main() {
     u = 2 * R + 1;
     v = 1;
     r = R * R - A;
-
+    int p = 2;
 
     int cc = 0, kk = __VERIFIER_nondet_int();
     while (u*u - v*v - 2*u + 2*v - 4*(A+r) + cc < kk) {
@@ -43,6 +43,7 @@ int main() {
             c++;
         }
 
+        p = 1;
         while (4*(A+r) - u*u - v*v - 2*u + 2*v + c <= k) {
           //__VERIFIER_assert(4*(A+r) == u*u - v*v - 2*u + 2*v);
           //if (!(r < 0))    break;
@@ -52,6 +53,7 @@ int main() {
         }
     }
 
+    p = 0;
     //__VERIFIER_assert(4*A == u*u - v*v  - 2*u + 2*v);
     return 0;
 }

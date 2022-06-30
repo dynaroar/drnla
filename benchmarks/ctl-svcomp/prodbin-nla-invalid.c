@@ -19,6 +19,8 @@ int main() {
     y = b;
     z = 0;
 
+    int p = 2;
+
     while (1) {
         // __VERIFIER_assert(z + x * y == a * b);
         if (!(y + z + x * y - a * b != 0))
@@ -30,8 +32,10 @@ int main() {
         }
         x = 2 * x;
         y = y / 2;
+        p = 1;
     }
     // __VERIFIER_assert(z == a * b);
-    
+
+    p = y + 1;
     return 0;
 }
