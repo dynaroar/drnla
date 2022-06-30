@@ -1,0 +1,3 @@
+t2: ([EF](p==1)) && ([EG](p==0))
+function: AND{EF{p==1}}{EG{p==0}}
+coar: 
