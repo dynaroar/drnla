@@ -1,0 +1,3 @@
+t2: [AG](a != 1 || [AF](r==1))
+function: AG{OR{a!=1}{AF{r==1}}}
+coar:
