@@ -14,16 +14,19 @@ void __VERIFIER_assert(int cond) {
     return;
 }
 */
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
+
+// ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
 
 int main() {
     int a, n, x, y, z;
-    a = __VERIFIER_nondet_int();
+    a = ?;
     n = 0;
     x = 0;
     y = 1;
     z = 6;
-    int c = 0, k = __VERIFIER_nondet_int();
+    // int c = 0, k = __VERIFIER_nondet_int();
+    int c, k;
     /* __VERIFIER_assume(k>=0); */
     while (y*z - 18*x - 12*y + 2*z - 6 + c <= k) {
       //__VERIFIER_assert(z == 6 * n + 6);
