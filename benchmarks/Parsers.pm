@@ -25,6 +25,11 @@ sub find_benchmarks {
         # next unless $fn =~ m/\.c$/; 
         # next if $fn =~ m/_fn\.c/;
         # next if $fn =~ /~$/;
+        next if $fn =~ /fix1/;
+        unless ($fn =~ /valid/) {
+            warn "skipping file: $fn.\n";
+            next;
+        }
         # trim off ending so we get the actual becnhmark name
         $fn =~ s/_fn\.c/.c/;
         $fn =~ s/\.t2/\.c/;
@@ -111,24 +116,26 @@ sub ddr {
             push @mp, { loc => $1, precision => $2, 
                original => $3, ifbr => $4, elsebr => $5 };
         }
-        $result = '\rTRUE'  if /RESULT:valid/;
-        $result = '\rFALSE' if /RESULT:invalid/;
+        #$result = '\rTRUE'  if /RESULT:valid/;
+        #$result = '\rFALSE' if /RESULT:invalid/;
         $result = '\rUNK'   if /RESULT:unknown/;
         $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)s/;
         $time   = $1 if /TIME-TOTAL:(\d+.\d+)s/;
         $stages = $1 if /REFINEMENT:(.*)$/;
+        $result = '\rExact' if /MAP:.*exact*/;
+        $result = '\rAppx' if /MAP:.*approx*/;
         #$time   = $1 if /EJKTIME:(\d+\.\d+)$/;
     }
     close F;
     use Data::Dumper;
     #print Dumper(\@mp);
     $stages =~ s/-iteration-//g;
-    $stages =~ s/widen-if/WT/g;
-    $stages =~ s/widen-else/WE/g;
-    $stages =~ s/strengthen-if/ST/g;
-    $stages =~ s/strengthen-else/SE/g;
+    $stages =~ s/widen-if/ExP/g;
+    $stages =~ s/widen-else/ExN/g;
+    $stages =~ s/strengthen-if/TrP/g;
+    $stages =~ s/strengthen-else/TrN/g;
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
-             simpltime => $simpltime, summary => join(" ", @summary), stages => $stages };
+             simpltime => $simpltime, summary => join(" ", @summary), stages => "Rand;UC;$stages" };
     print Dumper($o);
     return $o;
 }
