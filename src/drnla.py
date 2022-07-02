@@ -142,13 +142,15 @@ if __name__ == "__main__":
     ta = ts+func_time(prove)
 
     # map_str = f'MAP: to be converted'
-    steps_str = 'REFINEMENT:'+ ' -> '.join(ou_analysis.refine_steps)
+    steps_str = 'REFINEMENT:' + ' -> '.join(ou_analysis.refine_steps)
+    init_map = f'INITIAL-OU:{ou_analysis.ou_init_str}'
+    final_map = f'FINAL-OU:{ou_analysis.ou_str}'
     prop_str =f'PROPERTY:{settings.prop}'
     result = f'RESULT:{ou_analysis.verify_result}'
     time_simp = f'TIME-SIMPLIFICATION:{ts}s' 
     time_all = f'TIME-TOTAL:{ta}s'
 
-    details_str = f'{steps_str} \n {ou_analysis.ou_str}\n {prop_str}\n {result}'
+    details_str = f'{steps_str} \n {init_map} \n {final_map}\n {prop_str}\n {result}'
     time_str = f'{time_simp} \n {time_all} \n'
     mlog.info(f'----DynamiteLTL Analysis Result:----\n {details_str} \n {time_str}')
     # print(f'----DynamiteLTL Analysis Result:----\n {details_str} \n {time_str}')
