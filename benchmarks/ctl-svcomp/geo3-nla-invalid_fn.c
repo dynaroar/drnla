@@ -2,7 +2,7 @@
    Geometric Series
 computes x = sum(z^k)[k=0..k-1], y = z^(k-1)
 */
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
 //CTL ([EF](p==0)) && ([EF](p==1))
 
 // ARGS: -precondition "c == 1 && c < k" -domain polyhedra
@@ -10,8 +10,8 @@ extern int __VERIFIER_nondet_int(void);
 int main() {
     int z, a, k;
     int x, y, c;
-    z = __VERIFIER_nondet_int();
-    a = __VERIFIER_nondet_int();
+    z = ?;
+    a = ?;
     // k = __VERIFIER_nondet_int();
 
     x = a;

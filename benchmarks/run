@@ -50,8 +50,8 @@ sub getCTLprop {
       $propfn =~ s/-(in)?valid\.c/.prop/;
       $propfn =~ s/-(in)?valid_.*\.c/.prop/;
     } elsif ($propfn =~ m{/ctl-svcomp/}) {
-        $propfn =~ s{\/[^\/]*\.c}{/bresenham1.prop};
-        $propfn =~ s{\/[a-z]+\d?\.prp}{/bresenham1.prop};
+             $propfn =~ s{\/[^\/]*\.c}{/properties/efandefp-nla.prop};
+        $propfn =~ s{\/[a-z]+\d?\.prp}{/properties/efandefp-nla.prop};
     } else {
         die "don't know how to find prop file for $propfn";
     }
@@ -88,7 +88,7 @@ my $CFG = {
         DIR => qq{$USERREPO/src},
         CMD => sub {
             my $bnd = ($_[0] =~ /pldi13small/ ? '--lbnd 600' : '');
-            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./dynamltl.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 $bnd 2>&1 | tee /tmp/ddr.log);
+            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./drnla.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 $bnd 2>&1 | tee /tmp/ddr.log);
         },
         FETCH => sub { return qq(cp /tmp/ddr.log $_[0]); },
         PARSE => sub { return Parsers::ddr($_[0]); },
@@ -101,7 +101,7 @@ my $CFG = {
             return qq(echo "not found" > /tmp/function.log) unless -e $_[0];
             my $prp = getCTLprop($_[0],'function');
             my $args = getFuncTionArgs($_[0]);
-            return qq(./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
+            return qq(timeout ${TIMEOUT}s ./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
         FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
         PARSE => sub { return Parsers::function($_[0]); },
     },

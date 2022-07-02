@@ -18,10 +18,10 @@ props_list = ['reach','termination', 'ltl', 'ctl']
 verdict = '1==1'
 
 SrcDir = Path(__file__).parent
-DynLTLDir = Path(__file__).parent.parent.parent
+DrNLADir = Path(__file__).parent.parent.parent
    
 class Cil:
-    trans_dir = DynLTLDir/'deps'/'dyn_instr'
+    trans_dir = DrNLADir/'deps'/'dyn_instr'
     assert trans_dir.is_dir(), trans_dir
 
     cil_exe = trans_dir / f'{trans_dir}/_build/default/src/instr.exe'
@@ -49,7 +49,7 @@ class Dynamic:
     if 'DIG_HOME' in os.environ:
         DigPy = Path(os.getenv('DIG_HOME'))
     else:
-        DigPy = DynLTLDir/'deps/dig/src/dig.py'
+        DigPy = DrNLADir/'deps/dig/src/dig.py'
  
     dig_flags = '--noss --nocongruences --nominmaxplus --maxdeg 1 --log_level 4'
     source_opts = '{python} -O {dig_py} {source} {flags} --writeresults {invars_file} --writevtraces {vtrace_file}'
@@ -64,7 +64,7 @@ class Static:
     if 'ULTIMATE_HOME' in os.environ:
         StaticHome = Path(os.getenv('ULTIMATE_HOME'))
     else:
-        StaticHome = DynLTLDir / 'deps' / 'UAutomizer-linux'
+        StaticHome = DrNLADir / 'deps' / 'UAutomizer-linux'
 
     java_ultimate = f'java -Dosgi.configuration.area=config -Xmx10G -Xss4m -jar {StaticHome}/plugins/org.eclipse.equinox.launcher_1.5.800.v20200727-1323.jar -data config/data'
     ultimate_bash = StaticHome / 'run-ultimate.sh'

@@ -14,7 +14,7 @@ void __VERIFIER_assert(int cond) {
     return;
 }
 */
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
 
 //CTL ([EF](p==0)) && ([EF](p==1))
 
@@ -22,12 +22,14 @@ extern int __VERIFIER_nondet_int(void);
 
 int main() {
     int a, n, x, y, z;
-    a = __VERIFIER_nondet_int();
+    // a = __VERIFIER_nondet_int();
+    a = ?;
     n = 0;
     x = 0;
     y = 1;
     z = 6;
     // int c = 0, k = __VERIFIER_nondet_int();
+    int c, k;
 
     int p;
     p = 2;

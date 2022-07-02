@@ -353,7 +353,7 @@
 
 // ARGS: -precondition "c == 0 && c <= k" -domain polyhedra
 
-extern int __VERIFIER_nondet_int(void) ;
+// extern int __VERIFIER_nondet_int(void) ;
 int main(void) 
 { 
   int X ;
@@ -366,8 +366,10 @@ int main(void)
   int p ;
 
   {
-  X = __VERIFIER_nondet_int();
-  Y = __VERIFIER_nondet_int();
+//   X = __VERIFIER_nondet_int();
+//   Y = __VERIFIER_nondet_int();
+  X = ?;
+  Y = ?;
   v = 2 * Y - X;
   y = 0;
   x = 0;

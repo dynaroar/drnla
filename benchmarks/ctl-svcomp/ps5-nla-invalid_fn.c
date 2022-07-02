@@ -1,4 +1,4 @@
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
 //CTL ([EF](p==0)) && ([EF](p==1))
 // ARGS: -precondition "c == 0 && c < k" -domain polyhedra
 

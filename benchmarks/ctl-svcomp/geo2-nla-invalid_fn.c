@@ -5,13 +5,13 @@
 
 // ARGS: -precondition "c == 0 && c < k" -domain polyhedra
 
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
 
 
 int main() {
     int z, k;
     int x, y, c;
-    z = __VERIFIER_nondet_int();
+    z = ?;
     // k = __VERIFIER_nondet_int();
 
     x = 1;
