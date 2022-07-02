@@ -2,12 +2,12 @@
 \ttt{bresenham1-T.c} & \rExact  & 190.5    & Rand;UC;ExN1  & $\ell_{36}:exact:((((((((2   Y)   x) - ((2   X)   y)) - X) + (2   Y)) - v) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
 \ttt{cohencu1-F.c} & \rUNK    & 0.9      & Rand;UC; &  \\
 \ttt{cohencu1-T.c} & \rUNK    & 0.9      & Rand;UC; &  \\
-\ttt{cohencu2-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'28': (3*n*n + 3*n + 1 <= k, [0 >= -k + y], [k - y <= -1])}$ \\
-\ttt{cohencu2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'32': (3*n*n + 3*n + 1 <= k, [0 >= -k + y], [k - y <= -1])}$ \\
-\ttt{cohencu3-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'31': (n*n*n <= k, [0 >= -k + x], [k - x <= -1])}$ \\
-\ttt{cohencu3-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'31': (n*n*n <= k, [0 >= -k + x], [k - x <= -1])}$ \\
+\ttt{cohencu2-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '28': (3*n*n + 3*n + 1 <= k, [0 >= -k + y], [k - y <= -1])} \\
+\ttt{cohencu2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '32': (3*n*n + 3*n + 1 <= k, [0 >= -k + y], [k - y <= -1])} \\
+\ttt{cohencu3-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '31': (n*n*n <= k, [0 >= -k + x], [k - x <= -1])} \\
+\ttt{cohencu3-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '31': (n*n*n <= k, [0 >= -k + x], [k - x <= -1])} \\
 \ttt{cohencu4-F.c} & \rUNK    & 1.6      & Rand;UC; &  \\
-\ttt{cohencu4-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'31': (y*z - 18*x - 12*y + 2*z - 6 + c <= k, [0 >= c - k], [0 == c - k - 1])}$ \\
+\ttt{cohencu4-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '31': (y*z - 18*x - 12*y + 2*z - 6 + c <= k, [0 >= c - k], [0 == c - k - 1])} \\
 \ttt{cohencu5-F.c} & \rExact  & 161.1    & Rand;UC;ExN1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (-(k) + n)):(((0 + (k   1)) + (n   -1)) <= -1):$  \\
 \ttt{cohencu5-T.c} & \rExact  & 161.6    & Rand;UC;ExN1  & $\ell_{35}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
 \ttt{cohencu6-F.c} & \rUNK    & 0.9      & Rand;UC; &  \\
@@ -17,22 +17,22 @@
 \ttt{dijkstra1-F.c} & \rUNK    & 0.9      & Rand;UC; &  \\
 \ttt{dijkstra1-T.c} & \rUNK    & 1.0      & Rand;UC; &  \\
 \ttt{dijkstra2-F.c} & \rUNK    & 0.9      & Rand;UC; &  \\
-\ttt{dijkstra2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'48': (xp*xp + r*q - n*q + c <= k, [0 >= c - k], [-c + k <= -1])}$ \\
-\ttt{dijkstra3-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'46': (h*h*h - 12*h*n*q + 16*n*xp*q - h*q*q - 4*xp*q*q + 12*h*q*r -$ \\
-\ttt{dijkstra3-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'45': (h*h*h - 12*h*n*q + 16*n*xp*q - h*q*q - 4*xp*q*q + 12*h*q*r -$ \\
+\ttt{dijkstra2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '48': (xp*xp + r*q - n*q + c <= k, [0 >= c - k], [-c + k <= -1])} \\
+\ttt{dijkstra3-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '46': (h*h*h - 12*h*n*q + 16*n*xp*q - h*q*q - 4*xp*q*q + 12*h*q*r -} \\
+\ttt{dijkstra3-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '45': (h*h*h - 12*h*n*q + 16*n*xp*q - h*q*q - 4*xp*q*q + 12*h*q*r -} \\
 \ttt{dijkstra4-F.c} & \rAppx   & 27.7     & Rand;UC;  & $\ell_{45}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):((-(c) + k) <= -(1)):$  \\
 \ttt{dijkstra4-T.c} & \rAppx   & 29.8     & Rand;UC;  & $\ell_{45}:approximate:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k);(0 >= (c - k)):((-(c) + k) <= -(1)):$  \\
-\ttt{dijkstra5-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'46': (h*h*xp - 4*h*n*q + 4*n*xp*q - xp*q*q + 4*h*q*r - 4*xp*q*r +$ \\
-\ttt{dijkstra5-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'46': (h*h*xp - 4*h*n*q + 4*n*xp*q - xp*q*q + 4*h*q*r - 4*xp*q*r +$ \\
+\ttt{dijkstra5-F.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '46': (h*h*xp - 4*h*n*q + 4*n*xp*q - xp*q*q + 4*h*q*r - 4*xp*q*r +} \\
+\ttt{dijkstra5-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '46': (h*h*xp - 4*h*n*q + 4*n*xp*q - xp*q*q + 4*h*q*r - 4*xp*q*r +} \\
 \ttt{divbin1-F.c} & \rUNK    & 0.9      & Rand;UC; &  \\
 \ttt{divbin1-T.c} & \rUNK    & 0.9      & Rand;UC; &  \\
-\ttt{egcd-F.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: $$ \\
-\ttt{egcd-T.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: $$ \\
-\ttt{egcd2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'32': (c >= x*q + y*s, [0 >= b - c], [-b + c <= -1])}$ \\
+\ttt{egcd-F.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{} \\
+\ttt{egcd-T.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{} \\
+\ttt{egcd2-T.c} & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '32': (c >= x*q + y*s, [0 >= b - c], [-b + c <= -1])} \\
 \ttt{geo1-F.c}  & \rExact  & 198.2    & Rand;UC;  & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 \ttt{geo1-T.c}  & \rExact  & 187.3    & Rand;UC;  & $\ell_{24}:exact:!(((((((x   z) - x) - y) + 1) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-\ttt{geo2-F.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'24': (Not(1 + x*z - x - z*y + c < k), [0 >= -c + k], [c - k <= -1])}$ \\
-\ttt{geo2-T.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: $ {'25': (Not(1 + x*z - x - z*y + c < k), [0 >= -c + k], [c - k <= -1])}$ \\
+\ttt{geo2-F.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '24': (Not(1 + x*z - x - z*y + c < k), [0 >= -c + k], [c - k <= -1])} \\
+\ttt{geo2-T.c}  & \rTO     & 300.0    & Rand;UC; & Initial guess: \ttt{ '25': (Not(1 + x*z - x - z*y + c < k), [0 >= -c + k], [c - k <= -1])} \\
 \ttt{geo3-F.c}  & \rExact  & 221.5    & Rand;UC;  & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 \ttt{geo3-T.c}  & \rExact  & 216.4    & Rand;UC;  & $\ell_{25}:exact:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
 \ttt{ps2-F.c}   & \rExact  & 33.2     & Rand;UC;  & $\ell_{20}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
