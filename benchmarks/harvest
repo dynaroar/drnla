@@ -87,6 +87,11 @@ foreach my $tool (@tools) {
 #
 # Generate LaTeX for DDR
 #
+sub touchupName {
+  my ($b) = @_;
+  my $o = "\\ttt{$b}";  $o =~ s/-nla-/-/; $o =~ s/-valid/-T/; $o =~ s/-invalid/-F/; 
+  return $o;
+}
 if($#tools == 0 && $tools[0] eq 'ddr') {
   #print OUT "BENCH           RESULT  TIME   STAGES\n";
   my $dname = $benchdir; $dname =~ s{^.*/}{}g;
@@ -96,7 +101,8 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
     next if $b =~ /_lia/;
     print "did ps2:\n".Dumper($compare->{$b}) if $b =~ /ps2-nla-valid/;
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-    printf OUT "%-15s & %-8s & %-8s & %s & %s \\\\\n", $b, 
+    my $renderedBname = touchupName($b);
+    printf OUT "%-15s & %-8s & %-8s & %s & %s \\\\\n", $renderedBname, 
       $compare->{$b}->{ddr}->{detail}->{result},
       $compare->{$b}->{ddr}->{detail}->{time},
       $compare->{$b}->{ddr}->{detail}->{stages},
@@ -114,6 +120,18 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
 #
 # Generate LaTeX for how DDR Improves CTL
 #
+sub checkResult {
+  my ($res,$exp) = @_;
+  return '\unsound{\rTRUE}' if $exp eq '\rFALSE' && $res eq '\rTRUE';
+  return '\unsound{\rFALSE}' if $exp eq '\rTRUE' && $res eq '\rFALSE';
+  return $res;
+}
+sub checkImprove {
+  my ($lia,$nla,$exp) = @_;
+  return '\hlg '.$lia if $lia eq '\rTRUE' && $exp eq '\rTRUE' && $nla ne '\rTRUE';
+  return '\hlg '.$lia if $lia eq '\rFALSE' && $exp eq '\rFALSE'  && $nla ne '\rFALSE';
+  return $lia;
+}
 my $bn = $benchdir; $bn =~ s/^.*\///g;
 my $ts = join '-', @tools;
 my $outfn = "$benchdir/$outdir/improvements-$bn-$ts.tex";
@@ -122,7 +140,8 @@ print OUT "%RESULTS:\n% Benchmark & Exp. & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n";
 foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
-  printf OUT "%-15s & %-8s & ", $b, $exp;
+  my $renderedBname = touchupName($b);
+  printf OUT "%-15s & %-8s ", $renderedBname, $exp;
   foreach my $tool (@tools) {
     # if (not defined $compare->{$b}->{$tool}->{liaresult}) {
     #   warn "missing LIA results for $tool on $b, benchmark set $bn, benchmark: $b\n";
@@ -130,11 +149,14 @@ foreach my $b (sort keys %$compare) {
     #   $compare->{$b}->{$tool}->{liaresult} = 'NA';
     #   $compare->{$b}->{$tool}->{liatime} = 'NA';
     # }
-    print "$b - $tool:".Dumper($compare->{$b}->{$tool});
+    #print "$b - $tool:".Dumper($compare->{$b}->{$tool});
+    $compare->{$b}->{$tool}->{liaresult} = checkResult($compare->{$b}->{$tool}->{liaresult},$exp);
+    $compare->{$b}->{$tool}->{nlaresult} = checkResult($compare->{$b}->{$tool}->{nlaresult},$exp);
+    $compare->{$b}->{$tool}->{liaresult} = checkImprove($compare->{$b}->{$tool}->{liaresult},$compare->{$b}->{$tool}->{nlaresult},$exp);
     #print $tool." ".$b." ".Dumper($compare->{$b}->{$tool}) if not defined $compare->{$b}->{$tool}->{liaresult};
-    my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
-    my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
-    printf OUT "& $nlaeek"."%-8s} & %-8s & $liaeek"."%-8s} & %-8s ",
+    #my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
+    #my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
+    printf OUT "& "."%-8s & %-8s & "."%-8s & %-8s ",
     $compare->{$b}->{$tool}->{nlaresult},
     $compare->{$b}->{$tool}->{nlatime} ,
     $compare->{$b}->{$tool}->{liaresult},
