@@ -1,53 +1,64 @@
 %RESULTS:
 % Benchmark & Exp. & t2 Res & t2 Time & t2 Summary & function Res & function Time & function Summary\\
-\ttt{bresenham1-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      & \rCRASH  & 1.7      & \rUNK    & 5.7      & \rUNK    & 10.8      \\
+\ttt{bresenham1-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      & \rCRASH  & 1.8      & \rUNK    & 5.9      & \rUNK    & 10.9      \\
 \ttt{bresenham1-T.c} & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.7      & \rUNK    & 2.7       \\
-\ttt{cohencu1-F.c} & \rFALSE  & \rFALSE  & 0.6      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu1-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu2-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu3-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu3-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu4-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu4-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu5-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.0      & \rUNK    & 0.5       \\
-\ttt{cohencu5-T.c} & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.0      & \hlg \rTRUE & 1.0       \\
-\ttt{cohencu6-F.c} & \rFALSE  & \rFALSE  & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu6-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu7-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{cohencu7-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra-fix1-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra-fix1-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra1-F.c} & \rFALSE  & \rCRASH  & 1.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra1-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra2-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra3-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra3-T.c} & \rTRUE   & \rCRASH  & 1.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra4-F.c} & \rFALSE  & \rCRASH  & 1.7      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra4-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra5-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{dijkstra5-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{cohencu1-F.c} & \rFALSE  & \rFALSE  & 0.7      &          &          & \rUNK    & 4.0      &          &           \\
+\ttt{cohencu1-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rTRUE   & 0.7      &          &           \\
+\ttt{cohencu2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 4.5      &          &           \\
+\ttt{cohencu2-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.1      &          &           \\
+\ttt{cohencu3-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.1      &          &           \\
+\ttt{cohencu3-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.1      &          &           \\
+\ttt{cohencu4-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{cohencu4-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.2      &          &           \\
+\ttt{cohencu5-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \unsound{\rTRUE} & 1.1      & \rUNK    & 0.5       \\
+\ttt{cohencu5-T.c} & \rTRUE   & \rTRUE   & 0.8      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 1.0       \\
+\ttt{cohencu6-F.c} & \rFALSE  & \rFALSE  & 0.8      &          &          & \rUNK    & 0.1      &          &           \\
+\ttt{cohencu6-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.1      &          &           \\
+\ttt{cohencu7-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 1.5      &          &           \\
+\ttt{cohencu7-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.4      &          &           \\
+\ttt{dijkstra1-F.c} & \rFALSE  & \rCRASH  & 1.8      &          &          & \rUNK    & 5.3      &          &           \\
+\ttt{dijkstra1-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.9      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{dijkstra2-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra3-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.9      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra3-T.c} & \rTRUE   & \rTRUE   & 0.9      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra4-F.c} & \rFALSE  & \rCRASH  & 1.8      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra4-T.c} & \rTRUE   & \rTRUE   & 1.0      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra5-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & \rTO     &          &           \\
+\ttt{dijkstra5-T.c} & \rTRUE   & \rTRUE   & 0.9      &          &          & \rUNK    & \rTO     &          &           \\
 \ttt{divbin1-F.c} & \rFALSE  & \rUNK    & 0.2      &          &          & \rUNK    & 0.0      &          &           \\
 \ttt{divbin1-T.c} & \rTRUE   & \rUNK    & 0.2      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{egcd-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{egcd-T.c}  & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{egcd2-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
-\ttt{geo1-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.8      & \rUNK    & 1.9       \\
-\ttt{geo1-T.c}  & \rTRUE   & \rTRUE   & 0.6      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 0.8       \\
-\ttt{geo2-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.8      & \rUNK    & 0.6       \\
-\ttt{geo2-T.c}  & \rTRUE   & \rTRUE   & 0.6      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.6       \\
-\ttt{geo3-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.9      & \rUNK    & 4.9       \\
-\ttt{geo3-T.c}  & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 1.1       \\
-\ttt{ps2-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.9      & \rUNK    & 1.8       \\
-\ttt{ps2-T.c}   & \rTRUE   & \rTRUE   & 0.6      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.7       \\
-\ttt{ps3-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.7      & \rUNK    & 1.6       \\
-\ttt{ps3-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.6       \\
-\ttt{ps4-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.6      & \hlg \rFALSE & 0.7      & \rUNK    & 0.6      & \rUNK    & 1.5       \\
-\ttt{ps4-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.5       \\
-\ttt{ps5-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.7      & \rUNK    & 1.6       \\
-\ttt{ps5-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.5       \\
-\ttt{ps6-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.7      & \rUNK    & 1.5       \\
-\ttt{ps6-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.6       \\
-\ttt{sqrt1-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \unsound{\rTRUE} & 0.9      & \rUNK    & 2.4       \\
-\ttt{sqrt1-T.c} & \rTRUE   & \rTRUE   & 0.6      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.8       \\
+\ttt{egcd-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.4      &          &           \\
+\ttt{egcd-T.c}  & \rTRUE   & \rTRUE   & 0.9      &          &          & \rUNK    & 0.2      &          &           \\
+\ttt{egcd2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 3.4      &          &           \\
+\ttt{egcd2-T.c} & \rTRUE   & PARSE    & 0.3      &          &          & \rUNK    & 2.5      &          &           \\
+\ttt{egcd3-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{egcd3-T.c} & \rTRUE   & \rTRUE   & 0.8      &          &          & \rUNK    & 23.2     &          &           \\
+\ttt{fermat1-F.c} & \rFALSE  & PARSE    & 0.3      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{fermat1-T.c} & \rTRUE   & PARSE    & 0.2      &          &          & \rUNK    & 0.7      &          &           \\
+\ttt{geo1-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.8      & \rUNK    & 0.9      & \rUNK    & 2.4       \\
+\ttt{geo1-T.c}  & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 0.9       \\
+\ttt{geo2-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.8      & \rUNK    & 0.8      & \rUNK    & 0.7       \\
+\ttt{geo2-T.c}  & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 0.7       \\
+\ttt{geo3-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.8      & \rUNK    & 1.0      & \rUNK    & 5.8       \\
+\ttt{geo3-T.c}  & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.5      & \hlg \rTRUE & 1.0       \\
+\ttt{hard-F.c}  & \rFALSE  & \unsound{\rTRUE} & 0.8      &          &          & \rUNK    & 2.2      &          &           \\
+\ttt{hard-T.c}  & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 7.0      &          &           \\
+\ttt{hard2-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{hard2-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.0      &          &           \\
+\ttt{prod4br-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.9      &          &          & \rUNK    & 2.7      &          &           \\
+\ttt{prod4br-T.c} & \rTRUE   & \rCRASH  & 1.7      &          &          & \rUNK    & 0.8      &          &           \\
+\ttt{prodbin-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.9      &          &          & \rUNK    & 0.6      &          &           \\
+\ttt{prodbin-T.c} & \rTRUE   & \rTRUE   & 0.7      &          &          & \rUNK    & 0.2      &          &           \\
+\ttt{ps2-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.7      & \rUNK    & 2.0       \\
+\ttt{ps2-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.9       \\
+\ttt{ps3-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.8      & \rUNK    & 0.9      & \rUNK    & 2.2       \\
+\ttt{ps3-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.5      & \hlg \rTRUE & 0.7       \\
+\ttt{ps4-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.8      & \rUNK    & 2.0       \\
+\ttt{ps4-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 0.8       \\
+\ttt{ps5-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \rUNK    & 0.7      & \rUNK    & 2.0       \\
+\ttt{ps5-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.1      & \hlg \rTRUE & 0.8       \\
+\ttt{ps6-F.c}   & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.8      & \rUNK    & 0.7      & \rUNK    & 1.9       \\
+\ttt{ps6-T.c}   & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.2      & \hlg \rTRUE & 0.6       \\
+\ttt{sqrt1-F.c} & \rFALSE  & \unsound{\rTRUE} & 0.7      & \hlg \rFALSE & 0.7      & \unsound{\rTRUE} & 1.2      & \rUNK    & 3.0       \\
+\ttt{sqrt1-T.c} & \rTRUE   & \rTRUE   & 0.7      & \rTRUE   & 0.7      & \rUNK    & 0.4      & \hlg \rTRUE & 0.9       \\
