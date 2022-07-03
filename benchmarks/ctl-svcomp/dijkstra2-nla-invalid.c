@@ -56,7 +56,7 @@ int main() {
             break;
     }
 
-    p = k+c
+    p = k+c;
     //__VERIFIER_assert(h*h*h - 12*h*n + 16*n*p + 12*h*r - 16*p*r - h - 4*p == 0);
     //__VERIFIER_assert(p*p - n + r == 0);
     //__VERIFIER_assert(h*h*p - 4*h*n + 4*n*p + 4*h*r - 4*p*r - p == 0);

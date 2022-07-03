@@ -30,7 +30,6 @@ int main() {
         q = 4 * q;
     }
     //q == 4^n
-    
     p = 1;
     /* while (h * h * h - 12 * h * n * q + 16 * n * p * q - h * q * q - 4 * p * q * q + 12 * h * q * r - 16 * p * q * r + c <= k) { */
     while (q != 1) {
@@ -49,7 +48,7 @@ int main() {
         h = xp + q;
         xp = xp / 2;
         if (r >= h) {
-            p = p + q;
+            xp = xp + q;
             r = r - h;
         }
         c++;
@@ -59,6 +58,6 @@ int main() {
     //__VERIFIER_assert(h*h*h - 12*h*n + 16*n*p + 12*h*r - 16*p*r - h - 4*p == 0);
     //__VERIFIER_assert(p*p - n + r == 0);
     //__VERIFIER_assert(h*h*p - 4*h*n + 4*n*p + 4*h*r - 4*p*r - p == 0);
-    p = 0;
+    p = k+c;
     return 0;
 }

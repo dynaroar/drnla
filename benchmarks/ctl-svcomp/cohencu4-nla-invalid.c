@@ -14,6 +14,9 @@ void __VERIFIER_assert(int cond) {
     return;
 }
 */
+
+//CTL ([EF](p==0)) && ([EF](p==1))
+
 extern int __VERIFIER_nondet_int(void);
 
 int main() {
@@ -24,7 +27,7 @@ int main() {
     y = 1;
     z = 6;
     int c = 0, k = __VERIFIER_nondet_int();
-    /* __VERIFIER_assume(k>=0); */
+    int p = 2;
     while (y*z - 18*x - 12*y + 2*z - 6 + c <= k) {
       //__VERIFIER_assert(z == 6 * n + 6);
       //__VERIFIER_assert(y == 3 * n * n + 3 * n + 1);
