@@ -2,21 +2,21 @@
 START: 1;
 FROM: 1;
 
-      A := nondet();
+      xA := nondet();
       R := nondet();
-      assume((R - 1) * (R - 1) < A);
-      assume(A %2 == 1);
+      assume((R - 1) * (R - 1) < xA);
+      assume(xA %2 == 1);
       u := 2 * R + 1;
       v := 1;
-      r := R * R - A;
+      r := R * R - xA;
       p := 2;
 
-      cc := 0
+      cc := 0;
       kk := nondet();
 TO: 2;
 
 FROM: 2;
-      assume(u*u - v*v - 2*u + 2*v - 4*(A+r) + cc < kk);
+      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + cc < kk);
 TO: 3;
 
 FROM: 3;
@@ -25,31 +25,31 @@ FROM: 3;
 TO: 4;
 
 FROM: 4;
-      assume(u*u - v*v - 2*u + 2*v - 4*(A+r) + c <= k);
+      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + c <= k);
       r := r - v;
       v := v + 2;
       c := c + 1;
 TO: 4;
 
 FROM: 4;
-      assume(u*u - v*v - 2*u + 2*v - 4*(A+r) + c > k);
+      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + c > k);
 
       p := 1;
 TO: 5;
  
 FROM: 5;
-      assume(4*(A+r) - u*u - v*v - 2*u + 2*v + c <= k);
+      assume(4*(xA+r) - u*u - v*v - 2*u + 2*v + c <= k);
       r := r + u;
       u := u + 2;
       c := c1+ 1;
 TO: 5;
 
 FROM: 5;
-      assume(4*(A+r) - u*u - v*v - 2*u + 2*v + c > k);
+      assume(4*(xA+r) - u*u - v*v - 2*u + 2*v + c > k);
 TO: 2;
 
 FROM: 2;
-      assume(u*u - v*v - 2*u + 2*v - 4*(A+r) + cc >= kk);
+      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + cc >= kk);
       p := c-k;
 TO:6;
 
