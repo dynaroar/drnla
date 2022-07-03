@@ -218,8 +218,7 @@ class OUAnalysis(object):
                 self.dynamic.init_invars(invar_list, nla_ou)
             self.ou_init_str = self.write_ou()
 
-
-
+        mlog.info(f'{iter}th mSOFAR({self.write_ou()})')
         self.config.update_basename(iter)
         self.init_tools()
 
