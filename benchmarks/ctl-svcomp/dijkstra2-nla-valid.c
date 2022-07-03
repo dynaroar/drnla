@@ -30,7 +30,7 @@ int main() {
 
         q = 4 * q;
     }
-    p =1;
+    p=1;
     //q == 4^n
 
     /* while (p*p + r*q - n*q + c <= k) { */

@@ -1,4 +1,3 @@
-
 /* extended Euclid's algorithm */
 extern int __VERIFIER_nondet_int(void);
 

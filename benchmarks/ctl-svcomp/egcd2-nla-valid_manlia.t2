@@ -26,13 +26,13 @@ FROM: 3;
 TO: 4;
 
 FROM: 4;
-      assume(c >= x * q + y * s);
+      assume(c >= a);
       c := c - b;
       k := k + 1;
 TO: 4;
 
 FROM: 4;
-      assume(c < x * q + y * s);
+      assume(c < a);
 
       p := 1;
       a := b;

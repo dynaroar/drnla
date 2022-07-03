@@ -14,21 +14,21 @@ void __VERIFIER_assert(int cond) {
     return;
 }
 */
-
-//CTL ([EF](p==0)) && ([EF](p==1))
-
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
+// ARGS: -precondition "n == 0 && 3 * n * n + 3 * n + 1 <= k" -domain polyhedra
 
 int main() {
     int a, n, x, y, z;
-    a = __VERIFIER_nondet_int();
-    n = 0;
+    // a = __VERIFIER_nondet_int();
+    a = ?;
+    // n = 0;
     x = 0;
     y = 1;
     z = 6;
-    int c = 0, k = __VERIFIER_nondet_int();
+    // int k = __VERIFIER_nondet_int();
+    int k;
     int p = 2;
-    while (y*z - 18*x - 12*y + 2*z - 6 + c <= k) {
+    while (y <= k) {
       //__VERIFIER_assert(z == 6 * n + 6);
       //__VERIFIER_assert(y == 3 * n * n + 3 * n + 1);
       //__VERIFIER_assert(x == n * n * n);
@@ -40,7 +40,6 @@ int main() {
         x = x + y;
         y = y + z;
         z = z + 6;
-        c = c + 1;
         p = 1;
     }
     /*
@@ -51,6 +50,6 @@ int main() {
     __VERIFIER_assert(z*z - 12*y - 6*z + 12 == 0);
     __VERIFIER_assert(y*z - 18*x - 12*y + 2*z - 6 == 0);
     */
-    p = k-c;
+    p = (k-y);
     return 0;
 }

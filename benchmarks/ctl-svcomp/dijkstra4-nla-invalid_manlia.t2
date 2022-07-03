@@ -35,7 +35,7 @@ FROM: 5;
 TO: 6;
 
 FROM: 6;
-       assume(xp*xp + r*q - n*q + c <= k);
+       assume(h * h * n - 4 * h * n * xp + 4 * (n * n) * q - n * q * q - h * h * r + 4 * h * xp * r - 8 * n * q * r + q * q * r + 4 * q * r * r + c <= k);
 TO:7;
 
 FROM: 7;
@@ -63,7 +63,7 @@ FROM: 10;
 TO: 5;
  
 FROM: 6;
-       assume(xp*xp + r*q - n*q + c > k);
+       assume(h * h * n - 4 * h * n * xp + 4 * (n * n) * q - n * q * q - h * h * r + 4 * h * xp * r - 8 * n * q * r + q * q * r + 4 * q * r * r + c > k);
 TO:11;
  
 FROM: 5;
