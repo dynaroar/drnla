@@ -16,7 +16,7 @@ use Time::Out qw(timeout) ;
 use Time::HiRes qw(gettimeofday tv_interval);
 
 my $ITERS = 1;
-my $TIMEOUT  = 300;
+my $TIMEOUT  = 900;
 my $INTEGRATED = 0;
 my @timedout;
 my $pid = getppid();
@@ -193,7 +193,7 @@ print "    Total files : ".($#benches+1)."\n";
 my $dname = $benchdir; $dname =~ s{^.*/}{}g;
 open OUT, ">results/benchmarks-$dname.tex" or die "$dname - $!";
 foreach my $b (@benches) {
-    next if $b =~ /_lia/;
+    next if $b =~ /_lia/ or $b =~ /_manlia/;
     my $prop = Parsers::ctlT2ToTex(getCTLprop("$benchdir/$b",'t2'));
     printf OUT "%-25s & \$%s\$ \\\\\n", $b, $prop;
 }
