@@ -1,0 +1,42 @@
+START: 1;
+
+FROM: 1;
+      a := nondet();
+      n := 0;
+      x := 0;
+      y := 1;
+      z := 6;
+       
+      p := 2;
+
+TO: 2;
+
+FROM: 2;
+      assume(-1000 <= a && a <= 1000);
+TO: 3;
+
+FROM: 3;
+
+      assume(n <= a);
+TO:4;
+
+FROM: 4;
+      n := n + y - 3*n*n - 3*n; 
+      x := x + y;
+      y := y + z;
+      z := z + 6;
+      p := 1;
+   
+TO: 3;
+ 
+FROM: 3;
+      assume(n > a);
+      p := 0;
+TO: 5;
+
+FROM: 2;
+
+      assume(-1000 > a || a > 1000);
+      p := 1;
+      p := 0;
+TO: 6;

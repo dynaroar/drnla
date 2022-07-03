@@ -11,18 +11,20 @@ void __VERIFIER_assert(int cond) {
     return;
 }
 */
-extern int __VERIFIER_nondet_int(void);
+// extern int __VERIFIER_nondet_int(void);
+
+// ARGS: -precondition "q == 1 && q <= n" -domain polyhedra
 
 int main() {
     int n, xp, q, r, h;
 
-    n = __VERIFIER_nondet_int();
+    // n = __VERIFIER_nondet_int();
 
     xp = 0;
-    q = 1;
+    // q = 1;
     r = n;
     h = 0;
-    int c = 0, k = __VERIFIER_nondet_int();
+    int c = 0, k = ?;
 
     int p =2;
     while ( q <= n ) {
@@ -30,7 +32,7 @@ int main() {
 
         q = 4 * q;
     }
-    p=1;
+    p =1;
     //q == 4^n
 
     /* while (p*p + r*q - n*q + c <= k) { */
@@ -45,7 +47,7 @@ int main() {
       //if (!(q != 1))
       //    break;
 
-        if (xp*xp + r*q - n*q + c <= k){
+        if (c <= k){
         q = q / 4;
         h = xp + q;
         xp = xp / 2;
