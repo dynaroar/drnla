@@ -96,7 +96,7 @@ sub seahorn {
 sub ddr {
     my ($logfn) = @_;
     my @mp; my @summary;
-    my $simpltime = -1; my $stages ='';
+    my $simpltime = -1; my @stages; my $sofar = ''; my $iters = 0;
     open(F,"$logfn") or warn "file $logfn - $!";
     my ($time,$result) = (-1,'\rUNK');
     while (<F>) {
@@ -111,32 +111,50 @@ sub ddr {
 # TIME-SIMPLIFICATION:166.35550808906555s 
 # TIME-TOTAL:172.68422198295593s 
 
-        if(/MAP:(\d+);([a-z]+);(.*);(.*)$/) {
-            push @summary, "\$\\ell_{$1}:$2:".toTex($3).":".toTex($4).":".toTex($5)."\$ ";
-            push @mp, { loc => $1, precision => $2, 
-               original => $3, ifbr => $4, elsebr => $5 };
+        if(/MAP:(\d+);([a-z]+);(.*);(.*);(.*) ?$/) {
+            # $2 is exact/approx
+            my ($mLoc,$mPrecision,$mNLA,$mPos,$mNeg) = ($1,$2,$3,$4,$5);
+            my $str = "\$\\ell_{$mLoc}:".toTexPoly($mNLA).'$ $\mapsto$ $'.toTexPoly($mPos).",".toTexPoly($mNeg)."\$ ";
+            push @summary, $str;
+            $sofar = $str if /mSOFAR/;
+            push @mp, { loc => $mLoc, precision => $mPrecision, 
+               original => $mNLA, ifbr => $mPos, elsebr => $mNeg };
         }
         #$result = '\rTRUE'  if /RESULT:valid/;
         #$result = '\rFALSE' if /RESULT:invalid/;
         $result = '\rUNK'   if /RESULT:unknown/;
         $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)s/;
         $time   = $1 if /TIME-TOTAL:(\d+.\d+)s/;
-        $stages = $1 if /REFINEMENT:(.*)$/;
+#        $stages = $1 if /REFINEMENT:(.*)$/;
         $result = '\rExact' if /MAP:.*exact*/;
         $result = '\rAppx' if /MAP:.*approx*/;
-        #$time   = $1 if /EJKTIME:(\d+\.\d+)$/;
+        $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
+        if (/initial OU mapping:(.*)$/) {
+            #$sofar = $1; # if /initial OU mapping:(.*)$/;
+            push @stages, "D"; push @stages, "USC";    
+        }
+        push @stages, "V" if /run Ultimate static/;
+        push @stages, "TrN" if /strengthen ELSE/;
+        push @stages, "TrP" if /strengthen IF/;
+        push @stages, "ExtN" if /widen ELSE/;
+        push @stages, "ExtP" if /widen If/;
+        $iters++ if /th refinement result/;
+#        $sofar = 666 if /th refinement result:/;
+    }
+    if ($time > 900) {
+        $result = '\rAppx';
+        #$time = '\rTO';
+        $sofar =~ s/[\{\}]//g;
+        #push @summary, 'Initial guess: \ttt{'.$sofar.'}';
     }
     close F;
     use Data::Dumper;
     #print Dumper(\@mp);
-    $stages =~ s/-iteration-//g;
-    $stages =~ s/widen-if/ExP/g;
-    $stages =~ s/widen-else/ExN/g;
-    $stages =~ s/strengthen-if/TrP/g;
-    $stages =~ s/strengthen-else/TrN/g;
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
-             simpltime => $simpltime, summary => join(" ", @summary), stages => "Rand;UC;$stages" };
-    print Dumper($o);
+             simpltime => $simpltime, summary => join(" ", @summary), 
+             stages => join(", ",@stages),
+             iters => $iters };
+    #print Dumper($o);
     return $o;
 }
 sub t2 {
@@ -191,6 +209,22 @@ sub ctlT2ToTex {
     $t =~ s/_/\\_/g;
     $t =~ s/\[([A-Z][A-Z])\]/\\textsf{$1}/g;
     return $t;
+}
+sub toTexPoly {
+    my $t = shift @_;
+    return 'h^3 - 12hnq + 16nx\' - hq^2 - 4x\'q^2 + 12hqr - 6x\'qr +c \leq k'
+       if $t eq '((((((((((h * h) * h) - (((12 * h) * n) * q)) + (((16 * n) * xp) * q)) - ((h * q) * q)) - (((4 * xp) * q) * q)) + (((12 * h) * q) * r)) - (((16 * xp) * q) * r)) + c) <= k)';
+    return '0 \geq c-k' if $t eq '(0 >= (c - k))';
+    return '0 \geq c-k' if $t eq '(0 >= (-(k) + x))';
+    return 'k-c \leq -1' if $t eq  '(((0 + (k * 1)) + (c * -1)) <= -1)';
+    return '2Yx-2X^2y+2Y-v+c \leq k' if $t eq '((((((((2 * Y) * x) - ((2 * X) * y)) - X) + (2 * Y)) - v) + c) <= k)';
+    return 'k-x \leq -1' if $t eq '(((0 + (k * 1)) + (x * -1)) <= -1)';
+    return '3n^2 + 3n + 1 \leq k' if $t eq '(((((3 * n) * n) + (3 * n)) + 1) <= k)';
+#    return ;(0 >= (c - k));(((0 + (k * 1)) + (c * -1)) <= -1)
+    open TTT, ">>/tmp/simpl.txt" or die $!;
+    print TTT "$t\n";
+    close TTT;
+    return toTex($t);
 }
 sub toTex {
     my $t = shift @_;
