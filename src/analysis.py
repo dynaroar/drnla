@@ -33,7 +33,8 @@ class OUAnalysis(object):
         self.verify_result = 'unknown'
         self.ou_type = '_approximate'
         self.ou_str = '_empty'
-        self.refine_steps = []
+        self.ou_init_str = '_empty'
+        self.refine_steps = ['init_random']
         
     def init_tools(self):
       self.cil_trans = CTransform(self.config) 
@@ -53,6 +54,23 @@ class OUAnalysis(object):
                 error_case = var
         return error_case
          
+    def write_ou(self):
+        '''write file and convert OU mapping to string
+        '''
+        fw = open(self.config.ou_mapf, 'w+')
+        
+        map_str = []
+        for loc_str, ou_val in self.nla_ou.items():
+            nla, if_ou, else_ou = ou_val
+            nla_str = Z3.to_string(nla)
+            if_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),if_ou)))
+            else_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),else_ou)))
+            fw.write(f'{loc_str};{if_ou_str}')
+            map_str.append(f'MAP:{loc_str};{self.ou_type};{nla_str};{if_ou_str};{else_ou_str}')
+        fw.close()
+        return '\n'.join(map_str)
+       
+        
     def refine_cex(self, invars_i, dsolver):
         '''join more snaps to vtrace, strengthen the final result.
         '''
@@ -198,7 +216,10 @@ class OUAnalysis(object):
                 invar_list = self.dynamic.get_invars()
                 mlog.debug(f'------invars from dig (initial refinement): \n{invar_list}')
                 self.dynamic.init_invars(invar_list, nla_ou)
-   
+            self.ou_init_str = self.write_ou()
+
+
+
         self.config.update_basename(iter)
         self.init_tools()
 
@@ -297,7 +318,7 @@ class OUAnalysis(object):
     def verify_run(self):
         '''transform to linear program first
         '''
-        self.write_ou()
+        self.ou_str = self.write_ou()
         self.cil_trans.ltrans()
         result = self.verify_result
         if settings.prop == 'reach':
@@ -314,18 +335,3 @@ class OUAnalysis(object):
         if sresult == StaticResult.UNKNOWN:
               self.verify_result = 'unkown'
                
-    def write_ou(self):
-        '''write file and convert OU mapping to string
-        '''
-        fw = open(self.config.ou_mapf, 'w+')
-        
-        map_str = []
-        for loc_str, ou_val in self.nla_ou.items():
-            nla, if_ou, else_ou = ou_val
-            nla_str = Z3.to_string(nla)
-            if_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),if_ou)))
-            else_ou_str = '&&'.join(list(map(lambda inv: Z3.to_string(inv),else_ou)))
-            fw.write(f'{loc_str};{if_ou_str}')
-            map_str.append(f'MAP:{loc_str};{self.ou_type};{nla_str};{if_ou_str};{else_ou_str}')
-        self.ou_str = '\n'.join(map_str)
-        fw.close()
