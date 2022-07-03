@@ -1,10 +1,10 @@
-\ttt{afagp-F.c} & \rExact  & 68.2     & Rand;UC;  & $\ell_{18}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (k - y)):((-(k) + y) <= -(1)):$  \\
-\ttt{afagp-T.c} & \rExact  & 71.7     & Rand;UC;  & $\ell_{18}:exact:!(((((c + (y   y)) - (2   x)) + y) < k));(0 >= (-(c) + k)):((c - k) <= -(1)):$  \\
-\ttt{afefp-T.c} & \rExact  & 186.8    & Rand;UC;ExN1  & $\ell_{19}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-\ttt{afegp-F.c} & \rExact  & 247.2    & Rand;UC;ExN1  & $\ell_{18}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (a - k)):(((0 + (k   1)) + (a   -1)) <= -1):$  \\
-\ttt{afegp-T.c} & \rExact  & 195.1    & Rand;UC;ExN1  & $\ell_{19}:exact:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-\ttt{afp-F.c}   & \rExact  & 184.8    & Rand;UC;ExN1  & $\ell_{19}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (-(k) + n)):(((0 + (k   1)) + (n   -1)) <= -1):$  \\
-\ttt{afp-T.c}   & \rExact  & 188.5    & Rand;UC;ExN1  & $\ell_{19}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
-\ttt{agafp-F.c} & \rUNK    & 3.0      & Rand;UC; &  \\
-\ttt{agafp-T.c} & \rUNK    & 2.8      & Rand;UC; &  \\
-\ttt{efafp-T.c} & \rExact  & 256.8    & Rand;UC;ExN1  & $\ell_{29}:exact:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k);(0 >= (c - k)):(((0 + (k   1)) + (c   -1)) <= -1):$  \\
+\ttt{afagp-F.c} & \rExact  & 68.2     & 1  & D, USC, V, V & $\ell_{18}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
+\ttt{afagp-T.c} & \rExact  & 71.7     & 1  & D, USC, V, V & $\ell_{18}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{afefp-T.c} & \rExact  & 186.8    & 2  & D, USC, V, ExtN, V, V & $\ell_{19}:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{afegp-F.c} & \rExact  & 247.2    & 2  & D, USC, V, ExtN, V, V & $\ell_{18}:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k)$ $\mapsto$ $(0 >= (a - k)),(((0 + (k   1)) + (a   -1)) <= -1)$  \\
+\ttt{afegp-T.c} & \rExact  & 195.1    & 2  & D, USC, V, ExtN, V, V & $\ell_{19}:((((((t   t) - (4   s)) + (2   t)) + 1) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{afp-F.c}   & \rExact  & 184.8    & 2  & D, USC, V, ExtN, V, V & $\ell_{19}:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k)$ $\mapsto$ $(0 >= (-(k) + n)),(((0 + (k   1)) + (n   -1)) <= -1)$  \\
+\ttt{afp-T.c}   & \rExact  & 188.5    & 2  & D, USC, V, ExtN, V, V & $\ell_{19}:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{agafp-F.c} & \rUNK    & 3.0      & 0  &  &  \\
+\ttt{agafp-T.c} & \rUNK    & 2.8      & 0  &  &  \\
+\ttt{efafp-T.c} & \rExact  & 256.8    & 2  & D, USC, V, ExtN, V, V & $\ell_{29}:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
