@@ -69,9 +69,9 @@ foreach my $tool (@tools) {
       my $d = Parsers::parse($tool,$logfn,$ITERS);
       my $bb = $tmpb; 
       $compare->{$bb}->{$tool}->{detail} = $d if $tool eq 'ddr';
-      if($tmpb =~ /\_lia/) {
+      if($tmpb =~ /\_(man)?lia/) {
         next if $tool eq 'ddr';
-        my $t = $bb; $t =~ s/_lia//;
+        my $t = $bb; $t =~ s/_(man)?lia//;
         $compare->{$t}->{$tool}->{liatime} = $d->{time};
         $compare->{$t}->{$tool}->{liaresult} = $d->{result};
       } else {
@@ -98,13 +98,14 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
   my $outfn = "$benchdir/$outdir/ddr-$dname.tex";
   open OUT, ">$outfn" or die "$outfn - $!";
   foreach my $b (sort keys %$compare) {
-    next if $b =~ /_lia/;
+    next if $b =~ /_(man)?lia/;
     print "did ps2:\n".Dumper($compare->{$b}) if $b =~ /ps2-nla-valid/;
     my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
     my $renderedBname = touchupName($b);
-    printf OUT "%-15s & %-8s & %-8s & %s & %s \\\\\n", $renderedBname, 
+    printf OUT "%-15s & %-8s & %-8s & %-2d & %s & %s \\\\\n", $renderedBname, 
       $compare->{$b}->{ddr}->{detail}->{result},
       $compare->{$b}->{ddr}->{detail}->{time},
+      $compare->{$b}->{ddr}->{detail}->{iters},
       $compare->{$b}->{ddr}->{detail}->{stages},
       $compare->{$b}->{ddr}->{detail}->{summary};
   }
