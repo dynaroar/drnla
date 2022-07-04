@@ -164,7 +164,7 @@ class OUAnalysis(object):
         dsolver.init_vtrace(self.config.vtrace_genf)
         dsolver.write_vtrace_error(self.config.vtrace_cexf)
         dsolver.write_vtrace_error(self.config.vtrace_genf)
-        # self.config.vtrace_cexf = '/home/cyrus/dynamic-ltl/dynamiteLTL/test-tmp/ex3/traces.tcs'
+
         self.dynamic.run_trace(self.config.vtrace_cexf)
         
         invars_i_str = self.dynamic.get_invars()
@@ -184,8 +184,13 @@ class OUAnalysis(object):
         else:
             origin_ou = else_ou
         mlog.debug(f'origin ou: {origin_ou}')
-        ou_core, cex_core = dsolver.unsatcore_ou(origin_ou,invars_i)
-        mlog.debug(f'unsat core for {cex_case} and {error_case}: \n {ou_core} -> {cex_core}')
+
+        if 'small' in error_case:
+            ou_core, cex_core = dsolver.unsatcore_ou(origin_ou,invars_i)
+            mlog.debug(f'unsat core for {cex_case} and {error_case}: \n {ou_core} -> {cex_core}')
+        else:
+            cex_core = None
+
         if cex_core:
             invars_i = cex_core
             mlog.debug(f'new C_i: {invars_i}')
