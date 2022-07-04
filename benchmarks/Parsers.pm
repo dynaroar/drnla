@@ -25,6 +25,7 @@ sub find_benchmarks {
         # next unless $fn =~ m/\.c$/; 
         # next if $fn =~ m/_fn\.c/;
         # next if $fn =~ /~$/;
+        next if $fn ~= /cohencu1|cohencu6|dijkstra1/;
         next if $fn =~ /fix1/;
         unless ($fn =~ /valid/) {
             warn "skipping file: $fn.\n";
@@ -131,13 +132,13 @@ sub ddr {
         $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
         if (/initial OU mapping:(.*)$/) {
             #$sofar = $1; # if /initial OU mapping:(.*)$/;
-            push @stages, "D"; push @stages, "USC";    
+            push @stages, "d"; push @stages, "usc";    
         }
-        push @stages, "V" if /run Ultimate static/;
-        push @stages, "TrN" if /strengthen ELSE/;
-        push @stages, "TrP" if /strengthen IF/;
-        push @stages, "ExtN" if /widen ELSE/;
-        push @stages, "ExtP" if /widen If/;
+        push @stages, "v" if /run Ultimate static/;
+        push @stages, "tn" if /strengthen ELSE/;
+        push @stages, "tp" if /strengthen IF/;
+        push @stages, "en" if /widen ELSE/;
+        push @stages, "ep" if /widen If/;
         $iters++ if /th refinement result/;
 #        $sofar = 666 if /th refinement result:/;
     }
@@ -152,7 +153,7 @@ sub ddr {
     #print Dumper(\@mp);
     my $o = { time => tm2str($time), result => $result, "map" => \@mp,
              simpltime => $simpltime, summary => join(" ", @summary), 
-             stages => join(", ",@stages),
+             stages => join(",",@stages),
              iters => $iters };
     #print Dumper($o);
     return $o;
@@ -221,6 +222,22 @@ sub toTexPoly {
     return 'k-x \leq -1' if $t eq '(((0 + (k * 1)) + (x * -1)) <= -1)';
     return '3n^2 + 3n + 1 \leq k' if $t eq '(((((3 * n) * n) + (3 * n)) + 1) <= k)';
 #    return ;(0 >= (c - k));(((0 + (k * 1)) + (c * -1)) <= -1)
+    return '0 \geq y - k' if $t eq '(0 >= (-(k) + y))';
+    return 'k-y \leq -1' if $t eq '((k - y) <= -(1))';
+    return 'k-a\leq -1' if $t eq '(((0 + (k * 1)) + (a * -1)) <= -1)';
+    return '0 \geq a-k' if $t eq '(0 >= (a - k))';
+    return 't^2-4s+2t+1+c \leq k' if $t eq '((((((t * t) - (4 * s)) + (2 * t)) + 1) + c) <= k)';
+    return '\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)' if $t eq '!(((((((c + ((((((-(2) * y) * y) * y) * y) * y) * y)) - (((((6 * y) * y) * y) * y) * y)) - ((((5 * y) * y) * y) * y)) + (y * y)) + (12 * x)) < k))';
+    return 'z^2-12y-6z+12+c \leq k' if $t eq '((((((z * z) - (12 * y)) - (6 * z)) + 12) + c) <= k)';
+    return 'k-n\leq -1' if $t eq '((k - n) <= -(1))';
+    return '0=c-n \wedge 0 \geq c-k' if $t eq '(0 == (c - n))&&(0 >= (c - k))';
+    return '0 \geq n-k' if $t eq '(0 >= (-(k) + n))';
+    return 'n^3 \leq k' if $t eq '(((n * n) * n) <= k)';
+    return 'yz-18x-12y+2z-6+c \leq k' if $t eq '(((((((y * z) - (18 * x)) - (12 * y)) + (2 * z)) - 6) + c) <= k)';
+    return 'XXX' if $t eq 'YYY';
+    return 'XXX' if $t eq 'YYY';
+    return 'XXX' if $t eq 'YYY';
+    return 'XXX' if $t eq 'YYY';
     open TTT, ">>/tmp/simpl.txt" or die $!;
     print TTT "$t\n";
     close TTT;

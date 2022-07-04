@@ -137,12 +137,12 @@ my $bn = $benchdir; $bn =~ s/^.*\///g;
 my $ts = join '-', @tools;
 my $outfn = "$benchdir/$outdir/improvements-$bn-$ts.tex";
 open OUT, ">$outfn" or die $!;
-print OUT "%RESULTS:\n% Benchmark & Exp. & ".
+print OUT "%RESULTS:\n% Benchmark & ".
    join(" & ", map("$_ Res & $_ Time & $_ Summary",@tools))."\\\\\n";
 foreach my $b (sort keys %$compare) {
   my $exp = '\rTRUE'; $exp = '\rFALSE' if $b =~ /invalid/;
   my $renderedBname = touchupName($b);
-  printf OUT "%-15s & %-8s ", $renderedBname, $exp;
+  printf OUT "%-15s ", $renderedBname; # & "%-8s" , $exp;
   foreach my $tool (@tools) {
     # if (not defined $compare->{$b}->{$tool}->{liaresult}) {
     #   warn "missing LIA results for $tool on $b, benchmark set $bn, benchmark: $b\n";
@@ -154,6 +154,16 @@ foreach my $b (sort keys %$compare) {
     $compare->{$b}->{$tool}->{liaresult} = checkResult($compare->{$b}->{$tool}->{liaresult},$exp);
     $compare->{$b}->{$tool}->{nlaresult} = checkResult($compare->{$b}->{$tool}->{nlaresult},$exp);
     $compare->{$b}->{$tool}->{liaresult} = checkImprove($compare->{$b}->{$tool}->{liaresult},$compare->{$b}->{$tool}->{nlaresult},$exp);
+    if ($b =~ /-valid/) {
+      my $binv = $b; $binv =~ s/-valid/-invalid/;
+      # if we improved the Invalid one,
+      # and the Valid one is also \rTRUE 
+      # then this Valid ons is also "improved"
+      if ($compare->{$binv}->{$tool}->{liaresult} =~ /hlg/ &&
+          $compare->{$b}->{$tool}->{liaresult} =~ /rTRUE/) {
+        $compare->{$b}->{$tool}->{liaresult} = '\hlg '.$compare->{$b}->{$tool}->{liaresult};
+      }
+    }
     #print $tool." ".$b." ".Dumper($compare->{$b}->{$tool}) if not defined $compare->{$b}->{$tool}->{liaresult};
     #my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     #my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');

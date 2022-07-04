@@ -101,7 +101,7 @@ my $CFG = {
             return qq(echo "not found" > /tmp/function.log) unless -e $_[0];
             my $prp = getCTLprop($_[0],'function');
             my $args = getFuncTionArgs($_[0]);
-            return qq(timeout ${TIMEOUT}s ./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
+            return qq(timeout 30s ./function $_[0] -ctl "$prp" $args 2>&1 > /tmp/function.log); },
         FETCH => sub { return qq(cp /tmp/function.log $_[0]); },
         PARSE => sub { return Parsers::function($_[0]); },
     },
