@@ -1,3 +1,4 @@
+
 /* program computing a divisor for factorisation, by Knuth 4.5.4 Alg C ? */
 /*
 extern void __VERIFIER_error() __attribute__((__noreturn__));
@@ -51,9 +52,9 @@ int main() {
             u = u + 2;
             c++;
         }
+        p = 0;
     }
 
-    p = 0;
     //__VERIFIER_assert(4*A == u*u - v*v  - 2*u + 2*v);
     return 0;
 }

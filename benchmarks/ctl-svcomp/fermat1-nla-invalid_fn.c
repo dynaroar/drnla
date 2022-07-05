@@ -53,9 +53,9 @@ int main() {
             u = u + 2;
             c++;
         }
+        p = c-k;
     }
 
-    p = c-k;
     //__VERIFIER_assert(4*A == u*u - v*v  - 2*u + 2*v);
     return 0;
 }
