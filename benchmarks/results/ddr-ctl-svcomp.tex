@@ -1,62 +1,57 @@
-\ttt{bresenham1-F.c} & \rExact  & 185.5    & 2  & D, USC, V, ExtN, V, V & $\ell_{36}:2Yx-2X^2y+2Y-v+c \leq k$ $\mapsto$ $0 \geq c-k,k-x \leq -1$  \\
-\ttt{bresenham1-T.c} & \rExact  & 196.5    & 2  & D, USC, V, ExtN, V, V & $\ell_{36}:2Yx-2X^2y+2Y-v+c \leq k$ $\mapsto$ $0 \geq c-k,k-x \leq -1$  \\
-\ttt{cohencu1-F.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{cohencu1-T.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{cohencu2-F.c} & \rAppx   & 619.0    & 1  & D, USC, V, V & $\ell_{28}:3n^2 + 3n + 1 \leq k$ $\mapsto$ $0 \geq y - k,k-y \leq -1$  \\
-\ttt{cohencu2-T.c} & \rAppx   & 619.9    & 1  & D, USC, V, V & $\ell_{32}:3n^2 + 3n + 1 \leq k$ $\mapsto$ $0 \geq y - k,k-y \leq -1$  \\
-\ttt{cohencu3-F.c} & \rAppx   & 620.5    & 1  & D, USC, V, V & $\ell_{31}:(((n   n)   n) <= k)$ $\mapsto$ $0 \geq c-k,((k - x) <= -(1))$  \\
-\ttt{cohencu3-T.c} & \rAppx   & 620.3    & 1  & D, USC, V, V & $\ell_{31}:(((n   n)   n) <= k)$ $\mapsto$ $0 \geq c-k,((k - x) <= -(1))$  \\
-\ttt{cohencu4-F.c} & \rUNK    & 1.6      & 0  &  &  \\
-\ttt{cohencu4-T.c} & \rAppx   & 753.0    & 2  & D, USC, V, ExtN, V, V & $\ell_{31}:(((((((y   z) - (18   x)) - (12   y)) + (2   z)) - 6) + c) <= k)$ $\mapsto$ $(0 >= (-(k) + n)),(((0 + (k   1)) + (n   -1)) <= -1)$  \\
-\ttt{cohencu5-F.c} & \rExact  & 160.2    & 2  & D, USC, V, ExtN, V, V & $\ell_{35}:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
-\ttt{cohencu5-T.c} & \rExact  & 158.7    & 2  & D, USC, V, ExtN, V, V & $\ell_{35}:((((((z   z) - (12   y)) - (6   z)) + 12) + c) <= k)$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
-\ttt{cohencu6-F.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{cohencu6-T.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{cohencu7-F.c} & \rAppx   & 37.4     & 1  & D, USC, V, V & $\ell_{30}:((x + y) <= (((a + 1)   (a + 1))   (a + 1)))$ $\mapsto$ $(0 >= (-(a) + n)),(0 == ((-(a) + n) - 1))$  \\
-\ttt{cohencu7-T.c} & \rAppx   & 34.6     & 1  & D, USC, V, V & $\ell_{28}:((x + y) <= (((a + 1)   (a + 1))   (a + 1)))$ $\mapsto$ $(0 >= (-(a) + n)),(0 == ((-(a) + n) - 1))$  \\
-\ttt{dijkstra1-F.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{dijkstra1-T.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{dijkstra2-F.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{dijkstra2-T.c} & \rAppx   & 25.6     & 0  & D, USC, V &  \\
-\ttt{dijkstra3-F.c} & \rAppx   & 469.7    & 2  & D, USC, V, TrN, V, TrN, V &  \\
-\ttt{dijkstra3-T.c} & \rAppx   & 625.2    & 1  & D, USC, V, V & $\ell_{45}:h^3 - 12hnq + 16nx' - hq^2 - 4x'q^2 + 12hqr - 6x'qr +c \leq k$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
-\ttt{dijkstra4-F.c} & \rAppx   & 25.7     & 1  & D, USC, V, V & $\ell_{45}:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
-\ttt{dijkstra4-T.c} & \rAppx   & 27.6     & 1  & D, USC, V, V & $\ell_{45}:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
-\ttt{dijkstra5-F.c} & \rAppx   & 624.0    & 1  & D, USC, V, V & $\ell_{46}:(((((((((h   h)   xp) - (((4   h)   n)   q)) + (((4   n)   xp)   q)) - ((xp   q)   q)) + (((4   h)   q)   r)) - (((4   xp)   q)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
-\ttt{dijkstra5-T.c} & \rAppx   & 627.0    & 1  & D, USC, V, V & $\ell_{46}:(((((((((h   h)   xp) - (((4   h)   n)   q)) + (((4   n)   xp)   q)) - ((xp   q)   q)) + (((4   h)   q)   r)) - (((4   xp)   q)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{bresenham1-F.c} & \rExact  & 194.5    & 2  & d,usc,v,en,v,v & $\ell_{36}:2Yx-2X^2y+2Y-v+c \leq k$ $\mapsto$ $0 \geq c-k,k-x \leq -1$  \\
+\ttt{bresenham1-T.c} & \rExact  & 190.5    & 2  & d,usc,v,en,v,v & $\ell_{36}:2Yx-2X^2y+2Y-v+c \leq k$ $\mapsto$ $0 \geq c-k,k-x \leq -1$  \\
+\ttt{cohencu2-F.c} & \rAppx   & 618.8    & 1  & d,usc,v,v & $\ell_{28}:3n^2 + 3n + 1 \leq k$ $\mapsto$ $0 \geq y - k,k-y \leq -1$  \\
+\ttt{cohencu2-T.c} & \rAppx   & 618.9    & 1  & d,usc,v,v & $\ell_{32}:3n^2 + 3n + 1 \leq k$ $\mapsto$ $0 \geq y - k,k-y \leq -1$  \\
+\ttt{cohencu3-F.c} & \rAppx   & 619.5    & 1  & d,usc,v,v & $\ell_{31}:n^3 \leq k$ $\mapsto$ $0 \geq c-k,((k - x) <= -(1))$  \\
+\ttt{cohencu3-T.c} & \rAppx   & 619.4    & 1  & d,usc,v,v & $\ell_{31}:n^3 \leq k$ $\mapsto$ $0 \geq c-k,((k - x) <= -(1))$  \\
+\ttt{cohencu4-F.c} & \rAppx   & 745.6    & 2  & d,usc,v,en,v,v & $\ell_{31}:yz-18x-12y+2z-6+c \leq k$ $\mapsto$ $0 \geq n-k,(((0 + (k   1)) + (n   -1)) <= -1)$  \\
+\ttt{cohencu4-T.c} & \rAppx   & 748.7    & 2  & d,usc,v,en,v,v & $\ell_{31}:yz-18x-12y+2z-6+c \leq k$ $\mapsto$ $0 \geq n-k,(((0 + (k   1)) + (n   -1)) <= -1)$  \\
+\ttt{cohencu5-F.c} & \rExact  & 154.8    & 2  & d,usc,v,en,v,v & $\ell_{35}:z^2-12y-6z+12+c \leq k$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{cohencu5-T.c} & \rExact  & 152.7    & 2  & d,usc,v,en,v,v & $\ell_{35}:z^2-12y-6z+12+c \leq k$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{cohencu7-F.c} & \rAppx   & 28.4     & 1  & d,usc,v,v & $\ell_{30}:((x + y) <= (((a + 1)   (a + 1))   (a + 1)))$ $\mapsto$ $(0 >= (-(a) + n)),(0 == ((-(a) + n) - 1))$  \\
+\ttt{cohencu7-T.c} & \rAppx   & 31.9     & 1  & d,usc,v,v & $\ell_{28}:((x + y) <= (((a + 1)   (a + 1))   (a + 1)))$ $\mapsto$ $(0 >= (-(a) + n)),(0 == ((-(a) + n) - 1))$  \\
+\ttt{dijkstra2-F.c} & \rAppx   & 625.6    & 1  & d,usc,v,v & $\ell_{46}:(((((xp   xp) + (r   q)) - (n   q)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra2-T.c} & \rAppx   & 625.8    & 1  & d,usc,v,v & $\ell_{48}:(((((xp   xp) + (r   q)) - (n   q)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra3-F.c} & \rAppx   & 624.3    & 1  & d,usc,v,v & $\ell_{45}:h^3 - 12hnq + 16nx' - hq^2 - 4x'q^2 + 12hqr - 6x'qr +c \leq k$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra3-T.c} & \rAppx   & 625.1    & 1  & d,usc,v,v & $\ell_{45}:h^3 - 12hnq + 16nx' - hq^2 - 4x'q^2 + 12hqr - 6x'qr +c \leq k$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra4-F.c} & \rAppx   & 26.8     & 1  & d,usc,v,v & $\ell_{45}:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra4-T.c} & \rAppx   & 27.0     & 1  & d,usc,v,v & $\ell_{45}:((((((((((((h   h)   n) - (((4   h)   n)   xp)) + ((4   (n   n))   q)) - ((n   q)   q)) - ((h   h)   r)) + (((4   h)   xp)   r)) - (((8   n)   q)   r)) + ((q   q)   r)) + (((4   q)   r)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra5-F.c} & \rAppx   & 625.5    & 1  & d,usc,v,v & $\ell_{46}:(((((((((h   h)   xp) - (((4   h)   n)   q)) + (((4   n)   xp)   q)) - ((xp   q)   q)) + (((4   h)   q)   r)) - (((4   xp)   q)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
+\ttt{dijkstra5-T.c} & \rAppx   & 625.9    & 1  & d,usc,v,v & $\ell_{46}:(((((((((h   h)   xp) - (((4   h)   n)   q)) + (((4   n)   xp)   q)) - ((xp   q)   q)) + (((4   h)   q)   r)) - (((4   xp)   q)   r)) + c) <= k)$ $\mapsto$ $0 \geq c-k,((-(c) + k) <= -(1))$  \\
 \ttt{divbin1-F.c} & \rUNK    & 0.9      & 0  &  &  \\
 \ttt{divbin1-T.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{egcd-F.c}  & \rAppx   & \rTO     & 0  &  &  \\
+\ttt{egcd-F.c}  & \rUNK    & 0.9      & 0  &  &  \\
 \ttt{egcd-T.c}  & \rAppx   & \rTO     & 0  &  &  \\
-\ttt{egcd2-F.c} & \rAppx   & 691.4    & 1  & D, USC, V, V & $\ell_{33}:(c >= ((x   q) + (y   s)))$ $\mapsto$ $(0 >= (b - c)),((-(b) + c) <= -(1))$  \\
-\ttt{egcd2-T.c} & \rAppx   & 694.0    & 1  & D, USC, V, V & $\ell_{33}:(c >= ((x   q) + (y   s)))$ $\mapsto$ $(0 >= (b - c)),((-(b) + c) <= -(1))$  \\
+\ttt{egcd2-F.c} & \rAppx   & 685.6    & 1  & d,usc,v,v & $\ell_{33}:(c >= ((x   q) + (y   s)))$ $\mapsto$ $(0 >= (b - c)),((-(b) + c) <= -(1))$  \\
+\ttt{egcd2-T.c} & \rAppx   & 684.9    & 1  & d,usc,v,v & $\ell_{33}:(c >= ((x   q) + (y   s)))$ $\mapsto$ $(0 >= (b - c)),((-(b) + c) <= -(1))$  \\
 \ttt{egcd3-F.c} & \rUNK    & 1.6      & 0  &  &  \\
-\ttt{egcd3-T.c} & \rAppx   & \rTO     & 8  & D, USC, V, TrN, V, TrP, V, TrN, V, TrP, V, TrN, V, TrP, V, TrN, V, TrP, V &  \\
-\ttt{fermat1-F.c} & \rUNK    & 1.6      & 0  &  &  \\
+\ttt{egcd3-T.c} & \rAppx   & \rTO     & 8  & d,usc,v,tn,v,tp,v,tn,v,tp,v,tn,v,tp,v,tn,v,tp,v &  \\
+\ttt{fermat1-F.c} & \rUNK    & 1.5      & 0  &  &  \\
 \ttt{fermat1-T.c} & \rAppx   & \rTO     & 0  &  &  \\
-\ttt{geo1-F.c}  & \rExact  & 209.5    & 1  & D, USC, V, V & $\ell_{24}:!(((((((x   z) - x) - y) + 1) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{geo1-T.c}  & \rExact  & 184.2    & 1  & D, USC, V, V & $\ell_{24}:!(((((((x   z) - x) - y) + 1) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{geo2-F.c}  & \rAppx   & 743.4    & 1  & D, USC, V, V & $\ell_{24}:!((((((1 + (x   z)) - x) - (z   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{geo2-T.c}  & \rAppx   & 718.0    & 1  & D, USC, V, V & $\ell_{25}:!((((((1 + (x   z)) - x) - (z   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{geo3-F.c}  & \rExact  & 188.4    & 1  & D, USC, V, V & $\ell_{25}:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{geo3-T.c}  & \rExact  & 177.6    & 1  & D, USC, V, V & $\ell_{25}:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{hard-F.c}  & \rUNK    & 7.5      & 0  &  &  \\
-\ttt{hard-T.c}  & \rUNK    & 8.1      & 0  &  &  \\
+\ttt{geo1-F.c}  & \rExact  & 218.7    & 1  & d,usc,v,v & $\ell_{24}:!(((((((x   z) - x) - y) + 1) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{geo1-T.c}  & \rExact  & 178.3    & 1  & d,usc,v,v & $\ell_{24}:!(((((((x   z) - x) - y) + 1) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{geo2-F.c}  & \rAppx   & 727.7    & 1  & d,usc,v,v & $\ell_{24}:!((((((1 + (x   z)) - x) - (z   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{geo2-T.c}  & \rAppx   & 737.6    & 1  & d,usc,v,v & $\ell_{25}:!((((((1 + (x   z)) - x) - (z   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{geo3-F.c}  & \rExact  & 198.5    & 1  & d,usc,v,v & $\ell_{25}:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{geo3-T.c}  & \rExact  & 191.9    & 1  & d,usc,v,v & $\ell_{25}:!(((((((z   x) - x) + a) - ((a   z)   y)) + c) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{hard-F.c}  & \rUNK    & 7.9      & 0  &  &  \\
+\ttt{hard-T.c}  & \rUNK    & 7.8      & 0  &  &  \\
 \ttt{hard2-F.c} & \rUNK    & 0.9      & 0  &  &  \\
 \ttt{hard2-T.c} & \rUNK    & 0.9      & 0  &  &  \\
-\ttt{prod4br-F.c} & \rAppx   & 899.1    & 5  & D, USC, V, V, ExtN, V, TrN, V, ExtN, V, V & $\ell_{26}:!(((0 != a) \&\& (0 != (((b + q) + ((a   b)   xp)) - (x   y)))))$ $\mapsto$ $(((((0 + (x   -1)) + (p   -1)) <= -2) \&\& (((0 + (b   -1)) + (p   1)) <= 1) \&\& (((0 + (y   -1)) + (x   -1)) <= -1) \&\& (((0 + (q   -1)) + (xp   1)) <= 1) \&\& (((0 + (q   -1)) + (x   -1)) <= 11) \&\& (((0 + (b   -1)) + (x   -1)) <= -1) \&\& (((0 + (q   -1)) + (y   -1)) <= -1) \&\& (((0 + (q   -1)) + (b   -1)) <= -1) \&\& (((0 + (q   -1)) + (x   1)) <= 0) \&\& ((0 + (a   -1)) <= 0) \&\& ((0 + (q   -1)) <= 0) \&\& (((0 + (q   -1)) + (a   -1)) <= 0) \&\& (((0 + (q   -1)) + (p   -1)) <= -2) \&\& (((0 + (y   -1)) + (p   1)) <= 1) \&\& (((0 + (q   -1)) + (p   1)) <= 13)) || ((2 >= (p - x)) \&\& (0 >= (a + q)) \&\& (0 >= (b - y)) \&\& (0 >= (-(q) + x)) \&\& (0 >= (-(a) - x)) \&\& (0 >= (xp - y)) \&\& ((a - p) <= -(2)) \&\& (0 >= (-(b) + y)) \&\& (4 >= (-(a) + b)) \&\& ((q - xp) <= -(1)) \&\& (1 >= (-(a) + xp)))),((((((-(b) - x) <= -(5)) \&\& ((-(p) - y) <= -(3)) \&\& ((-(p) - x) <= -(3)) \&\& (0 >= -(q)) \&\& (-(a) <= -(1)) \&\& (-(b) <= -(1))) || (4 >= (b + x))) \&\& !(((2 >= (p - x)) \&\& (0 >= (a + q)) \&\& (0 >= (b - y)) \&\& (0 >= (-(q) + x)) \&\& (0 >= (-(a) - x)) \&\& (0 >= (xp - y)) \&\& ((a - p) <= -(2)) \&\& (0 >= (-(b) + y)) \&\& (4 >= (-(a) + b)) \&\& ((q - xp) <= -(1)) \&\& (1 >= (-(a) + xp))))) || ((0 >= (a - x)) \&\& (0 >= (x + xp)) \&\& (0 == (xp - 1)) \&\& ((-(a) - b) <= -(5))))$  \\
-\ttt{prod4br-T.c} & \rAppx   & 234.3    & 4  & D, USC, V, V, ExtN, V, TrN, V, ExtN, V &  \\
-\ttt{prodbin-F.c} & \rAppx   & 619.0    & 1  & D, USC, V, V & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 >= y),(-(y) <= -(1))$  \\
-\ttt{prodbin-T.c} & \rAppx   & 622.4    & 1  & D, USC, V, V & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 == (p - 1))\&\&(0 >= y),((-(p) - y) <= -(2))$  \\
-\ttt{ps2-F.c}   & \rExact  & 31.4     & 1  & D, USC, V, V & $\ell_{20}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{ps2-T.c}   & \rExact  & 30.9     & 1  & D, USC, V, V & $\ell_{20}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
-\ttt{ps3-F.c}   & \rExact  & 69.4     & 2  & D, USC, V, V, V & $\ell_{20}:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
-\ttt{ps3-T.c}   & \rExact  & 62.0     & 2  & D, USC, V, V, V & $\ell_{20}:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
-\ttt{ps4-F.c}   & \rExact  & 27.9     & 1  & D, USC, V, V & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
-\ttt{ps4-T.c}   & \rExact  & 85.3     & 2  & D, USC, V, V, V & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
-\ttt{ps5-F.c}   & \rExact  & 81.5     & 2  & D, USC, V, V, V & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
-\ttt{ps5-T.c}   & \rExact  & 38.7     & 1  & D, USC, V, V & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
-\ttt{ps6-F.c}   & \rExact  & 33.2     & 1  & D, USC, V, V & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
-\ttt{ps6-T.c}   & \rExact  & 43.4     & 1  & D, USC, V, V & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{sqrt1-F.c} & \rExact  & 120.0    & 2  & D, USC, V, ExtN, V, V & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq a-k,k-a\leq -1$  \\
-\ttt{sqrt1-T.c} & \rExact  & 120.6    & 2  & D, USC, V, ExtN, V, V & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq a-k,k-a\leq -1$  \\
+\ttt{prod4br-F.c} & \rAppx   & 227.5    & 4  & d,usc,v,en,v,tn,v,en,v,tn,v &  \\
+\ttt{prod4br-T.c} & \rAppx   & 152.7    & 4  & d,usc,v,v,en,v,tn,v,en,v &  \\
+\ttt{prodbin-F.c} & \rAppx   & 620.2    & 1  & d,usc,v,v & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 >= y),(-(y) <= -(1))$  \\
+\ttt{prodbin-T.c} & \rAppx   & 655.9    & 2  & d,usc,v,en,v,v & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 >= y),((0 + (y   -1)) <= -1)\&\&(((0 + (p   -1)) + (y   -1)) <= -2)\&\&((0 + (p   -1)) <= -1)\&\&(((0 + (p   1)) + (y   -1)) <= 1)$  \\
+\ttt{ps2-F.c}   & \rExact  & 27.8     & 1  & d,usc,v,v & $\ell_{20}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
+\ttt{ps2-T.c}   & \rExact  & 37.4     & 1  & d,usc,v,v & $\ell_{20}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{ps3-F.c}   & \rExact  & 44.3     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{ps3-T.c}   & \rExact  & 33.7     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{ps4-F.c}   & \rExact  & 36.9     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
+\ttt{ps4-T.c}   & \rExact  & 30.4     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
+\ttt{ps5-F.c}   & \rExact  & 56.4     & 2  & d,usc,v,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
+\ttt{ps5-T.c}   & \rExact  & 66.1     & 2  & d,usc,v,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
+\ttt{ps6-F.c}   & \rExact  & 80.0     & 2  & d,usc,v,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
+\ttt{ps6-T.c}   & \rExact  & 73.7     & 2  & d,usc,v,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
+\ttt{sqrt1-F.c} & \rExact  & 117.7    & 2  & d,usc,v,en,v,v & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
+\ttt{sqrt1-T.c} & \rExact  & 121.1    & 2  & d,usc,v,en,v,v & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq a-k,k-a\leq -1$  \\
+\bottomrule
