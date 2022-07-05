@@ -110,6 +110,7 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
       $compare->{$b}->{ddr}->{detail}->{summary};
   }
 #  print Dumper($compare);
+  print OUT "\\bottomrule\n";
   close OUT;
   print "wrote:  $outfn\n";
   print qx{cp $outfn results/};
@@ -123,12 +124,14 @@ if($#tools == 0 && $tools[0] eq 'ddr') {
 #
 sub checkResult {
   my ($res,$exp) = @_;
+  return $res if not defined $res;  
   return '\unsound{\rTRUE}' if $exp eq '\rFALSE' && $res eq '\rTRUE';
   return '\unsound{\rFALSE}' if $exp eq '\rTRUE' && $res eq '\rFALSE';
   return $res;
 }
 sub checkImprove {
   my ($lia,$nla,$exp) = @_;
+  return $lia if not defined $lia;
   return '\hlg '.$lia if $lia eq '\rTRUE' && $exp eq '\rTRUE' && $nla ne '\rTRUE';
   return '\hlg '.$lia if $lia eq '\rFALSE' && $exp eq '\rFALSE'  && $nla ne '\rFALSE';
   return $lia;
@@ -159,7 +162,8 @@ foreach my $b (sort keys %$compare) {
       # if we improved the Invalid one,
       # and the Valid one is also \rTRUE 
       # then this Valid ons is also "improved"
-      if ($compare->{$binv}->{$tool}->{liaresult} =~ /hlg/ &&
+      if (defined $compare->{$binv}->{$tool}->{liaresult} 
+          && $compare->{$binv}->{$tool}->{liaresult} =~ /hlg/ &&
           $compare->{$b}->{$tool}->{liaresult} =~ /rTRUE/) {
         $compare->{$b}->{$tool}->{liaresult} = '\hlg '.$compare->{$b}->{$tool}->{liaresult};
       }
@@ -167,6 +171,9 @@ foreach my $b (sort keys %$compare) {
     #print $tool." ".$b." ".Dumper($compare->{$b}->{$tool}) if not defined $compare->{$b}->{$tool}->{liaresult};
     #my $liaeek = ( $compare->{$b}->{$tool}->{liaresult} eq $exp ? '{' : '\red{');
     #my $nlaeek = ( $compare->{$b}->{$tool}->{nlaresult} eq $exp ? '{' : '\red{');
+    $compare->{$b}->{$tool}->{liaresult} = '-' if not defined $compare->{$b}->{$tool}->{liaresult};
+    $compare->{$b}->{$tool}->{liatime} = '-' if not defined $compare->{$b}->{$tool}->{liatime};
+    warn "LIA res=$compare->{$b}->{$tool}->{liaresult} time=$compare->{$b}->{$tool}->{liatime} not defined for $b / $tool" unless defined $compare->{$b}->{$tool}->{liaresult};
     printf OUT "& "."%-8s & %-8s & "."%-8s & %-8s ",
     $compare->{$b}->{$tool}->{nlaresult},
     $compare->{$b}->{$tool}->{nlatime} ,
@@ -175,7 +182,8 @@ foreach my $b (sort keys %$compare) {
   }
   print OUT " \\\\\n";
 }
+print OUT "\\bottomrule\n";
 close OUT;
 print "wrote: $outfn\n";
-print "  and copied it to results/\n";
+print "  and copied it to results/\n\n";
 print qx{cp $outfn results/};

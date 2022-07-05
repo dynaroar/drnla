@@ -46,10 +46,11 @@ sub getFuncTionArgs {
 sub getCTLprop {
     my ($benchmarkFn,$tool) = @_;
     my $propfn = $benchmarkFn;
+    #return '' if $benchmarkFn =~ /ctl-multi/;
     if ($propfn =~ m{ctl-pldi13}) {
       $propfn =~ s/-(in)?valid\.c/.prop/;
       $propfn =~ s/-(in)?valid_.*\.c/.prop/;
-    } elsif ($propfn =~ m{/ctl-svcomp/}) {
+    } elsif ($propfn =~ m{/ctl-svcomp/} || $propfn =~ m{/ctl-multi/}) {
              $propfn =~ s{\/[^\/]*\.c}{/properties/efandefp-nla.prop};
         $propfn =~ s{\/[a-z]+\d?\.prp}{/properties/efandefp-nla.prop};
     } else {
@@ -87,8 +88,9 @@ my $CFG = {
         # ./dynamltl.py -i ../benchmarks/ctl/ps2-nla-valid.c --prop 'termination' --refine 8
         DIR => qq{$USERREPO/src},
         CMD => sub {
+            my $refines = 8; $refines = 16 if $_[0] =~ /ctl-multi/;
             my $bnd = ($_[0] =~ /pldi13small/ ? '--lbnd 600' : '');
-            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./drnla.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine 8 $bnd 2>&1 | tee /tmp/ddr.log);
+            return qq(rm /tmp/ddr.log; timeout ${TIMEOUT}s ./drnla.py -timeout $TIMEOUT -i $_[0] --prop 'termination' --refine $refines $bnd 2>&1 | tee /tmp/ddr.log);
         },
         FETCH => sub { return qq(cp /tmp/ddr.log $_[0]); },
         PARSE => sub { return Parsers::ddr($_[0]); },

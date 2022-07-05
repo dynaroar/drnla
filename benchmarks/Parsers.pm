@@ -25,10 +25,10 @@ sub find_benchmarks {
         # next unless $fn =~ m/\.c$/; 
         # next if $fn =~ m/_fn\.c/;
         # next if $fn =~ /~$/;
-        next if $fn ~= /cohencu1|cohencu6|dijkstra1/;
+        next if $fn =~ /cohencu1|cohencu6|dijkstra1/;
         next if $fn =~ /fix1/;
         unless ($fn =~ /valid/) {
-            warn "skipping file: $fn.\n";
+            #warn "skipping file: $fn.\n";
             next;
         }
         # trim off ending so we get the actual becnhmark name

@@ -3,13 +3,15 @@ all:
 
 .PHONY: run
 run:
-#	mv -f harvest-howto.sh /tmp
+	echo "#### New Run ###" >> harvest-howto.sh
 	./run ctl-pldi13small-nla-rest run ddr
 	./run ctl-pldi13small-nla run ddr
 	./run ctl-svcomp run ddr
+	./run ctl-multi run ddr
 	./run ctl-pldi13small-nla-rest run t2,function
 	./run ctl-pldi13small-nla run t2,function
 	./run ctl-svcomp run t2,function
+	./run ctl-multi run t2
 
 .PHONY: harvest
 harvest:
