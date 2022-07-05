@@ -1,0 +1,35 @@
+START: 1;
+
+FROM: 1;
+      x := nondet();
+      y := nondet();
+      p := 2;
+TO: 2;
+
+FROM: 2;
+      assume(y>0);
+TO: 3;
+
+FROM: 3;
+      assume((x>=9) || (x<=-7));
+      y := y-2;
+TO: 4;
+
+FROM: 3;
+      assume((x<9) && (x>7));
+TO: 4;
+
+FROM: 4;
+      y := y-1;
+      p := 1;
+TO: 2;
+
+FROM: 2;
+      assume(y<=0);
+      p := 0;
+TO: 5;
+
+  
+FROM: 5;
+      assume(0 <= 0);
+TO: 5;

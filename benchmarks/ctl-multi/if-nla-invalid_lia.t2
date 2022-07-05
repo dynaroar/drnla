@@ -1,0 +1,21 @@
+START: 1;
+
+FROM: 1;
+      x := nondet();
+      p := 2;
+TO: 2;
+
+FROM: 2;
+      assume((x<= 6 && x>=6) || (x<= -6 && x>=-6));
+      p := 1;
+TO: 3;
+
+FROM: 2;
+      assume(x < -6 || (-6<x && x<6) || x>6);
+      p := x-6;
+TO: 3;
+
+  
+FROM: 3;
+      assume(0 <= 0);
+TO: 3;

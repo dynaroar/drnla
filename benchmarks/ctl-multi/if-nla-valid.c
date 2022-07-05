@@ -1,6 +1,7 @@
+
 extern int __VERIFIER_nondet_int(void);
 int main() {
-    int x;
+   int x;
    int p = 2;
     x = __VERIFIER_nondet_int();
    if (x*x == 36){

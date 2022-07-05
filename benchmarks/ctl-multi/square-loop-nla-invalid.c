@@ -5,10 +5,10 @@ int main() {
     y = __VERIFIER_nondet_int();
     int p = 2;
     while (y>0){
-        if (x*x>49) y = y-5;
+        if (x*x >49) y = y-5;
         y--;
         p = 1;
     }
-    p = 1-y;
+    p = y-1;
     return x;
 }
