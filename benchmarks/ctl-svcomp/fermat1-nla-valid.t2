@@ -45,11 +45,11 @@ TO: 5;
 
 FROM: 5;
       assume(4*(xA+r) - u*u - v*v - 2*u + 2*v + c > k);
+      p := 0;
 TO: 2;
 
 FROM: 2;
-      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + cc > kk);
-      p := 0;
+      assume(u*u - v*v - 2*u + 2*v - 4*(xA+r) + cc >= kk);
 TO:6;
 
  
