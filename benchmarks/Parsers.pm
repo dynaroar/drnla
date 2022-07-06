@@ -133,7 +133,7 @@ sub ddr {
         $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
         if (/initial OU mapping:(.*)$/) {
             #$sofar = $1; # if /initial OU mapping:(.*)$/;
-            push @stages, "d"; push @stages, "usc";    
+            #push @stages, "d"; push @stages, "usc";    
         }
         push @stages, "v" if /run Ultimate static/;
         push @stages, "tn" if /strengthen ELSE/;
