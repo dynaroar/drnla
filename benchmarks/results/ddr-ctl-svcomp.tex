@@ -39,7 +39,7 @@
 \ttt{hard2-F.c} & \rUNK    & 0.9      & 0  &  &  \\
 \ttt{hard2-T.c} & \rUNK    & 0.9      & 0  &  &  \\
 \ttt{prod4br-F.c} & \rAppx   & 227.5    & 4  & d,usc,v,en,v,tn,v,en,v,tn,v &  \\
-\ttt{prod4br-T.c} & \rAppx   & 152.7    & 4  & d,usc,v,v,en,v,tn,v,en,v &  \\
+\ttt{prod4br-T.c} & \rAppx   & 152.7    & 4  & d,usc,v,ep,v,en,v,tn,v,en,v &  \\
 \ttt{prodbin-F.c} & \rAppx   & 620.2    & 1  & d,usc,v,v & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 >= y),(-(y) <= -(1))$  \\
 \ttt{prodbin-T.c} & \rAppx   & 655.9    & 2  & d,usc,v,en,v,v & $\ell_{26}:!((0 != (((y + z) + (x   y)) - (a   b))))$ $\mapsto$ $(0 >= y),((0 + (y   -1)) <= -1)\&\&(((0 + (p   -1)) + (y   -1)) <= -2)\&\&((0 + (p   -1)) <= -1)\&\&(((0 + (p   1)) + (y   -1)) <= 1)$  \\
 \ttt{ps2-F.c}   & \rExact  & 27.8     & 1  & d,usc,v,v & $\ell_{20}:!(((((c + (y   y)) - (2   x)) + y) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
@@ -48,10 +48,10 @@
 \ttt{ps3-T.c}   & \rExact  & 33.7     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (6   x)) - (((2   y)   y)   y)) - ((3   y)   y)) - y) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
 \ttt{ps4-F.c}   & \rExact  & 36.9     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(0 >= (k - y)),((-(k) + y) <= -(1))$  \\
 \ttt{ps4-T.c}   & \rExact  & 30.4     & 1  & d,usc,v,v & $\ell_{20}:!((((((c + (4   x)) - (((y   y)   y)   y)) - (((2   y)   y)   y)) - (y   y)) < k))$ $\mapsto$ $(0 >= (-(c) + k)),((c - k) <= -(1))$  \\
-\ttt{ps5-F.c}   & \rExact  & 56.4     & 2  & d,usc,v,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
-\ttt{ps5-T.c}   & \rExact  & 66.1     & 2  & d,usc,v,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
-\ttt{ps6-F.c}   & \rExact  & 80.0     & 2  & d,usc,v,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
-\ttt{ps6-T.c}   & \rExact  & 73.7     & 2  & d,usc,v,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
+\ttt{ps5-F.c}   & \rExact  & 56.4     & 2  & d,usc,v,ep,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
+\ttt{ps5-T.c}   & \rExact  & 66.1     & 2  & d,usc,v,ep,v,v & $\ell_{19}:!(((((((c + (((((6   y)   y)   y)   y)   y)) + ((((15   y)   y)   y)   y)) + (((10   y)   y)   y)) - (30   x)) - y) < k))$ $\mapsto$ $(((0 + (k   1)) + (c   -1)) <= 0),((c - k) <= -(1))$  \\
+\ttt{ps6-F.c}   & \rExact  & 80.0     & 2  & d,usc,v,ep,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
+\ttt{ps6-T.c}   & \rExact  & 73.7     & 2  & d,usc,v,ep,v,v & $\ell_{19}:\neg(c-2y^6 -6 y^5-5y^4+y^2+12x \leq k)$ $\mapsto$ $(((0 + (k   1)) + (y   -1)) <= 0),((-(k) + y) <= -(1))$  \\
 \ttt{sqrt1-F.c} & \rExact  & 117.7    & 2  & d,usc,v,en,v,v & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq c-k,k-c \leq -1$  \\
 \ttt{sqrt1-T.c} & \rExact  & 121.1    & 2  & d,usc,v,en,v,v & $\ell_{21}:t^2-4s+2t+1+c \leq k$ $\mapsto$ $0 \geq a-k,k-a\leq -1$  \\
 \bottomrule
