@@ -4,7 +4,7 @@ FROM: 1;
       z := nondet();
       k := nondet();
       x := 1;
-      y := 1;
+      y := z;
       c := 1;
       p := 2;
       assume( c < k);
