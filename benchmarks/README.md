@@ -5,3 +5,9 @@ Benchmarks are adpated from the following sources:
 
 ## Categories
 - Polynomials 
+
+### Script commands
+
+```
+./run ctl-multi run ddr
+```
