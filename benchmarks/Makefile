@@ -11,7 +11,7 @@ run:
 	./run ctl-pldi13small-nla-rest run t2,function
 	./run ctl-pldi13small-nla run t2,function
 	./run ctl-svcomp run t2,function
-	./run ctl-multi run t2
+	./run ctl-multi run t2,function
 
 .PHONY: harvest
 harvest:
