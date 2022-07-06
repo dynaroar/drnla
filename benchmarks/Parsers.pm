@@ -127,8 +127,9 @@ sub ddr {
         $simpltime   = $1 if /TIME-SIMPLIFICATION:(\d+.\d+)s/;
         $time   = $1 if /TIME-TOTAL:(\d+.\d+)s/;
 #        $stages = $1 if /REFINEMENT:(.*)$/;
-        $result = '\rExact' if /MAP:.*exact*/;
-        $result = '\rAppx' if /MAP:.*approx*/;
+        $result = '\rExact' if /MAP:.*exact/;
+        $result = '\rExact' if /FINAL-OU:MAP:.*exact/;
+        $result = '\rAppx' if /MAP:.*approx/;
         $time   = $1 if /EJKTIME:(\d+\.\d+)$/;
         if (/initial OU mapping:(.*)$/) {
             #$sofar = $1; # if /initial OU mapping:(.*)$/;
@@ -138,7 +139,7 @@ sub ddr {
         push @stages, "tn" if /strengthen ELSE/;
         push @stages, "tp" if /strengthen IF/;
         push @stages, "en" if /widen ELSE/;
-        push @stages, "ep" if /widen If/;
+        push @stages, "ep" if /widen IF/;
         $iters++ if /th refinement result/;
 #        $sofar = 666 if /th refinement result:/;
     }
