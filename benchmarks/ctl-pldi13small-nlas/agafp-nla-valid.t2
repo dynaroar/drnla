@@ -1,0 +1,42 @@
+START: 1;
+
+FROM: 1;
+      k := nondet();
+      x := 0;
+      y := 0;
+      c := 0;
+      
+      p := 0;
+      xp := nondet();
+
+TO: 2;
+
+FROM: 2;
+      assume(xp>0);    
+TO: 3;
+
+FROM: 3;
+      p := p + 1;
+TO: 7;
+
+FROM: 2;
+      assume(xp <= 0);
+TO: 4;
+
+FROM: 4;
+      assume(c + 4*x - y*y*y*y - 2*y*y*y - y*y < k);
+TO: 5;
+
+FROM: 5;
+      c := c + 1;
+      y := y + 1;
+      x = y*y*y + x;
+TO: 4;
+ 
+FROM: 4;
+      assume(c + 4*x - y*y*y*y - 2*y*y*y - y*y >= k);
+TO: 6;
+
+FROM: 6;
+      p := 1;
+TO: 7;

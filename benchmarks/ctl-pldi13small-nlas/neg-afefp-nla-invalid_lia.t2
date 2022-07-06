@@ -1,0 +1,59 @@
+START: 1;
+
+FROM: 1;
+      z := nondet();
+      k := nondet();
+      x := 1;
+      y := 1;
+      z := 6;
+      c := 0;
+      p := 0;
+      xp := 5;
+ 
+TO: 2;
+
+FROM: 2;
+      assume(c < k);
+TO: 3;
+
+FROM: 3;
+       c := c + 1;
+       x := x * z + 1;
+       y := y * z;
+
+TO: 2;
+ 
+FROM: 2;
+      assume( c >= k);
+
+TO: 4;
+
+FROM: 4;
+      assume(xp>=0);
+TO: 5;
+
+FROM: 5;
+      rho1 := nondet();
+TO: 6;
+
+FROM: 6;
+      assume(rho1 > 0);
+TO: 7;
+
+FROM: 7;
+      xp := xp-1;
+TO: 4;
+
+FROM: 6;
+      assume(rho1<=0);
+TO: 4;
+
+FROM: 4;
+      assume(xp < 0);
+TO: 8;
+
+FROM: 8;
+      p := 1;
+TO: 9;
+
+ 
