@@ -1,0 +1,3 @@
+t2: [EF](p == 3) || [EX](p == 0) 
+function: OR{EF{p==3}}{EX{p==0}}
+coar: 
