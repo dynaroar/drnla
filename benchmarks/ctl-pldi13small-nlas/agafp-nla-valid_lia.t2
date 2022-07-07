@@ -30,7 +30,7 @@ TO: 5;
 FROM: 5;
       c := c + 1;
       y := y + 1;
-      x = y*y*y + x;
+      x := y*y*y + x;
 TO: 4;
  
 FROM: 4;
