@@ -3,10 +3,10 @@
  
 ### Benckmarks
 
-- ctl-svcomp: nla version, T2 versions, and FuncTion versions.
-- ctl-pldi13-nla: nla version, T2 versions, and FuncTion versions.
-- ctl-pldi13-nlas: various type of nlas, T2 versions, and FuncTion versions.
-- ctl-multi: handcrafted nla benchmarks, T2 versions, and FuncTion versions.
+- `ctl-svcomp`: nla version, T2 versions, and FuncTion versions.
+- `ctl-pldi13-nla`: nla version, T2 versions, and FuncTion versions.
+- `ctl-pldi13-nlas`: various type of nlas, T2 versions, and FuncTion versions.
+- `ctl-multi`: handcrafted nla benchmarks, T2 versions, and FuncTion versions.
 
 
 ### Source Code (main contribution)
