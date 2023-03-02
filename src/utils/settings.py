@@ -6,6 +6,7 @@ logger_level = 4
 gen_tcs = False
 init_ou = False
 is_lbnd = False
+bv = False
 tmpdir = Path().home()/'tmp'
 timeout = 600
 refine = 4

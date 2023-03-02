@@ -41,6 +41,10 @@ if __name__ == "__main__":
        action = "store_true",
        help="initial OU mapping for IF ELSE")
 
+    ag("--bv", "-bv",
+       action= 'store_true',
+       help= 'flag to run initial dynamic analysis on the input directly')
+   
     ag("--log", "-log",
        type=int,
        choices=range(5),
@@ -94,6 +98,7 @@ if __name__ == "__main__":
        default= settings.tmpdir,
        help= f'set temporary path for intermediate files')
 
+    
     args = aparser.parse_args()
 
     if args.init_ou:
@@ -113,6 +118,7 @@ if __name__ == "__main__":
     settings.prop = args.prop
     settings.tmpdir = args.tmpdir
     settings.verdict = args.verdict
+    settings.bv = args.bv
   
     inp = os.path.realpath(os.path.expanduser(args.inp))
 

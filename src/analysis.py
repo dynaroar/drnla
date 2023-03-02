@@ -207,7 +207,10 @@ class OUAnalysis(object):
     def refine(self, iter, result, nla_ou):
         mlog.info(f"\n-------Refinement iteration {iter}------\n")
         if iter == 1:
-            self.cil_trans.dtrans(nla_ou)
+            if settings.bv:
+                nla_ou['16']=(DynSolver.parse('(a|b) == 0'), [],[])
+            else:
+                self.cil_trans.dtrans(nla_ou)
             if settings.init_ou:
                 invar_list = []
                 for loc, value in nla_ou.items():

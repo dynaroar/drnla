@@ -191,3 +191,9 @@ class Z3(object):
 # print(f)
 # print(Z3.normalize(f))
 # print(f)
+
+# formula = [Or(Or(2 >= x, 1 >= -x, 0 >= x + y), (And(9 >= y, x + y <= -1)))]
+# f = [x>0]
+# print(Z3.to_string(Not (True)))
+
+# print(And(f))

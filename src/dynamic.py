@@ -3,6 +3,7 @@ from utils import settings
 from utils.smt import *
 
 import utils.common as CM
+from utils import settings
 import solver as DS
 from solver import *
 from z3 import *
@@ -12,6 +13,7 @@ mlog = CM.getLogger(__name__, settings.logger_level)
 
 class DynamicAnalysis(object):
     def __init__(self, config):
+        self.inp = config.inp
         self.source = config.src_instr
         self.invarsf = config.invarsf
         self.invars_refine = config.invars_refine
@@ -30,6 +32,8 @@ class DynamicAnalysis(object):
         CM.run_cmd(vtrace_cmd)
         
     def run_source(self):
+        if settings.bv:
+            self.source = self.inp
         source_cmd = settings.Dynamic.source_run(self.source, self.invarsf, self.vtracef)
         # mlog.info(f'------run DIG dynamic with source file:-------')
         CM.run_cmd(source_cmd)
