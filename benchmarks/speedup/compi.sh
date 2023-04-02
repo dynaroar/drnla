@@ -43,26 +43,26 @@ for src in $programs;do
     # sed -i 's/return.*0.*;/} return 0;/' $src
 done
 
-echo "compiling and run..."
+# echo "compiling and run..."
 
-table="$OUTPUT/runtime.tex"
-if [ -e $table ]; then
-    echo "File $table already exists! Will be overwritten"
-    rm $table
-    echo "Benchmark & Origin & Linear & Speedup" >> $table
-else
-    echo "Benchmark & Origin & Linear & Speedup" >> $table
-fi
-    
-for src in $programs;do
-    bench_name=$(basename $src .c)
-    name="${src%.*}"
-    bin="${name}_bin"
-    gcc $src -o $bin
+# table="$OUTPUT/runtime.tex"
+# if [ -e $table ]; then
+#     echo "File $table already exists! Will be overwritten"
+#     rm $table
+#     echo "Benchmark & Origin & Linear & Speedup" >> $table
+# else
+#     echo "Benchmark & Origin & Linear & Speedup" >> $table
+# fi
 
-    # echo "----running $bench_name..."
-    # # bin_time=$({ time ./$bin >/dev/null; } 2>&1 | grep real)
-    # { time ./$bin >/dev/null; } 2>&1 | grep real
-    echo "$bench_name & $runtime & - & -" >> $table 
-done
-echo "---Done"
+# for src in $programs;do
+#     bench_name=$(basename $src .c)
+#     name="${src%.*}"
+#     bin="${name}_bin"
+#     gcc $src -o $bin
+
+#     # echo "----running $bench_name..."
+#     # # bin_time=$({ time ./$bin >/dev/null; } 2>&1 | grep real)
+#     # { time ./$bin >/dev/null; } 2>&1 | grep real
+#     echo "$bench_name & $runtime & - & -" >> $table
+# done
+# echo "---Done"
