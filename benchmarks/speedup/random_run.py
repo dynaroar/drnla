@@ -2,6 +2,7 @@
 
 import os, sys, fileinput, subprocess
 import shlex, time, random
+import statistics
 #This is a relative path directory
 
 def runCmd(cmd):
@@ -17,12 +18,13 @@ def runTime(cmd):
     start = time.time()
     runCmd(cmd)
     end = time.time()
-    return round((end - start), 2)
+    return round((end - start), 4)
+    # return end - start
   
             
-def randRun(nla, lia, args, res):
+def randRun(nla, lia, args, res, tbnla, tblia, tbspd):
     nla_time = []
-    lia_time = []    
+    lia_time = []
     for i in range(10):
         inputs = [str(random.randint(-100, 100)) for i in range(args)]
         inputs_str = ' '.join(inputs)
@@ -30,10 +32,13 @@ def randRun(nla, lia, args, res):
         lia_run = f'./{lia} {inputs_str}'
         nla_time.append(runTime(nla_run))
         lia_time.append(runTime(lia_run))
-        # speedup = nla_time / lia_time
-    nla_avg = sum(nla_time) / len(nla_time)
-    lia_avg = sum(lia_time) / len(lia_time)
-    speedup = round((nla_avg / lia_avg), 2)
+    nla_avg = statistics.mean(nla_time)
+    lia_avg = statistics.mean(lia_time)
+    speedup = round((nla_avg / lia_avg), 4)
+    # speedup = nla_avg / lia_avg
+    tbnla.append(nla_avg)
+    tblia.append(lia_avg)
+    tbspd.append(speedup)
     res.write(f'{nla} & {nla_avg} & {lia_avg} & {speedup} \\\\ \n')
     print(f'{nla} & {nla_avg} & {lia_avg} & {speedup} \\')
      
@@ -49,10 +54,17 @@ def main():
   
     with open(sys.argv[1], 'r') as file:
         lines = file.readlines()
+        tbnla, tblia, tbspd = [], [], []
+    
         for line in lines:
             bins = line.strip().split(' ')
             print(f'----Running benchmark: {bins[0]}-----')
-            randRun(bins[0], bins[1], int(bins[2]), res)
+            randRun(bins[0], bins[1], int(bins[2]), res, tbnla, tblia, tbspd)
+    res.write(f'\\hline \n')
+    nla_over, lia_over, spd_over = statistics.mean(tbnla), statistics.mean(tblia), statistics.mean(tbspd)
+    res.write(f' Average & {nla_over} & {lia_over} & {spd_over} \\\\ \n')
+    res.write(f'\\hline \n')
+  
     res.close()
     print('Results saved to results.tex')
                      
