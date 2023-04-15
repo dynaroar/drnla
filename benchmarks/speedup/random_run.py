@@ -15,9 +15,9 @@ def runCmd(cmd):
 def runTime(cmd):
     # process_time() getting CPU time
     # time() gets Wall time
-    start = time.time()
+    start = time.process_time()
     runCmd(cmd)
-    end = time.time()
+    end = time.process_time()
     return round((end - start), 4)
     # return end - start
   
@@ -25,15 +25,15 @@ def runTime(cmd):
 def randRun(nla, lia, args, res, tbnla, tblia, tbspd):
     nla_time = []
     lia_time = []
-    for i in range(10):
-        inputs = [str(random.randint(-100, 100)) for i in range(args)]
+    for i in range(50):
+        inputs = [str(random.randint(-5000, 5000)) for i in range(args)]
         inputs_str = ' '.join(inputs)
         nla_run = f'./{nla} {inputs_str}'
         lia_run = f'./{lia} {inputs_str}'
         nla_time.append(runTime(nla_run))
         lia_time.append(runTime(lia_run))
-    nla_avg = statistics.mean(nla_time)
-    lia_avg = statistics.mean(lia_time)
+    nla_avg = statistics.median(nla_time)
+    lia_avg = statistics.median(lia_time)
     speedup = round((nla_avg / lia_avg), 4)
     # speedup = nla_avg / lia_avg
     tbnla.append(nla_avg)
