@@ -1,2 +1,0 @@
-vtrace_if_8; -n <= 0 && -k + y <= 0
-vtrace_else_8; -n <= -1 && k - y <= -1
