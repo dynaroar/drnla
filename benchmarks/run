@@ -2,12 +2,12 @@
 
 #use local::lib;
 my $USERHOME = $ENV{HOME};
-my $USERREPO = "$USERHOME/dynamiteLTL";
+my $USERREPO = "$USERHOME/drnla";
 my $USERTMP  = "$USERHOME/tmp";
-my $TOOLSDIR = '/tools';
+my $TOOLSDIR = "$USERHOME/drnla/deps";
 
-$ENV{"CONDA_HOME"} = "/tools/miniconda3/bin/python3";
-$ENV{"DIG_HOME"} ="/tools/dig/src/dig.py";
+#$ENV{"CONDA_HOME"} = "/tools/miniconda3/bin/python3";
+#$ENV{"DIG_HOME"} ="/tools/dig/src/dig.py";
 
 ###############################################################
 use strict;
@@ -51,7 +51,7 @@ sub getCTLprop {
     if ($propfn =~ m{ctl-pldi13}) {
       $propfn =~ s/-(in)?valid\.c/.prop/;
       $propfn =~ s/-(in)?valid_.*\.c/.prop/;
-    } elsif ($propfn =~ m{/ctl-svcomp/} || $propfn =~ m{/ctl-multi/}) {
+    } elsif ($propfn =~ m{/ctl-svcomp/} || $propfn =~ m{/ctl-multi/} || $propfn =~ m{/tmp/}) {
              $propfn =~ s{\/[^\/]*\.c}{/properties/efandefp-nla.prop};
         $propfn =~ s{\/[a-z]+\d?\.prp}{/properties/efandefp-nla.prop};
     } else {
@@ -77,7 +77,8 @@ sub appendTime {
 my $t0;
 my $CFG = {
     t2 => {
-        DIR => qq{/tools/T2},
+	    #    DIR => qq{/tools/T2},
+        DIR => qq{$TOOLSDIR/T2},
         CMD => sub { 
             my $prp = getCTLprop($_[0],'t2');
             $_[0] =~ s/\.c/.t2/;
@@ -97,7 +98,7 @@ my $CFG = {
         PARSE => sub { return Parsers::ddr($_[0]); },
     },
     function => {
-        DIR => qq{/tools/function},
+        DIR => qq{$TOOLSDIR/function},
         CMD => sub { 
             # does the file exist?
             $_[0] =~ s/\.c/_fn.c/;
@@ -150,7 +151,7 @@ sub runc { my ($cmd) = @_; print "+ $cmd\n(with timeout of $TIMEOUT s)\n";
 
 ###############################################################
 #### Arguments parsing
-die "usage: ./run (options) <subdir> (list|run) [dynamiteltl,dynamo,ultimate,seahorn,aprove,t2,function] (geo1-both-t,cohencu2-both-t,...)\n".
+die "usage: ./run (options) <subdir> (list|run) [ddr,dynamo,ultimate,seahorn,aprove,t2,function] (geo1-both-t,cohencu2-both-t,...)\n".
     "  (last argument is optional) \n".
     "  options:\n".
     "    --prop=(t|nt|ltl|ctl) # default is \"ctl\" for CTL\n".
