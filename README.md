@@ -22,7 +22,7 @@ DrNLA is a hybrid analysis tool to synthesis linear conditions for nonlinear bra
 - `ctl-pldi13-nlas`: Various type of NLAs , T2 versions, and FuncTion versions.
 - `ctl-multi`: Customized NLA benchmarks, T2 versions, and FuncTion versions.
 
-### Building DrNA
+### Building DrNLA
 
 `DrNLA` in built on top of open source dynamic analysis engine and static analysis framework, following instructions below to setup the running environment.
 Install general dependencies:
