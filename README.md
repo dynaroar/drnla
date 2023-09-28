@@ -24,7 +24,7 @@ DrNLA is a hybrid analysis tool to synthesis linear conditions for nonlinear bra
 
 ### Building DrNLA
 
-`DrNLA` in built on top of open source dynamic analysis engine and static analysis framework, following instructions below to setup the running environment.
+`DrNLA` is built on top of open source dynamic analysis engine and static analysis framework, following instructions below to setup the running environment.
 Install general dependencies:
 
 ```
