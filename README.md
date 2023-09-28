@@ -133,5 +133,5 @@ Inside `benchmarks` directory, we provide a script to run various tools on all t
 ```
 3. All the results will be written into latex tables, recording time, synthesis resutls and verification results. For each run, the intermediate results of DrNLA will also be saved into your home temporary directory, `Path().home()/$tmp` (create one if it doesn't exist).
 
-Finally, feel free to open an [issue](https://github.com/cyruliu/drnla/issues) ticket if you have any questions.
+Finally, feel free to open an [issue](https://github.com/dynaroar/drnla/issues) ticket if you have any questions.
 
